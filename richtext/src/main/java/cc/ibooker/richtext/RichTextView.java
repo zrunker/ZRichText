@@ -3,8 +3,6 @@ package cc.ibooker.richtext;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -12,10 +10,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewTreeObserver;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +20,7 @@ import java.util.ArrayList;
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<String> tempList;
     private SpannableString spannableString;
+    private DownLoadImage downLoadImage;
 
     public RichTextView(Context context) {
         this(context, null);
@@ -39,6 +34,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         super(context, attrs, defStyleAttr);
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
         setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    // 销毁
+    public void onDestory() {
+        if (downLoadImage != null)
+            downLoadImage.destory();
     }
 
     /**
@@ -79,38 +80,69 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             }
                             tempList.add(strBuilder.toString());
 
-                            // 采用Glide加载图片
-                            Glide.with(getContext())
-                                    .load(data.getText())
-                                    .into(new SimpleTarget<Drawable>() {
-                                        @Override
-                                        public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
-                                            RichImgBean richImgBean = new RichImgBean();
-                                            richImgBean.setOnClickSpan(data.getOnClickSpan());
-                                            richImgBean.setRealText(data.getText());
+//                            // 采用Glide加载图片
+//                            Glide.with(getContext())
+//                                    .load(data.getText())
+//                                    .into(new SimpleTarget<Drawable>() {
+//                                        @Override
+//                                        public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
+//                                            RichImgBean richImgBean = new RichImgBean();
+//                                            richImgBean.setOnClickSpan(data.getOnClickSpan());
+//                                            richImgBean.setRealText(data.getText());
+//
+//                                            int width = drawable.getIntrinsicWidth() / 2;
+//                                            int height = drawable.getIntrinsicHeight() / 2;
+//
+//                                            if (richTvWidth < width && width != 0) {
+//                                                float fl = new BigDecimal((float) richTvWidth / width)
+//                                                        .setScale(5, BigDecimal.ROUND_HALF_UP)
+//                                                        .floatValue();
+//                                                height = (int) (fl * height) + 1;
+//                                                width = richTvWidth;
+//                                                if (onLongImageSpanClickListener != null)
+//                                                    richImgBean.setOnClickSpan(onLongImageSpanClickListener);
+//                                            }
+//
+//                                            drawable.setBounds(0, 0, width, height);
+//                                            VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+//                                            richImgBean.setVerticalImageSpan(verticalImageSpan);
+//                                            data.setRichImgBean(richImgBean);
+//
+//                                            // 重新刷新数据
+//                                            updateRichTv(list);
+//                                        }
+//                                    });
+                            downLoadImage = new DownLoadImage();
+                            downLoadImage.loadImage(data.getText(), new DownLoadImage.ImageCallBack() {
+                                @Override
+                                public void getDrawable(Drawable drawable) {
+                                    RichImgBean richImgBean = new RichImgBean();
+                                    richImgBean.setOnClickSpan(data.getOnClickSpan());
+                                    richImgBean.setRealText(data.getText());
 
-                                            int width = drawable.getIntrinsicWidth() / 2;
-                                            int height = drawable.getIntrinsicHeight() / 2;
+                                    int width = drawable.getIntrinsicWidth();
+                                    int height = drawable.getIntrinsicHeight();
 
-                                            if (richTvWidth < width && width != 0) {
-                                                float fl = new BigDecimal((float) richTvWidth / width)
-                                                        .setScale(5, BigDecimal.ROUND_HALF_UP)
-                                                        .floatValue();
-                                                height = (int) (fl * height) + 1;
-                                                width = richTvWidth;
-                                                if (onLongImageSpanClickListener != null)
-                                                    richImgBean.setOnClickSpan(onLongImageSpanClickListener);
-                                            }
+                                    if (richTvWidth < width && width != 0) {
+                                        float fl = new BigDecimal((float) richTvWidth / width)
+                                                .setScale(5, BigDecimal.ROUND_HALF_UP)
+                                                .floatValue();
+                                        height = (int) (fl * height) + 1;
+                                        width = richTvWidth;
+                                        if (onLongImageSpanClickListener != null)
+                                            richImgBean.setOnClickSpan(onLongImageSpanClickListener);
+                                    }
 
-                                            drawable.setBounds(0, 0, width, height);
-                                            VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-                                            richImgBean.setVerticalImageSpan(verticalImageSpan);
-                                            data.setRichImgBean(richImgBean);
+                                    drawable.setBounds(0, 0, width, height);
+                                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+                                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+                                    data.setRichImgBean(richImgBean);
 
-                                            // 重新刷新数据
-                                            updateRichTv(list);
-                                        }
-                                    });
+                                    // 重新刷新数据
+                                    updateRichTv(list);
+                                }
+                            });
+
                         }
                     }
                     // 设置TextView

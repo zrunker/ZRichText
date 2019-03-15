@@ -11,6 +11,7 @@ import cc.ibooker.richtext.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
 public class MainActivity extends AppCompatActivity {
+    private RichTextView richTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             list.add(richBean);
         }
 
-        RichTextView richTextView = findViewById(R.id.richTextView);
+         richTextView = findViewById(R.id.richTextView);
         richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
             @Override
             public void onClickSpan(String txt) {
@@ -55,5 +56,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
             }
         }).setRichText(list);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        richTextView.onDestory();
     }
 }
