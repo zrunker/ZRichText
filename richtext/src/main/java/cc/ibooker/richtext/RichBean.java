@@ -8,6 +8,8 @@ public class RichBean {
     private int type;// 0-文本，1-图片
     private int height;
     private int width;
+    private String backgroundColor;// 背景16进制
+    private String color;// 文本颜色
     private ClickSpan.OnClickSpan onClickSpan;// 点击事件
     private RichImgBean richImgBean;
 
@@ -35,6 +37,17 @@ public class RichBean {
         this.type = type;
         this.height = height;
         this.width = width;
+        this.onClickSpan = onClickSpan;
+        this.richImgBean = richImgBean;
+    }
+
+    public RichBean(String text, int type, int height, int width, String backgroundColor, String color, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
+        this.text = text;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
         this.onClickSpan = onClickSpan;
         this.richImgBean = richImgBean;
     }
@@ -87,6 +100,22 @@ public class RichBean {
         this.richImgBean = richImgBean;
     }
 
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -94,6 +123,8 @@ public class RichBean {
                 ", type=" + type +
                 ", height=" + height +
                 ", width=" + width +
+                ", backgroundColor='" + backgroundColor + '\'' +
+                ", color='" + color + '\'' +
                 ", onClickSpan=" + onClickSpan +
                 ", richImgBean=" + richImgBean +
                 '}';
