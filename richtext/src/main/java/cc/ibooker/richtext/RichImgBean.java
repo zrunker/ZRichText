@@ -5,6 +5,7 @@ package cc.ibooker.richtext;
  */
 public class RichImgBean {
     private String realText;// 真实文本 一般是Url
+    private int res;// 图片Res
     private VerticalImageSpan verticalImageSpan;
     private ClickSpan.OnClickSpan onClickSpan;// 点击事件
 
@@ -13,8 +14,14 @@ public class RichImgBean {
     }
 
     public RichImgBean(String realText, VerticalImageSpan verticalImageSpan, ClickSpan.OnClickSpan onClickSpan) {
-
         this.realText = realText;
+        this.verticalImageSpan = verticalImageSpan;
+        this.onClickSpan = onClickSpan;
+    }
+
+    public RichImgBean(String realText, int res, VerticalImageSpan verticalImageSpan, ClickSpan.OnClickSpan onClickSpan) {
+        this.realText = realText;
+        this.res = res;
         this.verticalImageSpan = verticalImageSpan;
         this.onClickSpan = onClickSpan;
     }
@@ -43,10 +50,19 @@ public class RichImgBean {
         this.onClickSpan = onClickSpan;
     }
 
+    public int getRes() {
+        return res;
+    }
+
+    public void setRes(int res) {
+        this.res = res;
+    }
+
     @Override
     public String toString() {
         return "RichImgBean{" +
-                ", realText='" + realText + '\'' +
+                "realText='" + realText + '\'' +
+                ", res=" + res +
                 ", verticalImageSpan=" + verticalImageSpan +
                 ", onClickSpan=" + onClickSpan +
                 '}';

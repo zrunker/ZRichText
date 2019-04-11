@@ -4,7 +4,8 @@ package cc.ibooker.richtext;
  * 富文本相关数据
  */
 public class RichBean {
-    private String text;// 文本或图片URL
+    private String text;// 文本或图片URL/图片文件地址
+    private int res;// 图片Res
     private int type;// 0-文本，1-图片
     private int height; // 图片高
     private int width; // 图片宽
@@ -64,6 +65,28 @@ public class RichBean {
 
     public RichBean(String text, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
         this.text = text;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.richImgBean = richImgBean;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
+        this.text = text;
+        this.res = res;
         this.type = type;
         this.height = height;
         this.width = width;
@@ -227,10 +250,19 @@ public class RichBean {
         this.richImgBean = richImgBean;
     }
 
+    public int getRes() {
+        return res;
+    }
+
+    public void setRes(int res) {
+        this.res = res;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
                 "text='" + text + '\'' +
+                ", res=" + res +
                 ", type=" + type +
                 ", height=" + height +
                 ", width=" + width +

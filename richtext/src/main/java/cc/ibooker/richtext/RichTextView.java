@@ -24,6 +24,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -429,95 +434,120 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     private synchronized void downLoadImage(final RichBean data) {
         if (data != null) {
-//                        // 采用Glide加载图片
-//                        Glide.with(getContext())
-//                                .load(data.getText())
-//                                .into(new SimpleTarget<Drawable>() {
-//                                    @Override
-//                                    public void onResourceReady(@NonNull Drawable drawable, @Nullable Transition<? super Drawable> transition) {
-//                                        RichImgBean richImgBean = new RichImgBean();
-//                                        richImgBean.setOnClickSpan(data.getOnClickSpan());
-//                                        richImgBean.setRealText(data.getText());
-//
-//                                        int width = drawable.getIntrinsicWidth() / 2;
-//                                        int height = drawable.getIntrinsicHeight() / 2;
-//
-//                                        if (richTvWidth < width && width != 0) {
-//                                            float fl = new BigDecimal((float) richTvWidth / width)
-//                                                    .setScale(5, BigDecimal.ROUND_HALF_UP)
-//                                                    .floatValue();
-//                                            height = (int) (fl * height) + 1;
-//                                            width = richTvWidth;
-//                                            if (onLongImageSpanClickListener != null)
-//                                                richImgBean.setOnClickSpan(onLongImageSpanClickListener);
-//                                        }
-//
-//                                        drawable.setBounds(0, 0, width, height);
-//                                        VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-//                                        richImgBean.setVerticalImageSpan(verticalImageSpan);
-//                                        data.setRichImgBean(richImgBean);
-//
-//                                        // 重新刷新数据
-//                                        updateRichTvView(list);
-//                                    }
-//                                });
-            final DownLoadImage downLoadImage = new DownLoadImage();
-            if (downLoadImages == null)
-                downLoadImages = new ArrayList<>();
-            downLoadImages.add(downLoadImage);
-            downLoadImage.loadImage(data.getText(), new DownLoadImage.ImageCallBack() {
-                @Override
-                public void getDrawable(Drawable drawable) {
-                    RichImgBean richImgBean = new RichImgBean();
-                    richImgBean.setOnClickSpan(data.getOnClickSpan());
-                    richImgBean.setRealText(data.getText());
+            Object object = data.getText();
+            if (TextUtils.isEmpty(data.getText()))
+                object = data.getRes();
+            // 采用Glide加载图片
+            Glide.with(getContext())
+                    .load(object)
+                    .into(new SimpleTarget<GlideDrawable>() {
+                        @Override
+                        public void onResourceReady(GlideDrawable drawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            RichImgBean richImgBean = new RichImgBean();
+                            richImgBean.setOnClickSpan(data.getOnClickSpan());
+                            richImgBean.setRealText(data.getText());
+                            richImgBean.setRes(data.getRes());
 
-                    int width = drawable.getIntrinsicWidth();
-                    int height = drawable.getIntrinsicHeight();
+                            int width = drawable.getIntrinsicWidth();
+                            int height = drawable.getIntrinsicHeight();
 
-                    // 图片宽度大于文本控件的宽度设置点击事件
-                    if (richTvWidth < width && width != 0) {
-                        float fl = new BigDecimal((float) richTvWidth / width)
-                                .setScale(5, BigDecimal.ROUND_HALF_UP)
-                                .floatValue();
-                        height = (int) (fl * height) + 1;
-                        width = richTvWidth;
-                        if (onLongImageSpanClickListener != null)
-                            richImgBean.setOnClickSpan(onLongImageSpanClickListener);
-                    }
+                            // 图片宽度大于文本控件的宽度设置点击事件
+                            if (richTvWidth < width && width != 0) {
+                                float fl = new BigDecimal((float) richTvWidth / width)
+                                        .setScale(5, BigDecimal.ROUND_HALF_UP)
+                                        .floatValue();
+                                height = (int) (fl * height) + 1;
+                                width = richTvWidth;
+                                if (onLongImageSpanClickListener != null)
+                                    richImgBean.setOnClickSpan(onLongImageSpanClickListener);
+                            }
 
-                    drawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
-                    try {
-                        if (!TextUtils.isEmpty(data.getColor())) {
-                            // SRC_ATOP 颜色-MULTIPLY
-                            drawable.setColorFilter(Color.parseColor(data.getColor()),
-                                    PorterDuff.Mode.MULTIPLY);
+                            drawable.setBounds(0, 0, width, height);
+                            try {
+                                if (!TextUtils.isEmpty(data.getColor())) {
+                                    // SRC_ATOP 颜色-MULTIPLY
+                                    drawable.setColorFilter(Color.parseColor(data.getColor()),
+                                            PorterDuff.Mode.MULTIPLY);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                if (!TextUtils.isEmpty(data.getBackgroundColor())) {
+                                    // DST_OVER 背景-DARKEN
+                                    drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
+                                            PorterDuff.Mode.DARKEN);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+                            richImgBean.setVerticalImageSpan(verticalImageSpan);
+                            data.setRichImgBean(richImgBean);
+
+                            // 重新刷新数据
+                            updateRichImgView();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if (!TextUtils.isEmpty(data.getBackgroundColor())) {
-                            // DST_OVER 背景-DARKEN
-                            drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
-                                    PorterDuff.Mode.DARKEN);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-                    richImgBean.setVerticalImageSpan(verticalImageSpan);
-                    data.setRichImgBean(richImgBean);
+                    });
 
-                    // 重新刷新数据
-                    updateRichImgView();
-
-                    // 销毁下载器
-                    if (downLoadImages != null && downLoadImages.contains(downLoadImage))
-                        downLoadImages.remove(downLoadImage);
-                    downLoadImage.deStory();
-                }
-            });
+//            // 采用DownLoadImage加载图片
+//            final DownLoadImage downLoadImage = new DownLoadImage();
+//            if (downLoadImages == null)
+//                downLoadImages = new ArrayList<>();
+//            downLoadImages.add(downLoadImage);
+//            downLoadImage.loadImage(data.getText(), new DownLoadImage.ImageCallBack() {
+//                @Override
+//                public void getDrawable(Drawable drawable) {
+//                    RichImgBean richImgBean = new RichImgBean();
+//                    richImgBean.setOnClickSpan(data.getOnClickSpan());
+//                    richImgBean.setRealText(data.getText());
+//
+//                    int width = drawable.getIntrinsicWidth();
+//                    int height = drawable.getIntrinsicHeight();
+//
+//                    // 图片宽度大于文本控件的宽度设置点击事件
+//                    if (richTvWidth < width && width != 0) {
+//                        float fl = new BigDecimal((float) richTvWidth / width)
+//                                .setScale(5, BigDecimal.ROUND_HALF_UP)
+//                                .floatValue();
+//                        height = (int) (fl * height) + 1;
+//                        width = richTvWidth;
+//                        if (onLongImageSpanClickListener != null)
+//                            richImgBean.setOnClickSpan(onLongImageSpanClickListener);
+//                    }
+//
+//                    drawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
+//                    try {
+//                        if (!TextUtils.isEmpty(data.getColor())) {
+//                            // SRC_ATOP 颜色-MULTIPLY
+//                            drawable.setColorFilter(Color.parseColor(data.getColor()),
+//                                    PorterDuff.Mode.MULTIPLY);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        if (!TextUtils.isEmpty(data.getBackgroundColor())) {
+//                            // DST_OVER 背景-DARKEN
+//                            drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
+//                                    PorterDuff.Mode.DARKEN);
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+//                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+//                    data.setRichImgBean(richImgBean);
+//
+//                    // 重新刷新数据
+//                    updateRichImgView();
+//
+//                    // 销毁下载器
+//                    if (downLoadImages != null && downLoadImages.contains(downLoadImage))
+//                        downLoadImages.remove(downLoadImage);
+//                    downLoadImage.deStory();
+//                }
+//            });
         }
     }
 
