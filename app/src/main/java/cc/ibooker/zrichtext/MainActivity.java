@@ -47,10 +47,28 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 richBean.setType(0);
                 richBean.setText("书客创作" + i + "测试富文本");
-                if (i == 5)
+                if (i == 1) {
+                    richBean.setTextSizeMultiple(1.5f);
+                    richBean.setStrikethrough(true);
+                    richBean.setBold(true);
+                }
+                if (i == 3) {
+                    richBean.setAddUrl("http://ibooker.cc/article/search/list/1");
+                }
+                if (i == 5) {
                     richBean.setBackgroundColor("#FF4040");
-                if (i == 9)
+                    richBean.setSuperscript(true);
+                    richBean.setBoldItalic(true);
+                }
+                if (i == 7) {
+                    richBean.setUnderline(true);
+                    richBean.setItalic(true);
+                }
+                if (i == 9) {
                     richBean.setColor("#4aFF00");
+                    richBean.setSubscript(true);
+                    richBean.setScaleXMultiple(1.7f);
+                }
                 richBean.setOnClickSpan(new ClickSpan.OnClickSpan() {
                     @Override
                     public void onClickSpan(String txt) {

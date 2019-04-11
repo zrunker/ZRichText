@@ -3,6 +3,7 @@ package cc.ibooker.richtext;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -11,6 +12,14 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.ScaleXSpan;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.SubscriptSpan;
+import android.text.style.SuperscriptSpan;
+import android.text.style.URLSpan;
+import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewTreeObserver;
@@ -175,37 +184,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     else startPosition += tempList.get(i).length();
                 }
                 if (startPosition >= 0 && startPosition < spannableString.length()) {
+                    int endPosition = startPosition + text.length();
+
                     // 点击事件
                     if (richBean.getOnClickSpan() != null) {
                         ClickSpan clickSpan = new ClickSpan(text);
                         spannableString.setSpan(clickSpan,
-                                startPosition, startPosition + text.length(),
+                                startPosition, endPosition,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         // 设置具体的点击事件
                         clickSpan.setOnClickSpan(richBean.getOnClickSpan());
                     }
-                    // 文本背景
-                    if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
-                        try {
-                            BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
-                            spannableString.setSpan(backgroundColorSpan,
-                                    startPosition, startPosition + text.length(),
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    // 文本颜色
-                    if (!TextUtils.isEmpty(richBean.getColor())) {
-                        try {
-                            ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
-                            spannableString.setSpan(foregroundColorSpan,
-                                    startPosition, startPosition + text.length(),
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+
+                    setTextSpan(richBean, startPosition, endPosition);
                 }
             }
         }
@@ -252,13 +243,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 try {
                     VerticalImageSpan verticalImageSpan = richImgBean.getVerticalImageSpan();
                     String realText = tempList.get(position);
+                    int endPosition = startPosition + realText.length();
 
                     // 设置点击事件
                     if (richImgBean.getOnClickSpan() != null
                             || onImageSpanClickListener != null) {
                         ClickSpan clickSpan = new ClickSpan(richImgBean.getRealText());
                         spannableString.setSpan(clickSpan,
-                                startPosition, startPosition + realText.length(),
+                                startPosition, endPosition,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         // 设置具体的点击事件
                         if (richImgBean.getOnClickSpan() != null)
@@ -269,7 +261,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
                     // 显示图片
                     spannableString.setSpan(verticalImageSpan,
-                            startPosition, startPosition + realText.length(),
+                            startPosition, endPosition,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     // 刷新richTv
@@ -303,37 +295,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                 else startPosition += tempList.get(i).length();
                             }
                             if (startPosition >= 0 && startPosition < spannableString.length()) {
+                                int endPosition = startPosition + text.length();
+
                                 // 点击事件
                                 if (richBean.getOnClickSpan() != null) {
                                     ClickSpan clickSpan = new ClickSpan(text);
                                     spannableString.setSpan(clickSpan,
-                                            startPosition, startPosition + text.length(),
+                                            startPosition, endPosition,
                                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                     // 设置具体的点击事件
                                     clickSpan.setOnClickSpan(richBean.getOnClickSpan());
                                 }
-                                // 文本背景
-                                if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
-                                    try {
-                                        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
-                                        spannableString.setSpan(backgroundColorSpan,
-                                                startPosition, startPosition + text.length(),
-                                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                // 文本颜色
-                                if (!TextUtils.isEmpty(richBean.getColor())) {
-                                    try {
-                                        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
-                                        spannableString.setSpan(foregroundColorSpan,
-                                                startPosition, startPosition + text.length(),
-                                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+
+                                setTextSpan(richBean, startPosition, endPosition);
                             }
                         }
                     }
@@ -341,6 +315,110 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             }
             // 刷新richTv
             setText(spannableString);
+        }
+    }
+
+    /**
+     * 设置Span事件
+     */
+    private void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
+        // 文本背景
+        if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
+            try {
+                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
+                spannableString.setSpan(backgroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // 文本颜色
+        if (!TextUtils.isEmpty(richBean.getColor())) {
+            try {
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
+                spannableString.setSpan(foregroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // 添加超链接
+        if (!TextUtils.isEmpty(richBean.getAddUrl())) {
+            URLSpan urlSpan = new URLSpan(richBean.getAddUrl());
+            spannableString.setSpan(urlSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//            try {
+//                if (!TextUtils.isEmpty(richBean.getAddUrlColor()))
+//                    setHighlightColor(Color.parseColor(richBean.getAddUrlColor()));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+        }
+        // 字体倍数
+        if (richBean.getTextSizeMultiple() > 0) {
+            RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(richBean.getTextSizeMultiple());
+            spannableString.setSpan(relativeSizeSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否添加删除线
+        if (richBean.isUnderline()) {
+            UnderlineSpan underlineSpan = new UnderlineSpan();
+            spannableString.setSpan(underlineSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否添加删除线
+        if (richBean.isStrikethrough()) {
+            StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+            spannableString.setSpan(strikethroughSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否为上标
+        if (richBean.isSuperscript()) {
+            SuperscriptSpan superscriptSpan = new SuperscriptSpan();
+            spannableString.setSpan(superscriptSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否为下标
+        if (richBean.isSubscript()) {
+            SubscriptSpan subscriptSpan = new SubscriptSpan();
+            spannableString.setSpan(subscriptSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否加粗
+        if (richBean.isBold()) {
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否斜体
+        if (richBean.isItalic()) {
+            StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // 是否加粗并斜体
+        if (richBean.isBoldItalic()) {
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        // X轴缩放倍数
+        if (richBean.getScaleXMultiple() > 0) {
+            ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
+            spannableString.setSpan(scaleXSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
 
