@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         }, 10000);
 
         ImageView image = findViewById(R.id.image);
-        Picasso.get()
+        Glide.with(this)
                 .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
                 .into(image);
     }
