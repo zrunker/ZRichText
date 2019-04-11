@@ -1,9 +1,13 @@
 package cc.ibooker.zrichtext;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -19,15 +23,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<RichBean> list = new ArrayList<>();
+        final ArrayList<RichBean> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             RichBean richBean = new RichBean();
             if (i % 2 == 0) {
                 richBean.setType(1);
-                if (i == 2) {
+                if (i == 0) {
+                    richBean.setText("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg");
+                    richBean.setBackgroundColor("#40aff2");
+                } else if (i == 2) {
                     richBean.setText("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=991546949,3543761346&fm=26&gp=0.jpg");
-                    richBean.setBackgroundColor("#8740aff2");
-                    richBean.setColor("#2255F033");
+                    richBean.setColor("#55F033");
                 } else if (i == 4) {
                     richBean.setText("https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3421137803,3191126749&fm=26&gp=0.jpg");
                 } else if (i == 6)
@@ -67,6 +73,19 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
 //            }
 //        }).setRichText(list);
+
+//        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+//                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+//            }
+//        }).setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+//                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+//            }
+//        }).setRichText(list, R.mipmap.ic_launcher);
+
         richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
             @Override
             public void onClickSpan(String txt) {
@@ -77,7 +96,33 @@ public class MainActivity extends AppCompatActivity {
             public void onClickSpan(String txt) {
                 Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
             }
-        }).setRichText2(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+        }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+
+
+        // 5s之后修改单项数据
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RichBean richBean = list.get(0);
+                richBean.setBackgroundColor("#55FF00");
+                richTextView.updateItem(richBean, 0);
+            }
+        }, 5000);
+
+        // 5s之后修改单项数据
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RichBean richBean = list.get(9);
+                richBean.setText("下面是加载图片对比图：");
+                richTextView.updateItem(richBean, 9);
+            }
+        }, 10000);
+
+        ImageView image = findViewById(R.id.image);
+        Picasso.get()
+                .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
+                .into(image);
     }
 
     @Override

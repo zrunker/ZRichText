@@ -24,7 +24,7 @@ public class DownLoadImage {
     }
 
     // 销毁方法
-    public void destory() {
+    public void deStory() {
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
             handler = null;
