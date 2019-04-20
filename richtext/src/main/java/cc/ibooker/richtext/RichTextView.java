@@ -448,8 +448,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             richImgBean.setRealText(data.getText());
                             richImgBean.setRes(data.getRes());
 
-                            int width = drawable.getIntrinsicWidth();
-                            int height = drawable.getIntrinsicHeight();
+                            int width = data.getWidth();
+                            int height = data.getHeight();
+                            if (width <= 0)
+                                width = drawable.getIntrinsicWidth();
+                            if (height <= 0)
+                                height = drawable.getIntrinsicHeight();
 
                             // 图片宽度大于文本控件的宽度设置点击事件
                             if (richTvWidth < width && width != 0) {
