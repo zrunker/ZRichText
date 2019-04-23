@@ -679,11 +679,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
                 richImgBean.setRealText(data.getText());
-                int width = defaultDrawable.getIntrinsicWidth();
-                int height = defaultDrawable.getIntrinsicHeight();
-                defaultDrawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
-                VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
-                richImgBean.setVerticalImageSpan(verticalImageSpan);
+                if (defaultDrawable != null) {
+                    int width = defaultDrawable.getIntrinsicWidth();
+                    int height = defaultDrawable.getIntrinsicHeight();
+                    defaultDrawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
+                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
+                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+                }
                 data.setRichImgBean(richImgBean);
             }
         }
