@@ -1,6 +1,7 @@
 package cc.ibooker.richtext;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -34,15 +35,20 @@ import java.util.ArrayList;
 
 /**
  * 自定义富文本View
+ *
+ * @author 邹峰立
  */
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<String> tempList;
     private SpannableString spannableString;
-    private ArrayList<DownLoadImage> downLoadImages = new ArrayList<>();
+    //    private ArrayList<DownLoadImage> downLoadImages = new ArrayList<>();
     private ArrayList<Integer> imgTextList;
     private ArrayList<RichBean> list;
     private int richTvWidth;
     private Drawable defaultDrawable;
+
+    private boolean isScroll;// 是否可以滚动
+    private int richMaxLines;// 最大行数
 
     public RichTextView(Context context) {
         this(context, null);
@@ -55,15 +61,46 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
-        setMovementMethod(LinkMovementMethod.getInstance());
+        if (attrs != null) {
+            TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
+            isScroll = typeArray.getBoolean(R.styleable.RichTextView_isScroll, true);
+            typeArray.recycle();
+        }
+        setRichTvScroll();
     }
 
-    // 销毁
-    public void onDestory() {
-        if (downLoadImages != null)
-            for (DownLoadImage downLoadImage : downLoadImages)
-                downLoadImage.deStory();
+
+    // 设置是否能够滚动
+    public void setScroll(boolean scroll) {
+        this.isScroll = scroll;
+        setRichTvScroll();
     }
+
+    @Override
+    public void setMaxLines(int maxLines) {
+        super.setMaxLines(maxLines);
+        if (maxLines > 0 && maxLines < Integer.MAX_VALUE) {
+            this.richMaxLines = maxLines;
+            this.isScroll = true;
+        } else {
+            this.isScroll = false;
+        }
+        setRichTvScroll();
+    }
+
+    private void setRichTvScroll() {
+        if (isScroll && richMaxLines <= 0)
+            setMovementMethod(LinkMovementMethod.getInstance());
+        else
+            setOnTouchListener(new LinkMovementMethodOverride());
+    }
+
+    //    // 销毁
+//    public void onDestory() {
+//        if (downLoadImages != null)
+//            for (DownLoadImage downLoadImage : downLoadImages)
+//                downLoadImage.deStory();
+//    }
 
     /**
      * 展示数据到TextView上，图片预显示为：多空格·多空格，总宽度与图片大小一致  或者  空格i空格
