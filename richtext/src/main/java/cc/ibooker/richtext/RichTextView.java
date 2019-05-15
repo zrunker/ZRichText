@@ -370,7 +370,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition < spannableString.length()
                 && endPosition < spannableString.length()
-                && startPosition <= endPosition)
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(backgroundColor)) {
             try {
                 BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
                 spannableString.setSpan(backgroundColorSpan,
@@ -379,6 +380,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            setText(spannableString);
+        }
         return this;
     }
 
@@ -389,7 +392,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition < spannableString.length()
                 && endPosition < spannableString.length()
-                && startPosition <= endPosition)
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(color)) {
             try {
                 ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(color));
                 spannableString.setSpan(foregroundColorSpan,
@@ -398,6 +402,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            setText(spannableString);
+        }
         return this;
     }
 
@@ -408,7 +414,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition < spannableString.length()
                 && endPosition < spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(addUrl)) {
             URLSpan urlSpan = new URLSpan(addUrl);
             spannableString.setSpan(urlSpan,
                     startPosition, endPosition,
@@ -419,6 +426,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
+            setText(spannableString);
         }
         return this;
     }
@@ -435,6 +443,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(relativeSizeSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -451,6 +460,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(underlineSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -467,6 +477,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(strikethroughSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -483,6 +494,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(superscriptSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -499,6 +511,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(subscriptSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -515,6 +528,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -531,6 +545,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -547,6 +562,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -563,6 +579,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString.setSpan(scaleXSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
         }
         return this;
     }
@@ -573,51 +590,101 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
         // 文本背景
         if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
-            updateBackgroundColor(richBean.getBackgroundColor(), startPosition, endPosition);
+            try {
+                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
+                spannableString.setSpan(backgroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         // 文本颜色
         if (!TextUtils.isEmpty(richBean.getColor())) {
-            updateForegroundColor(richBean.getColor(), startPosition, endPosition);
+            try {
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
+                spannableString.setSpan(foregroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         // 添加超链接
         if (!TextUtils.isEmpty(richBean.getAddUrl())) {
-            updateURL(richBean.getAddUrl(), startPosition, endPosition);
+            URLSpan urlSpan = new URLSpan(richBean.getAddUrl());
+            spannableString.setSpan(urlSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//            try {
+//                if (!TextUtils.isEmpty(richBean.getAddUrlColor()))
+//                    setHighlightColor(Color.parseColor(richBean.getAddUrlColor()));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
         // 字体倍数
         if (richBean.getTextSizeMultiple() > 0) {
-            updateRelativeSize(richBean.getTextSizeMultiple(), startPosition, endPosition);
+            RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(richBean.getTextSizeMultiple());
+            spannableString.setSpan(relativeSizeSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否添加删除线
         if (richBean.isUnderline()) {
-            updateUnderline(startPosition, endPosition);
+            UnderlineSpan underlineSpan = new UnderlineSpan();
+            spannableString.setSpan(underlineSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否添加删除线
         if (richBean.isStrikethrough()) {
-            updateStrikethrough(startPosition, endPosition);
+            StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+            spannableString.setSpan(strikethroughSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否为上标
         if (richBean.isSuperscript()) {
-            updateSuperscript(startPosition, endPosition);
+            SuperscriptSpan superscriptSpan = new SuperscriptSpan();
+            spannableString.setSpan(superscriptSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否为下标
         if (richBean.isSubscript()) {
-            updateSubscript(startPosition, endPosition);
+            SubscriptSpan subscriptSpan = new SubscriptSpan();
+            spannableString.setSpan(subscriptSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否加粗
         if (richBean.isBold()) {
-            updateStyleBold(startPosition, endPosition);
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否斜体
         if (richBean.isItalic()) {
-            updateStyleItalic(startPosition, endPosition);
+            StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // 是否加粗并斜体
         if (richBean.isBoldItalic()) {
-            updateStyleBoldItalic(startPosition, endPosition);
+            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+            spannableString.setSpan(styleSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
         // X轴缩放倍数
         if (richBean.getScaleXMultiple() > 0) {
-            updateScaleX(richBean.getScaleXMultiple(), startPosition, endPosition);
+            ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
+            spannableString.setSpan(scaleXSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
     }
 
