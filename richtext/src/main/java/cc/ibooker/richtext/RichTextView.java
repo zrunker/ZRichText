@@ -1,11 +1,13 @@
 package cc.ibooker.richtext;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -115,6 +117,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } else {
                 ViewTreeObserver vto = getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -361,34 +364,52 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 设置Span事件
+     * 文本背景
      */
-    private void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
-        // 文本背景
-        if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
+    public RichTextView updateBackgroundColor(String backgroundColor, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition)
             try {
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
+                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
                 spannableString.setSpan(backgroundColorSpan,
                         startPosition, endPosition,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        // 文本颜色
-        if (!TextUtils.isEmpty(richBean.getColor())) {
+        return this;
+    }
+
+    /**
+     * 文本颜色
+     */
+    public RichTextView updateForegroundColor(String color, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition)
             try {
-                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(color));
                 spannableString.setSpan(foregroundColorSpan,
                         startPosition, endPosition,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        // 添加超链接
-        if (!TextUtils.isEmpty(richBean.getAddUrl())) {
-            URLSpan urlSpan = new URLSpan(richBean.getAddUrl());
+        return this;
+    }
+
+    /**
+     * 添加超链接
+     */
+    public RichTextView updateURL(String addUrl, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
+            URLSpan urlSpan = new URLSpan(addUrl);
             spannableString.setSpan(urlSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
@@ -399,68 +420,204 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //                e.printStackTrace();
 //            }
         }
-        // 字体倍数
-        if (richBean.getTextSizeMultiple() > 0) {
-            RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(richBean.getTextSizeMultiple());
+        return this;
+    }
+
+    /**
+     * 字体倍数
+     */
+    public RichTextView updateRelativeSize(float textSizeMultiple, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
+            RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(textSizeMultiple);
             spannableString.setSpan(relativeSizeSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否添加删除线
-        if (richBean.isUnderline()) {
+        return this;
+    }
+
+    /**
+     * 是否添加删除线
+     */
+    public RichTextView updateUnderline(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             UnderlineSpan underlineSpan = new UnderlineSpan();
             spannableString.setSpan(underlineSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否添加删除线
-        if (richBean.isStrikethrough()) {
+        return this;
+    }
+
+    /**
+     * 是否添加删除线
+     */
+    public RichTextView updateStrikethrough(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
             spannableString.setSpan(strikethroughSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否为上标
-        if (richBean.isSuperscript()) {
+        return this;
+    }
+
+    /**
+     * 是否为上标
+     */
+    public RichTextView updateSuperscript(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             SuperscriptSpan superscriptSpan = new SuperscriptSpan();
             spannableString.setSpan(superscriptSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否为下标
-        if (richBean.isSubscript()) {
+        return this;
+    }
+
+    /**
+     * 是否为下标
+     */
+    public RichTextView updateSubscript(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             SubscriptSpan subscriptSpan = new SubscriptSpan();
             spannableString.setSpan(subscriptSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否加粗
-        if (richBean.isBold()) {
+        return this;
+    }
+
+    /**
+     * 是否加粗
+     */
+    public RichTextView updateStyleBold(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否斜体
-        if (richBean.isItalic()) {
+        return this;
+    }
+
+    /**
+     * 是否斜体
+     */
+    public RichTextView updateStyleItalic(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // 是否加粗并斜体
-        if (richBean.isBoldItalic()) {
+        return this;
+    }
+
+    /**
+     * 是否加粗并斜体
+     */
+    public RichTextView updateStyleBoldItalic(int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
             spannableString.setSpan(styleSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-        // X轴缩放倍数
-        if (richBean.getScaleXMultiple() > 0) {
-            ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
+        return this;
+    }
+
+    /**
+     * X轴缩放倍数
+     */
+    public RichTextView updateScaleX(float scaleXMultiple, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition < spannableString.length()
+                && endPosition < spannableString.length()
+                && startPosition <= endPosition) {
+            ScaleXSpan scaleXSpan = new ScaleXSpan(scaleXMultiple);
             spannableString.setSpan(scaleXSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        return this;
+    }
+
+    /**
+     * 设置Span事件
+     */
+    private void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
+        // 文本背景
+        if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
+            updateBackgroundColor(richBean.getBackgroundColor(), startPosition, endPosition);
+        }
+        // 文本颜色
+        if (!TextUtils.isEmpty(richBean.getColor())) {
+            updateForegroundColor(richBean.getColor(), startPosition, endPosition);
+        }
+        // 添加超链接
+        if (!TextUtils.isEmpty(richBean.getAddUrl())) {
+            updateURL(richBean.getAddUrl(), startPosition, endPosition);
+        }
+        // 字体倍数
+        if (richBean.getTextSizeMultiple() > 0) {
+            updateRelativeSize(richBean.getTextSizeMultiple(), startPosition, endPosition);
+        }
+        // 是否添加删除线
+        if (richBean.isUnderline()) {
+            updateUnderline(startPosition, endPosition);
+        }
+        // 是否添加删除线
+        if (richBean.isStrikethrough()) {
+            updateStrikethrough(startPosition, endPosition);
+        }
+        // 是否为上标
+        if (richBean.isSuperscript()) {
+            updateSuperscript(startPosition, endPosition);
+        }
+        // 是否为下标
+        if (richBean.isSubscript()) {
+            updateSubscript(startPosition, endPosition);
+        }
+        // 是否加粗
+        if (richBean.isBold()) {
+            updateStyleBold(startPosition, endPosition);
+        }
+        // 是否斜体
+        if (richBean.isItalic()) {
+            updateStyleItalic(startPosition, endPosition);
+        }
+        // 是否加粗并斜体
+        if (richBean.isBoldItalic()) {
+            updateStyleBoldItalic(startPosition, endPosition);
+        }
+        // X轴缩放倍数
+        if (richBean.getScaleXMultiple() > 0) {
+            updateScaleX(richBean.getScaleXMultiple(), startPosition, endPosition);
         }
     }
 
@@ -649,6 +806,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } else {
                 ViewTreeObserver vto = getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);

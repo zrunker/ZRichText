@@ -143,9 +143,4 @@ public class MainActivity extends AppCompatActivity {
                 .into(image);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        richTextView.onDestory();
-    }
 }
