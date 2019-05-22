@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 richBean.setBackgroundColor("#55FF00");
                 richTextView.updateItem(richBean, 0);
             }
-        }, 5000);
+        }, 4000);
 
         // 5s之后修改单项数据
         new Handler().postDelayed(new Runnable() {
@@ -135,12 +135,28 @@ public class MainActivity extends AppCompatActivity {
                 richBean.setText("下面是加载图片对比图：");
                 richTextView.updateItem(richBean, 9);
             }
-        }, 10000);
+        }, 8000);
 
         ImageView image = findViewById(R.id.image);
         Glide.with(this)
                 .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
                 .into(image);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.updateBackgroundColor("#5643f5", 0, 20);
+            }
+        }, 12000);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.updateForegroundColor("#5643f5", 20, 40);
+            }
+        }, 16000);
     }
 
 }

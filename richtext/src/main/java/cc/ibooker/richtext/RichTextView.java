@@ -377,6 +377,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 spannableString.setSpan(backgroundColorSpan,
                         startPosition, endPosition,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                    for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                        // DST_OVER 背景-DARKEN
+                        verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(backgroundColor),
+                                PorterDuff.Mode.DARKEN);
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -399,6 +408,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 spannableString.setSpan(foregroundColorSpan,
                         startPosition, endPosition,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                    for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                        // SRC_ATOP 颜色-MULTIPLY
+                        verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(color),
+                                PorterDuff.Mode.MULTIPLY);
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
