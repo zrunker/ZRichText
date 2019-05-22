@@ -51,6 +51,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     private boolean isScroll;// 是否可以滚动
     private int richMaxLines;// 最大行数
+    private int loadImgTatol = 0;// 待加载图片总数
+    private int loadImgComplete = 0;// 已加载图片总数
 
     public RichTextView(Context context) {
         this(context, null);
@@ -110,6 +112,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param datas 待显示数据
      */
     public RichTextView setRichText(ArrayList<RichBean> datas) {
+        loadImgComplete = 0;
+        loadImgTatol = 0;
         if (datas != null && datas.size() > 0) {
             list = datas;
             if (richTvWidth > 0) {
@@ -148,6 +152,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (data.getType() == 0) {// 文本
                 tempList.add(data.getText());
             } else {// 图片
+                loadImgTatol++;
                 StringBuilder strBuilder = new StringBuilder();
                 // 设置占位符 - 要是唯一值
                 if (data.getWidth() > 0) {
@@ -184,7 +189,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             final RichBean data = list.get(i);
             if (data.getType() == 0)
                 continue;
-            downLoadImage(data);
+            downLoadImage(data, true);
         }
     }
 
@@ -366,30 +371,39 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景
      */
-    public RichTextView updateBackgroundColor(String backgroundColor, int startPosition, int endPosition) {
-        if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
-                && startPosition <= endPosition
-                && !TextUtils.isEmpty(backgroundColor)) {
-            try {
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
-                spannableString.setSpan(backgroundColorSpan,
-                        startPosition, endPosition,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    public RichTextView updateBackgroundColor(final String backgroundColor, final int startPosition, final int endPosition) {
+        if (loadImgTatol == loadImgComplete) {
+            if (spannableString != null
+                    && startPosition < spannableString.length()
+                    && endPosition < spannableString.length()
+                    && startPosition <= endPosition
+                    && !TextUtils.isEmpty(backgroundColor)) {
+                try {
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
+                    spannableString.setSpan(backgroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
-                if (verticalImageSpans != null && verticalImageSpans.length > 0) {
-                    for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                        // DST_OVER 背景-DARKEN
-                        verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(backgroundColor),
-                                PorterDuff.Mode.DARKEN);
+                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                            // DST_OVER 背景-DARKEN
+                            verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(backgroundColor),
+                                    PorterDuff.Mode.DARKEN);
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                setText(spannableString);
             }
-            setText(spannableString);
+        } else {
+            this.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateBackgroundColor(backgroundColor, startPosition, endPosition);
+                }
+            }, 100);
         }
         return this;
     }
@@ -397,30 +411,39 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本颜色
      */
-    public RichTextView updateForegroundColor(String color, int startPosition, int endPosition) {
-        if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
-                && startPosition <= endPosition
-                && !TextUtils.isEmpty(color)) {
-            try {
-                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(color));
-                spannableString.setSpan(foregroundColorSpan,
-                        startPosition, endPosition,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    public RichTextView updateForegroundColor(final String color, final int startPosition, final int endPosition) {
+        if (loadImgTatol == loadImgComplete) {
+            if (spannableString != null
+                    && startPosition < spannableString.length()
+                    && endPosition < spannableString.length()
+                    && startPosition <= endPosition
+                    && !TextUtils.isEmpty(color)) {
+                try {
+                    ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(color));
+                    spannableString.setSpan(foregroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
-                if (verticalImageSpans != null && verticalImageSpans.length > 0) {
-                    for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                        // SRC_ATOP 颜色-MULTIPLY
-                        verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(color),
-                                PorterDuff.Mode.MULTIPLY);
+                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                            // SRC_ATOP 颜色-MULTIPLY
+                            verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(color),
+                                    PorterDuff.Mode.MULTIPLY);
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                setText(spannableString);
             }
-            setText(spannableString);
+        } else {
+            this.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateForegroundColor(color, startPosition, endPosition);
+                }
+            }, 100);
         }
         return this;
     }
@@ -709,9 +732,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 下载图片
      *
-     * @param data 待处理数据
+     * @param data   待处理数据
+     * @param isSign 是否需要标记
      */
-    private synchronized void downLoadImage(final RichBean data) {
+    private synchronized void downLoadImage(final RichBean data, final boolean isSign) {
         if (data != null) {
             Object object = data.getText();
             if (TextUtils.isEmpty(data.getText()))
@@ -720,6 +744,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             Glide.with(getContext())
                     .load(object)
                     .into(new SimpleTarget<GlideDrawable>() {
+
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            super.onLoadFailed(e, errorDrawable);
+                            // 判断图片是否全部加载完成
+                            if (isSign) {
+                                if (loadImgTatol > loadImgComplete)
+                                    loadImgComplete++;
+                            }
+                        }
+
                         @Override
                         public void onResourceReady(GlideDrawable drawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
                             RichImgBean richImgBean = new RichImgBean();
@@ -770,6 +805,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
                             // 重新刷新数据
                             updateRichImgView();
+
+                            // 判断图片是否全部加载完成
+                            if (isSign) {
+                                if (loadImgTatol > loadImgComplete)
+                                    loadImgComplete++;
+                            }
                         }
                     });
 
@@ -859,7 +900,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     setRichText(list);
                 }
             } else {// 图片
-                downLoadImage(richBean);
+                downLoadImage(richBean, false);
             }
         }
         return this;
@@ -873,6 +914,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
 
     public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes) {
+        loadImgComplete = 0;
+        loadImgTatol = 0;
         return setRichText(datas, getResources().getDrawable(defaultRes));
     }
 
@@ -883,6 +926,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param drawable 默认预显示图片
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
+        loadImgComplete = 0;
+        loadImgTatol = 0;
         if (datas != null && datas.size() > 0) {
             list = datas;
             defaultDrawable = drawable;
@@ -914,10 +959,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             final RichBean data = list.get(i);
             if (data.getType() == 0) {
                 tempList.add(data.getText());
-            } else {
+            } else {// 图片
+                loadImgTatol++;
                 // 设置占位符 - 唯一值
                 tempList.add("" + i);
-
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
@@ -947,7 +992,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             final RichBean data = list.get(i);
             if (data.getType() == 0)
                 continue;
-            downLoadImage(data);
+            downLoadImage(data, true);
         }
     }
 
