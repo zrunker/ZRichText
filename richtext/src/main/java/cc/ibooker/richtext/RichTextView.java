@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.ViewTreeObserver;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -53,6 +54,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int richMaxLines;// 最大行数
     private int loadImgTatol = 0;// 待加载图片总数
     private int loadImgComplete = 0;// 已加载图片总数
+    private boolean isOpenCache = true;// 是否开启缓存，默认开启
 
     public RichTextView(Context context) {
         this(context, null);
@@ -111,9 +113,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      *
      * @param datas 待显示数据
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas) {
+    public RichTextView setRichText(ArrayList<RichBean> datas, boolean isOpenCache) {
         loadImgComplete = 0;
         loadImgTatol = 0;
+        this.isOpenCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
             list = datas;
             if (richTvWidth > 0) {
@@ -743,6 +746,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             // 采用Glide加载图片
             Glide.with(getContext())
                     .load(object)
+                    .dontAnimate()
+                    .skipMemoryCache(isOpenCache)
+                    .diskCacheStrategy(!isOpenCache ? DiskCacheStrategy.NONE : DiskCacheStrategy.ALL)
                     .into(new SimpleTarget<GlideDrawable>() {
 
                         @Override
@@ -897,7 +903,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     // 更新数据
                     list.set(position, richBean);
                     // 内容变化
-                    setRichText(list);
+                    setRichText(list, isOpenCache);
                 }
             } else {// 图片
                 downLoadImage(richBean, false);
@@ -913,10 +919,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param defaultRes 默认预显示图片
      */
 
-    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes) {
+    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
         loadImgComplete = 0;
         loadImgTatol = 0;
-        return setRichText(datas, getResources().getDrawable(defaultRes));
+        this.isOpenCache = isOpenCache;
+        return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
     }
 
     /**
@@ -925,9 +932,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param datas    待显示数据
      * @param drawable 默认预显示图片
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
+    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable, boolean isOpenCache) {
         loadImgComplete = 0;
         loadImgTatol = 0;
+        this.isOpenCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
             list = datas;
             defaultDrawable = drawable;
