@@ -46,9 +46,14 @@ public class DownLoadImage {
                     drawable = Drawable.createFromStream(url.openStream(), null);
                     Message message = Message.obtain();
                     message.obj = drawable;
+                    message.what = 1;
                     handler.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Message message = Message.obtain();
+                    message.obj = e;
+                    message.what = 2;
+                    handler.sendMessage(message);
                 }
             }
         });
@@ -68,16 +73,26 @@ public class DownLoadImage {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Drawable drawable;
-            drawable = (Drawable) msg.obj;
-            if (mWef.get().callBack != null)
-                mWef.get().callBack.getDrawable(drawable);
+            switch (msg.what) {
+                case 1:
+                    Drawable drawable;
+                    drawable = (Drawable) msg.obj;
+                    if (mWef.get().callBack != null)
+                        mWef.get().callBack.getDrawable(drawable);
+                    break;
+                case 2:
+                    if (mWef.get().callBack != null)
+                        mWef.get().callBack.onError((Exception) msg.obj);
+                    break;
+            }
         }
     }
 
     // 对外提供回调
     public interface ImageCallBack {
         void getDrawable(Drawable drawable);
+
+        void onError(Exception e);
     }
 
 }
