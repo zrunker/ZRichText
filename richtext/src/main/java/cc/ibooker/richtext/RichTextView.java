@@ -40,6 +40,8 @@ import java.util.ArrayList;
  * 自定义富文本View
  *
  * @author 邹峰立
+ *
+ * https://github.com/zrunker/ZRichText
  */
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<String> tempList;
