@@ -40,7 +40,7 @@ import java.util.ArrayList;
  * 自定义富文本View
  *
  * @author 邹峰立
- *
+ * <p>
  * https://github.com/zrunker/ZRichText
  */
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
@@ -73,6 +73,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (attrs != null) {
             TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
             isScroll = typeArray.getBoolean(R.styleable.RichTextView_isScroll, true);
+            isOpenImgCache = typeArray.getBoolean(R.styleable.RichTextView_isOpenImgCache, true);
+            loadImgModel = typeArray.getInt(R.styleable.RichTextView_loadImgModel, 0);
             typeArray.recycle();
         }
         setRichTvScroll();
