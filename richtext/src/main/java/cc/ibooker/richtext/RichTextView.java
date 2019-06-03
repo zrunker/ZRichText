@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Spannable;
@@ -398,13 +399,41 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 清空背景颜色
+     */
+    public RichTextView clearBackgroundColor() {
+        updateBackgroundColor("#00FFFFFF", 0, spannableString.length());
+        return this;
+    }
+
+    /**
+     * 恢复背景颜色
+     */
+    public RichTextView resetBackgroundColor() {
+        Drawable drawable = getBackground();
+        ColorDrawable colorDrawable = (ColorDrawable) drawable;
+        int color = colorDrawable.getColor();
+        updateBackgroundColor(color, 0, spannableString.length());
+        return this;
+    }
+
+    /**
+     * 恢复文本颜色
+     */
+    public RichTextView resetForegroundColor() {
+        int color = getCurrentTextColor();
+        updateForegroundColor(color, 0, spannableString.length());
+        return this;
+    }
+
+    /**
      * 文本背景
      */
     public RichTextView updateBackgroundColor(final String backgroundColor, final int startPosition, final int endPosition) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
-                    && startPosition < spannableString.length()
-                    && endPosition < spannableString.length()
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
                     && startPosition <= endPosition
                     && !TextUtils.isEmpty(backgroundColor)) {
                 try {
@@ -438,13 +467,52 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 文本背景2
+     */
+    public RichTextView updateBackgroundColor(final int backgroundColor, final int startPosition, final int endPosition) {
+        if (loadImgTatol == loadImgComplete) {
+            if (spannableString != null
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
+                    && startPosition <= endPosition) {
+                try {
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(backgroundColor);
+                    spannableString.setSpan(backgroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                            // DST_OVER 背景-DARKEN
+                            verticalImageSpan.getDrawable().setColorFilter(backgroundColor,
+                                    PorterDuff.Mode.DARKEN);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                setText(spannableString);
+            }
+        } else {
+            this.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateBackgroundColor(backgroundColor, startPosition, endPosition);
+                }
+            }, 100);
+        }
+        return this;
+    }
+
+    /**
      * 文本颜色
      */
     public RichTextView updateForegroundColor(final String color, final int startPosition, final int endPosition) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
-                    && startPosition < spannableString.length()
-                    && endPosition < spannableString.length()
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
                     && startPosition <= endPosition
                     && !TextUtils.isEmpty(color)) {
                 try {
@@ -478,12 +546,51 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 文本颜色2
+     */
+    public RichTextView updateForegroundColor(final int color, final int startPosition, final int endPosition) {
+        if (loadImgTatol == loadImgComplete) {
+            if (spannableString != null
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
+                    && startPosition <= endPosition) {
+                try {
+                    ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(color);
+                    spannableString.setSpan(foregroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                            // SRC_ATOP 颜色-MULTIPLY
+                            verticalImageSpan.getDrawable().setColorFilter(color,
+                                    PorterDuff.Mode.MULTIPLY);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                setText(spannableString);
+            }
+        } else {
+            this.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateForegroundColor(color, startPosition, endPosition);
+                }
+            }, 100);
+        }
+        return this;
+    }
+
+    /**
      * 添加超链接
      */
     public RichTextView updateURL(String addUrl, int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition
                 && !TextUtils.isEmpty(addUrl)) {
             URLSpan urlSpan = new URLSpan(addUrl);
@@ -506,8 +613,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateRelativeSize(float textSizeMultiple, int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(textSizeMultiple);
             spannableString.setSpan(relativeSizeSpan,
@@ -523,8 +630,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateUnderline(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             UnderlineSpan underlineSpan = new UnderlineSpan();
             spannableString.setSpan(underlineSpan,
@@ -540,8 +647,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateStrikethrough(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
             spannableString.setSpan(strikethroughSpan,
@@ -557,8 +664,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateSuperscript(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             SuperscriptSpan superscriptSpan = new SuperscriptSpan();
             spannableString.setSpan(superscriptSpan,
@@ -574,8 +681,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateSubscript(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             SubscriptSpan subscriptSpan = new SubscriptSpan();
             spannableString.setSpan(subscriptSpan,
@@ -591,8 +698,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateStyleBold(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
             spannableString.setSpan(styleSpan,
@@ -608,8 +715,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateStyleItalic(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
             spannableString.setSpan(styleSpan,
@@ -625,8 +732,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateStyleBoldItalic(int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
             spannableString.setSpan(styleSpan,
@@ -642,8 +749,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView updateScaleX(float scaleXMultiple, int startPosition, int endPosition) {
         if (spannableString != null
-                && startPosition < spannableString.length()
-                && endPosition < spannableString.length()
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
             ScaleXSpan scaleXSpan = new ScaleXSpan(scaleXMultiple);
             spannableString.setSpan(scaleXSpan,
