@@ -420,7 +420,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 恢复文本颜色
+     * 恢复文本颜色-包含图片部分
      */
     public RichTextView resetForegroundColor() {
         int color = getCurrentTextColor();
