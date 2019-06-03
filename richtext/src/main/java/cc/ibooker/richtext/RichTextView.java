@@ -411,9 +411,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public RichTextView resetBackgroundColor() {
         Drawable drawable = getBackground();
-        ColorDrawable colorDrawable = (ColorDrawable) drawable;
-        int color = colorDrawable.getColor();
-        updateBackgroundColor(color, 0, spannableString.length());
+        if (drawable != null) {
+            ColorDrawable colorDrawable = (ColorDrawable) drawable;
+            int color = colorDrawable.getColor();
+            updateBackgroundColor(color, 0, spannableString.length());
+        }
         return this;
     }
 
@@ -423,6 +425,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public RichTextView resetForegroundColor() {
         int color = getCurrentTextColor();
         updateForegroundColor(color, 0, spannableString.length());
+        return this;
+    }
+
+    /**
+     * 重置文本颜色-非图片部分
+     */
+    public RichTextView resetTextColor() {
+        int color = getCurrentTextColor();
+        setTextColor(color);
+        updateTextColor(color, 0, spannableString.length());
         return this;
     }
 
@@ -580,6 +592,49 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     updateForegroundColor(color, startPosition, endPosition);
                 }
             }, 100);
+        }
+        return this;
+    }
+
+    /**
+     * 文本颜色3
+     */
+    public RichTextView updateTextColor(int color, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            try {
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(color);
+                spannableString.setSpan(foregroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 文本颜色4
+     */
+    public RichTextView updateTextColor(String color, int startPosition, int endPosition) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(color)) {
+            try {
+                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(color));
+                spannableString.setSpan(foregroundColorSpan,
+                        startPosition, endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setText(spannableString);
         }
         return this;
     }

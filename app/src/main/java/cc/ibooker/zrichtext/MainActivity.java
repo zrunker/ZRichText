@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 richBean.setBackgroundColor("#55FF00");
                 richTextView.updateItem(richBean, 0);
             }
-        }, 4000);
+        }, 3000);
 
         // 5s之后修改单项数据
         new Handler().postDelayed(new Runnable() {
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 richBean.setText("下面是加载图片对比图：");
                 richTextView.updateItem(richBean, 9);
             }
-        }, 8000);
+        }, 5000);
 
         ImageView image = findViewById(R.id.image);
         Glide.with(this)
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 richTextView.updateBackgroundColor("#5643f5", 0, 20);
             }
-        }, 12000);
+        }, 7000);
 
 
         new Handler().postDelayed(new Runnable() {
@@ -156,7 +156,35 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 richTextView.updateForegroundColor("#5643f5", 20, 40);
             }
-        }, 16000);
+        }, 9000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.clearBackgroundColor();
+            }
+        }, 11000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.resetBackgroundColor();
+            }
+        }, 12000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.resetTextColor();
+            }
+        }, 13000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.resetForegroundColor();
+            }
+        }, 14000);
     }
 
 }
