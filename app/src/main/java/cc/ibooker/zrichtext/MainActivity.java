@@ -161,6 +161,13 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                richTextView.updateBackgroundColorRound("#5643f5", 8, 35, 65);
+            }
+        }, 10000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
                 richTextView.clearBackgroundColor();
             }
         }, 11000);
