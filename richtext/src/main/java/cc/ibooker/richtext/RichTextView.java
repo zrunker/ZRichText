@@ -186,7 +186,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 StringBuilder strBuilder = new StringBuilder();
                 // 设置占位符 - 要是唯一值
                 if (data.getWidth() > 0) {
-                    int width = px2sp(getContext(), data.getWidth());
+                    int width = DensityUtil.px2sp(getContext(), data.getWidth());
                     int num = (int) (width / size);
                     // 判断num是否已存在
                     numExist(num);
@@ -511,6 +511,37 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 @Override
                 public void run() {
                     updateBackgroundColor(backgroundColor, startPosition, endPosition);
+                }
+            }, 100);
+        }
+        return this;
+    }
+
+    /**
+     * 更新文本圆角背景 - 只适合文字部分
+     */
+    public RichTextView updateBackgroundColorRound(final String backgroundColor, final int radius, final int startPosition, final int endPosition) {
+        if (loadImgTatol == loadImgComplete) {
+            if (spannableString != null
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
+                    && startPosition <= endPosition
+                    && !TextUtils.isEmpty(backgroundColor)) {
+                try {
+                    RoundBackgroundColorSpan backgroundColorSpan = new RoundBackgroundColorSpan(Color.parseColor(backgroundColor), getCurrentTextColor(), radius);
+                    spannableString.setSpan(backgroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                setText(spannableString);
+            }
+        } else {
+            this.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    updateBackgroundColorRound(backgroundColor, radius, startPosition, endPosition);
                 }
             }, 100);
         }
@@ -1032,7 +1063,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                 richImgBean.setOnClickSpan(onLongImageSpanClickListener);
                         }
 
-                        drawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
+                        drawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
                         try {
                             if (!TextUtils.isEmpty(data.getColor())) {
                                 // SRC_ATOP 颜色-MULTIPLY
@@ -1199,7 +1230,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 if (defaultDrawable != null) {
                     int width = defaultDrawable.getIntrinsicWidth();
                     int height = defaultDrawable.getIntrinsicHeight();
-                    defaultDrawable.setBounds(0, 0, dp2px(getContext(), width), dp2px(getContext(), height));
+                    defaultDrawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
                     VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
                     richImgBean.setVerticalImageSpan(verticalImageSpan);
                 }
@@ -1223,22 +1254,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 continue;
             downLoadImage(data, true);
         }
-    }
-
-    /**
-     * 根据手机的分辨率从 px(像素) 的单位 转成为 sp
-     */
-    private int px2sp(Context context, float pxValue) {
-        float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (pxValue / fontScale + 0.5f);
-    }
-
-    /**
-     * 根据手机分辨率从DP转成PX
-     */
-    public static int dp2px(Context context, float dpValue) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
     }
 
     /**
