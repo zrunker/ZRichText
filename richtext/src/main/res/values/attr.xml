@@ -4,8 +4,8 @@
         <attr name="isScroll" format="boolean" />
         <attr name="isOpenImgCache" format="boolean" />
         <attr name="loadImgModel" format="integer">
-            <flag name="0" value="0" />
-            <flag name="1" value="1" />
+            <flag name="MODE_0" value="0" />
+            <flag name="MODE_1" value="1" />
         </attr>
     </declare-styleable>
 </resources>
