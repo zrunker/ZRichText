@@ -34,7 +34,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     /*latex数学公式*/
-    implementation files('libs/jlatexmath-1.0.7.jar')
+//    implementation files('libs/jlatexmath-1.0.7.jar')
     /*glide图片加载*/
     implementation 'com.github.bumptech.glide:glide:3.7.0'
 //    implementation 'com.github.bumptech.glide:glide:4.8.0'
