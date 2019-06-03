@@ -46,7 +46,6 @@ import java.util.ArrayList;
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<String> tempList;
     private SpannableString spannableString;
-    private ArrayList<DownLoadImage> downLoadImages = new ArrayList<>();
     private ArrayList<Integer> imgTextList;
     private ArrayList<RichBean> list;
     private int richTvWidth;
@@ -108,9 +107,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 销毁
     public void onDestory() {
-        if (downLoadImages != null)
-            for (DownLoadImage downLoadImage : downLoadImages)
-                downLoadImage.deStory();
+        DownLoadImage.getInstance().deStory();
     }
 
     // 设置加载模式
@@ -851,11 +848,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         });
             } else if (loadImgModel == 1) {
                 // 采用DownLoadImage加载图片
-                final DownLoadImage downLoadImage = new DownLoadImage();
-                if (downLoadImages == null)
-                    downLoadImages = new ArrayList<>();
-                downLoadImages.add(downLoadImage);
-                downLoadImage.loadImage(data.getText(), new DownLoadImage.ImageCallBack() {
+                DownLoadImage.getInstance().loadImage(data.getText(), isOpenImgCache, new DownLoadImage.ImageCallBack() {
                     @Override
                     public void getDrawable(Drawable drawable) {
                         RichImgBean richImgBean = new RichImgBean();
@@ -908,11 +901,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             if (loadImgTatol > loadImgComplete)
                                 loadImgComplete++;
                         }
-
-                        // 销毁下载器
-                        if (downLoadImages != null && downLoadImages.contains(downLoadImage))
-                            downLoadImages.remove(downLoadImage);
-                        downLoadImage.deStory();
                     }
 
                     @Override
