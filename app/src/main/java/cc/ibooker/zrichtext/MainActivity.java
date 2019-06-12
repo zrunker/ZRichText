@@ -19,9 +19,60 @@ public class MainActivity extends AppCompatActivity {
     private RichTextView richTextView;
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        richTextView.onDestory();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        richTextView = findViewById(R.id.richTextView);
+
+        String source = "设$F_1$, $F_2$分别是椭圆$E$: $x^2+\\frac{y^2}{b^2}=1(0\\lt b\\lt 1)$的左、右焦点, 过点$F_1$的直线交椭圆$E$于$A$、$B$两点, 若$|AF_1|=3|F_1B|$, $AF_2\\perp x$轴, 则椭圆$E$的方程为( )";
+//        richTextView.setRichText(source);
+
+
+        // 数学公式
+        final String richText = "$\\therefore$ 椭圆$C$的方程为$\\frac{x^2}{4}+\\frac{y^2}{3}=1$"
+                + "111111111226565asdfa" +
+                "$e^{\\pi i} + 1 = 0$" +
+                "$$\n" +
+                "\\begin{aligned}\n" +
+                "u \\cdot n\n" +
+                "& =u n^T \\\\\n" +
+                "& = u(A A^{-1})n^T \\\\\n" +
+                "& =(uA)(A^{-1}n^T) \\\\\n" +
+                "& =(uA)((A^{-1}n^T)^T)^T \\\\\n" +
+                "& =(uA)(n(A^{-1})^T)^T \\\\\n" +
+                "& =uA \\cdot n(A^{-1})^T \\\\\n" +
+                "& =uA\\cdot nB \\\\\n" +
+                "& =0\n" +
+                "\\end{aligned}\n" +
+                "$$" +
+                "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
+                "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
+                "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
+                "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
+                "水电费感受到个人身体根深蒂固防守打法跟不上的根本是赶不上的根本是人工";
+
+//        richTextView.setRichText(richText);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColor(Color.parseColor("#40aff2"), 0, 31);
+//            }
+//        }, 2000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateForegroundColor(Color.parseColor("#40aff2"), 61, 101);
+//            }
+//        }, 3000);
+
 
         final ArrayList<RichBean> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -46,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 richBean.setHeight(0);
             } else {
                 richBean.setType(0);
-                richBean.setText("书客创作" + i + "测试富文本");
+                richBean.setText("书客创作" + i + "测试富文本" + "$e^{\\pi i} + 1 = 0$");
                 if (i == 1) {
                     richBean.setTextSizeMultiple(1.5f);
                     richBean.setStrikethrough(true);
@@ -79,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
             list.add(richBean);
         }
 
-        richTextView = findViewById(R.id.richTextView);
 //        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
 //            @Override
 //            public void onClickSpan(String txt) {
@@ -117,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
 
 
-        // 5s之后修改单项数据
+        // 3s之后修改单项数据
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -136,11 +186,6 @@ public class MainActivity extends AppCompatActivity {
                 richTextView.updateItem(richBean, 9);
             }
         }, 5000);
-
-        ImageView image = findViewById(R.id.image);
-        Glide.with(this)
-                .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
-                .into(image);
 
 
         new Handler().postDelayed(new Runnable() {
@@ -192,6 +237,12 @@ public class MainActivity extends AppCompatActivity {
                 richTextView.resetForegroundColor();
             }
         }, 14000);
+
+
+        ImageView image = findViewById(R.id.image);
+        Glide.with(this)
+                .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
+                .into(image);
     }
 
 }

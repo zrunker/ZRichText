@@ -1,5 +1,7 @@
 package cc.ibooker.richtext;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -10,9 +12,19 @@ import android.text.style.ImageSpan;
  * 垂直居中ImageSpan
  */
 public class VerticalImageSpan extends ImageSpan {
+    private Bitmap bitmap;
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
 
     public VerticalImageSpan(Drawable drawable) {
         super(drawable);
+    }
+
+    public VerticalImageSpan(Context context, Bitmap b) {
+        super(context, b);
+        this.bitmap = b;
     }
 
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fontMetricsInt) {

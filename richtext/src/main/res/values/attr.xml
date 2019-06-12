@@ -7,5 +7,7 @@
             <flag name="MODE_0" value="0" />
             <flag name="MODE_1" value="1" />
         </attr>
+        <attr name="backGroundColor" format="string" />
+        <attr name="tintColor" format="string" />
     </declare-styleable>
 </resources>

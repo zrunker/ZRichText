@@ -8,22 +8,22 @@ import android.util.LruCache;
 /**
  * 图片加载缓存类
  */
-public class ImageCacheUtil {
+public class DrawableCacheUtil {
     private LruCache<String, Drawable> mLruCache;
-    private static ImageCacheUtil imageCacheUtil;
+    private static DrawableCacheUtil imageCacheUtil;
 
-    public static ImageCacheUtil getInstanse() {
+    public static DrawableCacheUtil getInstanse() {
         if (imageCacheUtil == null) {
-            synchronized (ImageCacheUtil.class) {
+            synchronized (DrawableCacheUtil.class) {
                 if (imageCacheUtil == null)
-                    imageCacheUtil = new ImageCacheUtil();
+                    imageCacheUtil = new DrawableCacheUtil();
             }
         }
         return imageCacheUtil;
     }
 
     // 初始化mLruCache
-    public ImageCacheUtil init() {
+    public DrawableCacheUtil init() {
         int maxMemory = (int) Runtime.getRuntime().maxMemory();// 获取系统分配给应用的总内存大小
         int mCacheSize = maxMemory / 8;// 设置图片内存缓存占用八分之一
         mLruCache = new LruCache<String, Drawable>(mCacheSize) {

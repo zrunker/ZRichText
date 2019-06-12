@@ -3,8 +3,12 @@ package cc.ibooker.richtext;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -12,6 +16,7 @@ import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
@@ -36,6 +41,14 @@ import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import cc.ibooker.richtext.jlatexmath.core.AjLatexMath;
+import cc.ibooker.richtext.jlatexmath.core.Insets;
+import cc.ibooker.richtext.jlatexmath.core.TeXConstants;
+import cc.ibooker.richtext.jlatexmath.core.TeXFormula;
+import cc.ibooker.richtext.jlatexmath.core.TeXIcon;
 
 /**
  * 自定义富文本View
@@ -48,7 +61,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<String> tempList;
     private SpannableString spannableString;
     private ArrayList<Integer> imgTextList;
-    private ArrayList<RichBean> list;
+    private ArrayList<RichBean> richBeanList;
+    private ArrayList<LatexBean> latexBeanList;
     private int richTvWidth;
     private Drawable defaultDrawable;
 
@@ -58,6 +72,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int loadImgComplete = 0;// 已加载图片总数
     private boolean isOpenImgCache = true;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
+    private String backGroundColor;// 背景颜色
+    private String tintColor;// 文字颜色
+    private boolean isResetData = true;// 是否重置数据
 
     public RichTextView(Context context) {
         this(context, null);
@@ -75,11 +92,28 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             isScroll = typeArray.getBoolean(R.styleable.RichTextView_isScroll, true);
             isOpenImgCache = typeArray.getBoolean(R.styleable.RichTextView_isOpenImgCache, true);
             loadImgModel = typeArray.getInt(R.styleable.RichTextView_loadImgModel, 0);
+            backGroundColor = typeArray.getString(R.styleable.RichTextView_backGroundColor);
+            tintColor = typeArray.getString(R.styleable.RichTextView_tintColor);
             typeArray.recycle();
         }
         setRichTvScroll();
+        if (!TextUtils.isEmpty(backGroundColor))
+            try {
+                setBackgroundColor(Color.parseColor(backGroundColor));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        if (!TextUtils.isEmpty(tintColor))
+            try {
+                setTextColor(Color.parseColor(tintColor));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        // 重置数据
+        resetData();
+        // 初始化AjLatexMath
+        AjLatexMath.init(getContext().getApplicationContext());
     }
-
 
     // 设置是否能够滚动
     public void setScroll(boolean scroll) {
@@ -109,6 +143,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     // 销毁
     public void onDestory() {
         DownLoadImage.getInstance().deStory();
+        try {
+            Glide.with(getContext()).pauseRequests();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 设置加载模式
@@ -121,6 +160,95 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     // 设置是否打开缓存
     public RichTextView setOpenImgCache(boolean openImgCache) {
         this.isOpenImgCache = openImgCache;
+        return this;
+    }
+
+    // 清空数据
+    private void resetData() {
+        if (isResetData) {
+            if (tempList == null)
+                tempList = new ArrayList<>();
+            else
+                tempList.clear();
+            spannableString = null;
+            if (imgTextList == null)
+                imgTextList = new ArrayList<>();
+            else
+                imgTextList.clear();
+            if (richBeanList == null)
+                richBeanList = new ArrayList<>();
+            else
+                richBeanList.clear();
+            if (latexBeanList == null)
+                latexBeanList = new ArrayList<>();
+            else
+                latexBeanList.clear();
+            richTvWidth = 0;
+            defaultDrawable = null;
+            loadImgTatol = 0;
+            loadImgComplete = 0;
+        } else {
+            if (latexBeanList == null)
+                latexBeanList = new ArrayList<>();
+            else
+                latexBeanList.clear();
+            loadImgTatol = 0;
+            loadImgComplete = 0;
+        }
+        isResetData = true;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param text 待显示数据
+     */
+    public RichTextView setRichText(final CharSequence text) {
+        if (!TextUtils.isEmpty(text)) {
+            resetData();
+            spannableString = new SpannableString(text);
+            setText(spannableString);
+            // 处理Latex
+            if (richTvWidth > 0) {
+                dealWithLatex(text);
+                setText(spannableString);
+            } else {
+                ViewTreeObserver vto = getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                    @Override
+                    public void onGlobalLayout() {
+                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        richTvWidth = getMeasuredWidth();
+                        dealWithLatex(text);
+                        setText(spannableString);
+                    }
+                });
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param richBean 待显示数据
+     */
+    public RichTextView setRichText(RichBean richBean) {
+        setRichText(richBean, true);
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param richBean    待显示数据
+     * @param isOpenCache 是否开始图片缓存 默认缓存
+     */
+    public RichTextView setRichText(RichBean richBean, boolean isOpenCache) {
+        ArrayList<RichBean> datas = new ArrayList<>();
+        datas.add(richBean);
+        setRichText(datas, isOpenCache);
         return this;
     }
 
@@ -141,11 +269,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isOpenCache 是否开始图片缓存 默认缓存
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, boolean isOpenCache) {
-        loadImgComplete = 0;
-        loadImgTatol = 0;
+        resetData();
         this.isOpenImgCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
-            list = datas;
+            richBeanList = datas;
             if (richTvWidth > 0) {
                 updateRichTvData1();
             } else {
@@ -157,6 +284,73 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
                         updateRichTvData1();
+                    }
+                });
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 展示数据到TextView上，图片没预显示
+     *
+     * @param datas      待显示数据
+     * @param defaultRes 默认预显示图片
+     */
+
+    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes) {
+        return setRichText(datas, defaultRes, true);
+    }
+
+    /**
+     * 展示数据到TextView上，图片没预显示
+     *
+     * @param datas       待显示数据
+     * @param defaultRes  默认预显示图片
+     * @param isOpenCache 是否开启图片缓存 默认true
+     */
+
+    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
+        resetData();
+        this.isOpenImgCache = isOpenCache;
+        return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
+    }
+
+    /**
+     * 展示数据到TextView上，图片预显示
+     *
+     * @param datas    待显示数据
+     * @param drawable 默认预显示图片
+     */
+    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
+        setRichText(datas, drawable, true);
+        return this;
+    }
+
+    /**
+     * 展示数据到TextView上，图片预显示
+     *
+     * @param datas       待显示数据
+     * @param drawable    默认预显示图片
+     * @param isOpenCache 是否开启图片缓存 默认true
+     */
+    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable, boolean isOpenCache) {
+        resetData();
+        this.isOpenImgCache = isOpenCache;
+        if (datas != null && datas.size() > 0) {
+            richBeanList = datas;
+            defaultDrawable = drawable;
+            if (richTvWidth > 0) {
+                updateRichTvData2();
+            } else {
+                ViewTreeObserver vto = getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                    @Override
+                    public void onGlobalLayout() {
+                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        richTvWidth = getMeasuredWidth();
+                        updateRichTvData2();
                     }
                 });
             }
@@ -177,8 +371,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         imgTextList.clear();
 
         // 循环遍历获取文本
-        for (int i = 0; i < list.size(); i++) {
-            final RichBean data = list.get(i);
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
             if (data.getType() == 0) {// 文本
                 tempList.add(data.getText());
             } else {// 图片
@@ -209,14 +403,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : tempList)
             stringBuilder.append(str);
-        spannableString = new SpannableString(stringBuilder.toString());
+        String text = stringBuilder.toString();
+        spannableString = new SpannableString(text);
+        setText(spannableString);
+        dealWithLatex(text);
 
         // 重新刷新数据
         updateRichTvView();
 
         // 循环遍历显示图片
-        for (int i = 0; i < list.size(); i++) {
-            final RichBean data = list.get(i);
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
             if (data.getType() == 0)
                 continue;
             downLoadImage(data, true);
@@ -240,8 +437,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     private synchronized void updateRichTvView() {
         if (spannableString != null && tempList != null) {
-            for (int j = 0; j < list.size(); j++) {
-                RichBean richBean = list.get(j);
+            for (int j = 0; j < richBeanList.size(); j++) {
+                RichBean richBean = richBeanList.get(j);
                 updateRichBean(richBean, j);
             }
             // 刷新richTv
@@ -255,7 +452,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if ((richBean.getOnClickSpan() != null
                 || !TextUtils.isEmpty(richBean.getBackgroundColor())
                 || !TextUtils.isEmpty(richBean.getColor()))
-                && richBean.getType() == 0) {
+                && richBean.getType() == 0
+                && spannableString != null) {
             String text = richBean.getText();
             if (tempList.contains(text)) {
                 int startPosition = 0;// 标记realText的开始位置
@@ -298,8 +496,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 更新RichTv - 处理图片以及图片点击事件
      */
     private synchronized void updateRichImgView() {
-        for (int j = 0; j < list.size(); j++) {
-            RichBean richBean = list.get(j);
+        for (int j = 0; j < richBeanList.size(); j++) {
+            RichBean richBean = richBeanList.get(j);
             if (richBean.getRichImgBean() != null) // 加载图片
                 updateRichTvImgSpan(richBean.getRichImgBean(), j);
         }
@@ -359,8 +557,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     private synchronized void updateRichTvImgView() {
         if (spannableString != null && tempList != null) {
-            for (int j = 0; j < list.size(); j++) {
-                RichBean richBean = list.get(j);
+            for (int j = 0; j < richBeanList.size(); j++) {
+                RichBean richBean = richBeanList.get(j);
                 if (richBean.getRichImgBean() != null) {// 加载图片
                     updateRichTvImgSpan(richBean.getRichImgBean(), j);
                 } else {
@@ -402,16 +600,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 清空背景颜色
      */
     public RichTextView clearBackgroundColor() {
-        updateBackgroundColor("#00FFFFFF", 0, spannableString.length());
+        if (spannableString != null)
+            updateBackgroundColor("#00FFFFFF", 0, spannableString.length());
         return this;
     }
 
     /**
-     * 恢复背景颜色
+     * 重置背景颜色
      */
     public RichTextView resetBackgroundColor() {
         Drawable drawable = getBackground();
-        if (drawable != null) {
+        if (drawable != null && spannableString != null) {
             ColorDrawable colorDrawable = (ColorDrawable) drawable;
             int color = colorDrawable.getColor();
             updateBackgroundColor(color, 0, spannableString.length());
@@ -420,11 +619,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 恢复文本颜色-包含图片部分
+     * 重置文本颜色-包含图片部分
      */
     public RichTextView resetForegroundColor() {
-        int color = getCurrentTextColor();
-        updateForegroundColor(color, 0, spannableString.length());
+        if (spannableString != null) {
+            int color = getCurrentTextColor();
+            updateForegroundColor(color, 0, spannableString.length());
+        }
         return this;
     }
 
@@ -432,9 +633,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 重置文本颜色-非图片部分
      */
     public RichTextView resetTextColor() {
-        int color = getCurrentTextColor();
-        setTextColor(color);
-        updateTextColor(color, 0, spannableString.length());
+        if (spannableString != null) {
+            int color = getCurrentTextColor();
+            setTextColor(color);
+            updateTextColor(color, 0, spannableString.length());
+        }
         return this;
     }
 
@@ -567,9 +770,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
                     if (verticalImageSpans != null && verticalImageSpans.length > 0) {
                         for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                            // SRC_ATOP 颜色-MULTIPLY
-                            verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(color),
-                                    PorterDuff.Mode.MULTIPLY);
+                            Bitmap bitmap = verticalImageSpan.getBitmap();
+                            if (bitmap != null) {
+                                Canvas canvas = new Canvas(bitmap);
+                                Paint paint1 = new Paint();
+                                paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(color), PorterDuff.Mode.SRC_IN));
+                                canvas.drawBitmap(bitmap, 0, 0, paint1);
+                            } else {
+                                // SRC_ATOP 颜色-MULTIPLY
+                                verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(color),
+                                        PorterDuff.Mode.MULTIPLY);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -606,9 +817,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
                     if (verticalImageSpans != null && verticalImageSpans.length > 0) {
                         for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                            // SRC_ATOP 颜色-MULTIPLY
-                            verticalImageSpan.getDrawable().setColorFilter(color,
-                                    PorterDuff.Mode.MULTIPLY);
+                            Bitmap bitmap = verticalImageSpan.getBitmap();
+                            if (bitmap != null) {
+                                Canvas canvas = new Canvas(bitmap);
+                                Paint paint1 = new Paint();
+                                paint1.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+                                canvas.drawBitmap(bitmap, 0, 0, paint1);
+                            } else {
+                                // SRC_ATOP 颜色-MULTIPLY
+                                verticalImageSpan.getDrawable().setColorFilter(color,
+                                        PorterDuff.Mode.MULTIPLY);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -851,103 +1070,108 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 设置Span事件
      */
     private void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
-        // 文本背景
-        if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
-            try {
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
-                spannableString.setSpan(backgroundColorSpan,
-                        startPosition, endPosition,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            // 文本背景
+            if (!TextUtils.isEmpty(richBean.getBackgroundColor())) {
+                try {
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(richBean.getBackgroundColor()));
+                    spannableString.setSpan(backgroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        // 文本颜色
-        if (!TextUtils.isEmpty(richBean.getColor())) {
-            try {
-                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
-                spannableString.setSpan(foregroundColorSpan,
-                        startPosition, endPosition,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            } catch (Exception e) {
-                e.printStackTrace();
+            // 文本颜色
+            if (!TextUtils.isEmpty(richBean.getColor())) {
+                try {
+                    ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor(richBean.getColor()));
+                    spannableString.setSpan(foregroundColorSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        // 添加超链接
-        if (!TextUtils.isEmpty(richBean.getAddUrl())) {
-            URLSpan urlSpan = new URLSpan(richBean.getAddUrl());
-            spannableString.setSpan(urlSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            // 添加超链接
+            if (!TextUtils.isEmpty(richBean.getAddUrl())) {
+                URLSpan urlSpan = new URLSpan(richBean.getAddUrl());
+                spannableString.setSpan(urlSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 //            try {
 //                if (!TextUtils.isEmpty(richBean.getAddUrlColor()))
 //                    setHighlightColor(Color.parseColor(richBean.getAddUrlColor()));
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-        }
-        // 字体倍数
-        if (richBean.getTextSizeMultiple() > 0) {
-            RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(richBean.getTextSizeMultiple());
-            spannableString.setSpan(relativeSizeSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否添加删除线
-        if (richBean.isUnderline()) {
-            UnderlineSpan underlineSpan = new UnderlineSpan();
-            spannableString.setSpan(underlineSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否添加删除线
-        if (richBean.isStrikethrough()) {
-            StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
-            spannableString.setSpan(strikethroughSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否为上标
-        if (richBean.isSuperscript()) {
-            SuperscriptSpan superscriptSpan = new SuperscriptSpan();
-            spannableString.setSpan(superscriptSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否为下标
-        if (richBean.isSubscript()) {
-            SubscriptSpan subscriptSpan = new SubscriptSpan();
-            spannableString.setSpan(subscriptSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否加粗
-        if (richBean.isBold()) {
-            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
-            spannableString.setSpan(styleSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否斜体
-        if (richBean.isItalic()) {
-            StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
-            spannableString.setSpan(styleSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // 是否加粗并斜体
-        if (richBean.isBoldItalic()) {
-            StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
-            spannableString.setSpan(styleSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
-        // X轴缩放倍数
-        if (richBean.getScaleXMultiple() > 0) {
-            ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
-            spannableString.setSpan(scaleXSpan,
-                    startPosition, endPosition,
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 字体倍数
+            if (richBean.getTextSizeMultiple() > 0) {
+                RelativeSizeSpan relativeSizeSpan = new RelativeSizeSpan(richBean.getTextSizeMultiple());
+                spannableString.setSpan(relativeSizeSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否添加删除线
+            if (richBean.isUnderline()) {
+                UnderlineSpan underlineSpan = new UnderlineSpan();
+                spannableString.setSpan(underlineSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否添加删除线
+            if (richBean.isStrikethrough()) {
+                StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+                spannableString.setSpan(strikethroughSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否为上标
+            if (richBean.isSuperscript()) {
+                SuperscriptSpan superscriptSpan = new SuperscriptSpan();
+                spannableString.setSpan(superscriptSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否为下标
+            if (richBean.isSubscript()) {
+                SubscriptSpan subscriptSpan = new SubscriptSpan();
+                spannableString.setSpan(subscriptSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否加粗
+            if (richBean.isBold()) {
+                StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+                spannableString.setSpan(styleSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否斜体
+            if (richBean.isItalic()) {
+                StyleSpan styleSpan = new StyleSpan(Typeface.ITALIC);
+                spannableString.setSpan(styleSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 是否加粗并斜体
+            if (richBean.isBoldItalic()) {
+                StyleSpan styleSpan = new StyleSpan(Typeface.BOLD_ITALIC);
+                spannableString.setSpan(styleSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // X轴缩放倍数
+            if (richBean.getScaleXMultiple() > 0) {
+                ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
+                spannableString.setSpan(scaleXSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
         }
     }
 
@@ -958,154 +1182,158 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isSign 是否需要标记 图片加载次数
      */
     private synchronized void downLoadImage(final RichBean data, final boolean isSign) {
-        if (data != null) {
-            Object object = data.getText();
-            if (TextUtils.isEmpty(data.getText()))
-                object = data.getRes();
-            if (loadImgModel == 0) {
-                // 采用Glide加载图片
-                Glide.with(getContext())
-                        .load(object)
-                        .dontAnimate()
-                        .skipMemoryCache(isOpenImgCache)
-                        .diskCacheStrategy(!isOpenImgCache ? DiskCacheStrategy.NONE : DiskCacheStrategy.ALL)
-                        .into(new SimpleTarget<GlideDrawable>() {
+        try {
+            if (data != null) {
+                Object object = data.getText();
+                if (TextUtils.isEmpty(data.getText()))
+                    object = data.getRes();
+                if (loadImgModel == 0) {
+                    // 采用Glide加载图片
+                    Glide.with(getContext())
+                            .load(object)
+                            .dontAnimate()
+                            .skipMemoryCache(!isOpenImgCache)
+                            .diskCacheStrategy(!isOpenImgCache ? DiskCacheStrategy.NONE : DiskCacheStrategy.ALL)
+                            .into(new SimpleTarget<GlideDrawable>() {
 
-                            @Override
-                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                                super.onLoadFailed(e, errorDrawable);
-                                // 判断图片是否全部加载完成
-                                if (isSign) {
-                                    if (loadImgTatol > loadImgComplete)
-                                        loadImgComplete++;
-                                }
-                            }
-
-                            @Override
-                            public void onResourceReady(GlideDrawable drawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                                RichImgBean richImgBean = new RichImgBean();
-                                richImgBean.setOnClickSpan(data.getOnClickSpan());
-                                richImgBean.setRealText(data.getText());
-                                richImgBean.setRes(data.getRes());
-
-                                int width = data.getWidth();
-                                int height = data.getHeight();
-                                if (width <= 0)
-                                    width = drawable.getIntrinsicWidth();
-                                if (height <= 0)
-                                    height = drawable.getIntrinsicHeight();
-
-                                // 图片宽度大于文本控件的宽度设置点击事件
-                                if (richTvWidth < width && width != 0) {
-                                    float fl = new BigDecimal((float) richTvWidth / width)
-                                            .setScale(5, BigDecimal.ROUND_HALF_UP)
-                                            .floatValue();
-                                    height = (int) (fl * height) + 1;
-                                    width = richTvWidth;
-                                    if (onLongImageSpanClickListener != null)
-                                        richImgBean.setOnClickSpan(onLongImageSpanClickListener);
-                                }
-
-                                drawable.setBounds(0, 0, width, height);
-                                try {
-                                    if (!TextUtils.isEmpty(data.getColor())) {
-                                        // SRC_ATOP 颜色-MULTIPLY
-                                        drawable.setColorFilter(Color.parseColor(data.getColor()),
-                                                PorterDuff.Mode.MULTIPLY);
+                                @Override
+                                public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                                    super.onLoadFailed(e, errorDrawable);
+                                    // 判断图片是否全部加载完成
+                                    if (isSign) {
+                                        if (loadImgTatol > loadImgComplete)
+                                            loadImgComplete++;
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
-                                try {
-                                    if (!TextUtils.isEmpty(data.getBackgroundColor())) {
-                                        // DST_OVER 背景-DARKEN
-                                        drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
-                                                PorterDuff.Mode.DARKEN);
+
+                                @Override
+                                public void onResourceReady(GlideDrawable drawable, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                    RichImgBean richImgBean = new RichImgBean();
+                                    richImgBean.setOnClickSpan(data.getOnClickSpan());
+                                    richImgBean.setRealText(data.getText());
+                                    richImgBean.setRes(data.getRes());
+
+                                    int width = data.getWidth();
+                                    int height = data.getHeight();
+                                    if (width <= 0)
+                                        width = drawable.getIntrinsicWidth();
+                                    if (height <= 0)
+                                        height = drawable.getIntrinsicHeight();
+
+                                    // 图片宽度大于文本控件的宽度设置点击事件
+                                    if (richTvWidth < width && width != 0) {
+                                        float fl = new BigDecimal((float) richTvWidth / width)
+                                                .setScale(5, BigDecimal.ROUND_HALF_UP)
+                                                .floatValue();
+                                        height = (int) (fl * height) + 1;
+                                        width = richTvWidth;
+                                        if (onLongImageSpanClickListener != null)
+                                            richImgBean.setOnClickSpan(onLongImageSpanClickListener);
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+
+                                    drawable.setBounds(0, 0, width, height);
+                                    try {
+                                        if (!TextUtils.isEmpty(data.getColor())) {
+                                            // SRC_ATOP 颜色-MULTIPLY
+                                            drawable.setColorFilter(Color.parseColor(data.getColor()),
+                                                    PorterDuff.Mode.MULTIPLY);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        if (!TextUtils.isEmpty(data.getBackgroundColor())) {
+                                            // DST_OVER 背景-DARKEN
+                                            drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
+                                                    PorterDuff.Mode.DARKEN);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+                                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+                                    data.setRichImgBean(richImgBean);
+
+                                    // 重新刷新数据
+                                    updateRichImgView();
+
+                                    // 判断图片是否全部加载完成
+                                    if (isSign) {
+                                        if (loadImgTatol > loadImgComplete)
+                                            loadImgComplete++;
+                                    }
                                 }
-                                VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-                                richImgBean.setVerticalImageSpan(verticalImageSpan);
-                                data.setRichImgBean(richImgBean);
+                            });
+                } else if (loadImgModel == 1) {
+                    // 采用DownLoadImage加载图片
+                    DownLoadImage.getInstance().loadImage(data.getText(), isOpenImgCache, new DownLoadImage.ImageCallBack() {
+                        @Override
+                        public void getDrawable(Drawable drawable) {
+                            RichImgBean richImgBean = new RichImgBean();
+                            richImgBean.setOnClickSpan(data.getOnClickSpan());
+                            richImgBean.setRealText(data.getText());
+                            richImgBean.setRes(data.getRes());
 
-                                // 重新刷新数据
-                                updateRichImgView();
+                            int width = drawable.getIntrinsicWidth();
+                            int height = drawable.getIntrinsicHeight();
 
-                                // 判断图片是否全部加载完成
-                                if (isSign) {
-                                    if (loadImgTatol > loadImgComplete)
-                                        loadImgComplete++;
+                            // 图片宽度大于文本控件的宽度设置点击事件
+                            if (richTvWidth < width && width != 0) {
+                                float fl = new BigDecimal((float) richTvWidth / width)
+                                        .setScale(5, BigDecimal.ROUND_HALF_UP)
+                                        .floatValue();
+                                height = (int) (fl * height) + 1;
+                                width = richTvWidth;
+                                if (onLongImageSpanClickListener != null)
+                                    richImgBean.setOnClickSpan(onLongImageSpanClickListener);
+                            }
+
+                            drawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
+                            try {
+                                if (!TextUtils.isEmpty(data.getColor())) {
+                                    // SRC_ATOP 颜色-MULTIPLY
+                                    drawable.setColorFilter(Color.parseColor(data.getColor()),
+                                            PorterDuff.Mode.MULTIPLY);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        });
-            } else if (loadImgModel == 1) {
-                // 采用DownLoadImage加载图片
-                DownLoadImage.getInstance().loadImage(data.getText(), isOpenImgCache, new DownLoadImage.ImageCallBack() {
-                    @Override
-                    public void getDrawable(Drawable drawable) {
-                        RichImgBean richImgBean = new RichImgBean();
-                        richImgBean.setOnClickSpan(data.getOnClickSpan());
-                        richImgBean.setRealText(data.getText());
-                        richImgBean.setRes(data.getRes());
-
-                        int width = drawable.getIntrinsicWidth();
-                        int height = drawable.getIntrinsicHeight();
-
-                        // 图片宽度大于文本控件的宽度设置点击事件
-                        if (richTvWidth < width && width != 0) {
-                            float fl = new BigDecimal((float) richTvWidth / width)
-                                    .setScale(5, BigDecimal.ROUND_HALF_UP)
-                                    .floatValue();
-                            height = (int) (fl * height) + 1;
-                            width = richTvWidth;
-                            if (onLongImageSpanClickListener != null)
-                                richImgBean.setOnClickSpan(onLongImageSpanClickListener);
-                        }
-
-                        drawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
-                        try {
-                            if (!TextUtils.isEmpty(data.getColor())) {
-                                // SRC_ATOP 颜色-MULTIPLY
-                                drawable.setColorFilter(Color.parseColor(data.getColor()),
-                                        PorterDuff.Mode.MULTIPLY);
+                            try {
+                                if (!TextUtils.isEmpty(data.getBackgroundColor())) {
+                                    // DST_OVER 背景-DARKEN
+                                    drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
+                                            PorterDuff.Mode.DARKEN);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            if (!TextUtils.isEmpty(data.getBackgroundColor())) {
-                                // DST_OVER 背景-DARKEN
-                                drawable.setColorFilter(Color.parseColor(data.getBackgroundColor()),
-                                        PorterDuff.Mode.DARKEN);
+                            VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
+                            richImgBean.setVerticalImageSpan(verticalImageSpan);
+                            data.setRichImgBean(richImgBean);
+
+                            // 重新刷新数据
+                            updateRichImgView();
+
+                            // 判断图片是否全部加载完成
+                            if (isSign) {
+                                if (loadImgTatol > loadImgComplete)
+                                    loadImgComplete++;
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                        VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
-                        richImgBean.setVerticalImageSpan(verticalImageSpan);
-                        data.setRichImgBean(richImgBean);
 
-                        // 重新刷新数据
-                        updateRichImgView();
-
-                        // 判断图片是否全部加载完成
-                        if (isSign) {
-                            if (loadImgTatol > loadImgComplete)
-                                loadImgComplete++;
+                        @Override
+                        public void onError(Exception e) {
+                            // 判断图片是否全部加载完成
+                            if (isSign) {
+                                if (loadImgTatol > loadImgComplete)
+                                    loadImgComplete++;
+                            }
                         }
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        // 判断图片是否全部加载完成
-                        if (isSign) {
-                            if (loadImgTatol > loadImgComplete)
-                                loadImgComplete++;
-                        }
-                    }
-                });
+                    });
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1117,93 +1345,25 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateItem(RichBean richBean, int position) {
         if (richBean != null
-                && list != null
+                && richBeanList != null
                 && tempList != null
-                && position < list.size()
-                && tempList.size() == list.size()) {
+                && position < richBeanList.size()
+                && tempList.size() == richBeanList.size()) {
             if (richBean.getType() == 0) {// 文本
                 if (richBean.getText().equals(tempList.get(position))) {
                     // 更新数据
-                    list.set(position, richBean);
+                    richBeanList.set(position, richBean);
                     // 样式变化
                     updateRichTvItemView(richBean, position);
                 } else {
                     // 更新数据
-                    list.set(position, richBean);
+                    richBeanList.set(position, richBean);
                     // 内容变化
-                    setRichText(list, isOpenImgCache);
+                    isResetData = false;
+                    setRichText(richBeanList, isOpenImgCache);
                 }
             } else {// 图片
                 downLoadImage(richBean, false);
-            }
-        }
-        return this;
-    }
-
-    /**
-     * 展示数据到TextView上，图片没预显示
-     *
-     * @param datas      待显示数据
-     * @param defaultRes 默认预显示图片
-     */
-
-    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes) {
-        return setRichText(datas, defaultRes, true);
-    }
-
-    /**
-     * 展示数据到TextView上，图片没预显示
-     *
-     * @param datas       待显示数据
-     * @param defaultRes  默认预显示图片
-     * @param isOpenCache 是否开启图片缓存 默认true
-     */
-
-    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
-        loadImgComplete = 0;
-        loadImgTatol = 0;
-        this.isOpenImgCache = isOpenCache;
-        return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
-    }
-
-    /**
-     * 展示数据到TextView上，图片预显示
-     *
-     * @param datas    待显示数据
-     * @param drawable 默认预显示图片
-     */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
-        setRichText(datas, drawable, true);
-        return this;
-    }
-
-    /**
-     * 展示数据到TextView上，图片预显示
-     *
-     * @param datas       待显示数据
-     * @param drawable    默认预显示图片
-     * @param isOpenCache 是否开启图片缓存 默认true
-     */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable, boolean isOpenCache) {
-        loadImgComplete = 0;
-        loadImgTatol = 0;
-        this.isOpenImgCache = isOpenCache;
-        if (datas != null && datas.size() > 0) {
-            list = datas;
-            defaultDrawable = drawable;
-            if (richTvWidth > 0) {
-                updateRichTvData2();
-            } else {
-                ViewTreeObserver vto = getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                    @Override
-                    public void onGlobalLayout() {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth();
-                        updateRichTvData2();
-                    }
-                });
             }
         }
         return this;
@@ -1215,8 +1375,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             tempList = new ArrayList<>();
         tempList.clear();
         // 循环遍历获取文本
-        for (int i = 0; i < list.size(); i++) {
-            final RichBean data = list.get(i);
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
             if (data.getType() == 0) {
                 tempList.add(data.getText());
             } else {// 图片
@@ -1242,18 +1402,122 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : tempList)
             stringBuilder.append(str);
-        spannableString = new SpannableString(stringBuilder.toString());
+        String text = stringBuilder.toString();
+        spannableString = new SpannableString(text);
+        setText(spannableString);
+        dealWithLatex(text);
 
         // 重新刷新数据
         updateRichTvImgView();
 
         // 循环遍历显示图片
-        for (int i = 0; i < list.size(); i++) {
-            final RichBean data = list.get(i);
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
             if (data.getType() == 0)
                 continue;
             downLoadImage(data, true);
         }
+    }
+
+    // 处理LaTeX数学公式
+    private RichTextView dealWithLatex(CharSequence text) {
+        String latexPattern = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
+        Pattern pattern = Pattern.compile(latexPattern);
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            LatexBean latexBean = new LatexBean(matcher.group(), matcher.start(), matcher.end());
+            latexBeanList.add(latexBean);
+        }
+        for (LatexBean latexBean : latexBeanList) {
+            String result = latexBean.getLatex().replaceAll("\\$+", "");
+            Bitmap bitmap;
+            if (isOpenImgCache) {
+                bitmap = BitmapCacheUtil.getInstanse().init().getBitmapByPath(result);
+                if (bitmap == null) {
+                    bitmap = latexDrawable(result);
+                    if (bitmap != null)
+                        BitmapCacheUtil.getInstanse().init().putBitmapByPath(result, bitmap);
+                }
+            } else
+                bitmap = latexDrawable(result);
+            int startPosition = latexBean.getStartPosition();
+            int endPosition = latexBean.getEndPosition();
+            if (spannableString != null
+                    && startPosition <= spannableString.length()
+                    && endPosition <= spannableString.length()
+                    && startPosition <= endPosition
+                    && bitmap != null) {
+                spannableString.setSpan(
+                        new VerticalImageSpan(getContext(), bitmap),
+                        startPosition,
+                        endPosition,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+        }
+        return this;
+    }
+
+    // 将latex文本转换为Bitmap
+    private Bitmap latexDrawable(String latex) {
+        TextPaint paint = getPaint();
+        float density = paint.density;
+        float textSize = paint.getTextSize();
+        float proportion = textSize / density;
+
+        TeXFormula formula = TeXFormula.getPartialTeXFormula(latex);
+        TeXIcon icon = formula.new TeXIconBuilder()
+                .setStyle(TeXConstants.STYLE_DISPLAY)
+                .setSize(proportion)
+                .setWidth(TeXConstants.UNIT_SP, proportion, TeXConstants.ALIGN_LEFT)
+                .setIsMaxWidth(true)
+                .setInterLineSpacing(TeXConstants.UNIT_SP, AjLatexMath.getLeading(proportion))
+                .build();
+        icon.setInsets(new Insets(5, 5, 5, 5));
+
+        Bitmap image = Bitmap.createBitmap(icon.getIconWidth(), icon.getIconHeight(),
+                Bitmap.Config.ARGB_8888);
+
+//        Canvas g2 = new Canvas(image);
+//        g2.drawColor(Color.TRANSPARENT);
+//        icon.paintIcon(g2, 0, 0);
+
+        // 设置背景
+        Canvas g2 = new Canvas(image);
+        int drawColor = Color.TRANSPARENT;
+        if (!TextUtils.isEmpty(backGroundColor)) {
+            try {
+                drawColor = Color.parseColor(backGroundColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        g2.drawColor(drawColor);
+        icon.paintIcon(g2, 0, 0);
+
+        // 设置颜色
+        if (!TextUtils.isEmpty(tintColor)) {
+            try {
+                Canvas canvas = new Canvas(image);
+                Paint paint1 = new Paint();
+                paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(tintColor), PorterDuff.Mode.SRC_IN));
+                canvas.drawBitmap(image, 0, 0, paint1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 如果image的宽度>RichTextView的宽度，改变image的大小
+        if (image.getWidth() > richTvWidth) {
+            image = Bitmap.createScaledBitmap(image, richTvWidth,
+                    image.getHeight() * richTvWidth / image.getWidth(),
+                    false);
+        }
+
+        return image;
+
+//        return new BitmapDrawable(getResources(), image);
+//        return new BitmapDrawable( bitmap);
+//        return bitmap;
     }
 
     /**
