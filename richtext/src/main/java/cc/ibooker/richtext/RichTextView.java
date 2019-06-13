@@ -232,6 +232,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 显示数据
      *
+     * @param text             待显示数据
+     * @param onLatexClickSpan Latex公式点击事件
+     * @return
+     */
+    public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpan) {
+        this.onLatexClickSpan = onLatexClickSpan;
+        setRichText(text);
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
      * @param richBean 待显示数据
      */
     public RichTextView setRichText(RichBean richBean) {
@@ -373,6 +386,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         // 循环遍历获取文本
         for (int i = 0; i < richBeanList.size(); i++) {
             final RichBean data = richBeanList.get(i);
+            if (onLatexClickSpan == null)
+                onLatexClickSpan = data.getOnLatexClickSpan();
             if (data.getType() == 0) {// 文本
                 tempList.add(data.getText());
             } else {// 图片
@@ -1377,6 +1392,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         // 循环遍历获取文本
         for (int i = 0; i < richBeanList.size(); i++) {
             final RichBean data = richBeanList.get(i);
+            if (onLatexClickSpan == null)
+                onLatexClickSpan = data.getOnLatexClickSpan();
             if (data.getType() == 0) {
                 tempList.add(data.getText());
             } else {// 图片
@@ -1447,11 +1464,20 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
                     && bitmap != null) {
+                // 显示图片
                 spannableString.setSpan(
                         new VerticalImageSpan(getContext(), bitmap),
                         startPosition,
                         endPosition,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                // 设置Latex点击事件
+                if (onLatexClickSpan != null) {
+                    LatexClickSpan latexClickSpan = new LatexClickSpan(latexBean.getLatex(), bitmap);
+                    spannableString.setSpan(latexClickSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    latexClickSpan.setOnLatexClickSpan(onLatexClickSpan);
+                }
             }
         }
         return this;
@@ -1537,6 +1563,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     public RichTextView setOnLongImageSpanClickListener(ClickSpan.OnClickSpan onLongImageSpanClickListener) {
         this.onLongImageSpanClickListener = onLongImageSpanClickListener;
+        return this;
+    }
+
+    /**
+     * Latex公式点击事件
+     */
+    private LatexClickSpan.OnLatexClickSpan onLatexClickSpan;
+
+    public RichTextView setOnLatexClickSpan(LatexClickSpan.OnLatexClickSpan onLatexClickSpan) {
+        this.onLatexClickSpan = onLatexClickSpan;
         return this;
     }
 }

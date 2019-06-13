@@ -22,6 +22,7 @@ public class RichBean {
     private boolean isBoldItalic;// 是否加粗并斜体 - 针对于文本
     private float scaleXMultiple;// X轴缩放倍数 - 针对于文本
     private ClickSpan.OnClickSpan onClickSpan;// 点击事件
+    private LatexClickSpan.OnLatexClickSpan onLatexClickSpan;
     private RichImgBean richImgBean; // 图片相关信息
 
     public RichBean() {
@@ -103,6 +104,29 @@ public class RichBean {
         this.isBoldItalic = isBoldItalic;
         this.scaleXMultiple = scaleXMultiple;
         this.onClickSpan = onClickSpan;
+        this.richImgBean = richImgBean;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
         this.richImgBean = richImgBean;
     }
 
@@ -258,6 +282,14 @@ public class RichBean {
         this.res = res;
     }
 
+    public LatexClickSpan.OnLatexClickSpan getOnLatexClickSpan() {
+        return onLatexClickSpan;
+    }
+
+    public void setOnLatexClickSpan(LatexClickSpan.OnLatexClickSpan onLatexClickSpan) {
+        this.onLatexClickSpan = onLatexClickSpan;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -279,6 +311,7 @@ public class RichBean {
                 ", isBoldItalic=" + isBoldItalic +
                 ", scaleXMultiple=" + scaleXMultiple +
                 ", onClickSpan=" + onClickSpan +
+                ", onLatexClickSpan=" + onLatexClickSpan +
                 ", richImgBean=" + richImgBean +
                 '}';
     }

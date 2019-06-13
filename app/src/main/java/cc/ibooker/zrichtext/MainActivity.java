@@ -1,5 +1,6 @@
 package cc.ibooker.zrichtext;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import cc.ibooker.richtext.ClickSpan;
+import cc.ibooker.richtext.LatexClickSpan;
 import cc.ibooker.richtext.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
@@ -58,7 +60,12 @@ public class MainActivity extends AppCompatActivity {
                 "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
                 "水电费感受到个人身体根深蒂固防守打法跟不上的根本是赶不上的根本是人工";
 
-//        richTextView.setRichText(richText);
+//        richTextView.setRichText(richText, new LatexClickSpan.OnLatexClickSpan() {
+//            @Override
+//            public void onLatexClickSpan(String latex, Bitmap bitmap) {
+//                Toast.makeText(MainActivity.this, latex, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
@@ -98,6 +105,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 richBean.setType(0);
                 richBean.setText("书客创作" + i + "测试富文本" + "$e^{\\pi i} + 1 = 0$");
+                richBean.setOnLatexClickSpan(new LatexClickSpan.OnLatexClickSpan() {
+
+                    @Override
+                    public void onLatexClickSpan(String latex, Bitmap bitmap) {
+                        Toast.makeText(MainActivity.this, latex, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 if (i == 1) {
                     richBean.setTextSizeMultiple(1.5f);
                     richBean.setStrikethrough(true);
@@ -105,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (i == 3) {
                     richBean.setAddUrl("http://ibooker.cc/article/search/list/1");
+                    richBean.setOnClickSpan(new ClickSpan.OnClickSpan() {
+                        @Override
+                        public void onClickSpan(String txt) {
+                            Toast.makeText(MainActivity.this, "文本点击事件：" + txt, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 if (i == 5) {
                     richBean.setBackgroundColor("#FF4040");
@@ -114,18 +134,19 @@ public class MainActivity extends AppCompatActivity {
                 if (i == 7) {
                     richBean.setUnderline(true);
                     richBean.setItalic(true);
+                    richBean.setOnClickSpan(new ClickSpan.OnClickSpan() {
+                        @Override
+                        public void onClickSpan(String txt) {
+                            Toast.makeText(MainActivity.this, "文本点击事件：" + txt, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 if (i == 9) {
                     richBean.setColor("#4aFF00");
                     richBean.setSubscript(true);
                     richBean.setScaleXMultiple(1.7f);
                 }
-                richBean.setOnClickSpan(new ClickSpan.OnClickSpan() {
-                    @Override
-                    public void onClickSpan(String txt) {
-                        Toast.makeText(MainActivity.this, "文本点击事件：" + txt, Toast.LENGTH_SHORT).show();
-                    }
-                });
+
             }
             list.add(richBean);
         }
