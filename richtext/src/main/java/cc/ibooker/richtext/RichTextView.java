@@ -75,6 +75,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private String backGroundColor;// 背景颜色
     private String tintColor;// 文字颜色
     private boolean isResetData = true;// 是否重置数据
+    private CharSequence richText;// 文本内容
 
     public RichTextView(Context context) {
         this(context, null);
@@ -109,6 +110,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        richText = getText();
         // 重置数据
         resetData();
         // 初始化AjLatexMath
@@ -131,6 +133,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.isScroll = false;
         }
         setRichTvScroll();
+    }
+
+    @Override
+    public CharSequence getText() {
+        return richText;
     }
 
     private void setRichTvScroll() {
@@ -204,13 +211,28 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setRichText(final CharSequence text) {
+        richText = text;
+        setRichText(richText, false);
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param text          待显示数据
+     * @param isLatexOneStr 是否将Latex公式当中1位字符串处理
+     * @return
+     */
+    public RichTextView setRichText(final CharSequence text, final boolean isLatexOneStr) {
         if (!TextUtils.isEmpty(text)) {
             resetData();
-            spannableString = new SpannableString(text);
+            // 显示数据
+            richText = text;
+            spannableString = new SpannableString(richText);
             setText(spannableString);
             // 处理Latex
             if (richTvWidth > 0) {
-                dealWithLatex(text);
+                dealWithLatex(text, isLatexOneStr);
                 setText(spannableString);
             } else {
                 ViewTreeObserver vto = getViewTreeObserver();
@@ -220,7 +242,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
-                        dealWithLatex(text);
+                        dealWithLatex(text, isLatexOneStr);
                         setText(spannableString);
                     }
                 });
@@ -418,10 +440,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : tempList)
             stringBuilder.append(str);
-        String text = stringBuilder.toString();
-        spannableString = new SpannableString(text);
+        richText = stringBuilder.toString();
+        spannableString = new SpannableString(richText);
         setText(spannableString);
-        dealWithLatex(text);
+        dealWithLatex(richText, false);
 
         // 重新刷新数据
         updateRichTvView();
@@ -1421,10 +1443,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         StringBuilder stringBuilder = new StringBuilder();
         for (String str : tempList)
             stringBuilder.append(str);
-        String text = stringBuilder.toString();
-        spannableString = new SpannableString(text);
+        richText = stringBuilder.toString();
+        spannableString = new SpannableString(richText);
         setText(spannableString);
-        dealWithLatex(text);
+        dealWithLatex(richText, false);
 
         // 重新刷新数据
         updateRichTvImgView();
@@ -1439,46 +1461,62 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 处理LaTeX数学公式
-    private synchronized RichTextView dealWithLatex(CharSequence text) {
-        String latexPattern = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
-        Pattern pattern = Pattern.compile(latexPattern);
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            LatexBean latexBean = new LatexBean(matcher.group(), matcher.start(), matcher.end());
-            latexBeanList.add(latexBean);
-        }
-        for (LatexBean latexBean : latexBeanList) {
-            String result = latexBean.getLatex().replaceAll("\\$+", "");
-            Bitmap bitmap;
-            if (isOpenImgCache) {
-                bitmap = BitmapCacheUtil.getInstanse().init().getBitmapByPath(result);
-                if (bitmap == null) {
-                    bitmap = latexDrawable(result);
-                    if (bitmap != null)
-                        BitmapCacheUtil.getInstanse().init().putBitmapByPath(result, bitmap);
+    private synchronized RichTextView dealWithLatex(CharSequence text, boolean isLatexOneStr) {
+        if (!TextUtils.isEmpty(text)) {
+            String latexPattern = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
+            Pattern pattern = Pattern.compile(latexPattern);
+            Matcher matcher = pattern.matcher(text);
+            while (matcher.find()) {
+                LatexBean latexBean = new LatexBean(matcher.group(), matcher.start(), matcher.end());
+                latexBeanList.add(latexBean);
+            }
+            // 替换公式为空格
+            if (isLatexOneStr) {
+                String tempText = text.toString();
+                for (LatexBean latexBean : latexBeanList) {
+                    String latex = latexBean.getLatex();
+                    int index = tempText.indexOf(latex);
+                    tempText = tempText.replaceFirst(latexPattern, " ");
+                    latexBean.setStartPosition(index);
+                    latexBean.setEndPosition(index + 1);
                 }
-            } else
-                bitmap = latexDrawable(result);
-            int startPosition = latexBean.getStartPosition();
-            int endPosition = latexBean.getEndPosition();
-            if (spannableString != null
-                    && startPosition <= spannableString.length()
-                    && endPosition <= spannableString.length()
-                    && startPosition <= endPosition
-                    && bitmap != null) {
-                // 显示图片
-                spannableString.setSpan(
-                        new VerticalImageSpan(getContext(), bitmap),
-                        startPosition,
-                        endPosition,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                // 设置Latex点击事件
-                if (onLatexClickSpan != null) {
-                    LatexClickSpan latexClickSpan = new LatexClickSpan(latexBean.getLatex(), bitmap);
-                    spannableString.setSpan(latexClickSpan,
-                            startPosition, endPosition,
+                richText = tempText;
+                spannableString = new SpannableString(richText);
+            }
+            // 加载公式图片
+            for (LatexBean latexBean : latexBeanList) {
+                String result = latexBean.getLatex().replaceAll("\\$+", "");
+                Bitmap bitmap;
+                if (isOpenImgCache) {
+                    bitmap = BitmapCacheUtil.getInstanse().init().getBitmapByPath(result);
+                    if (bitmap == null) {
+                        bitmap = latexDrawable(result);
+                        if (bitmap != null)
+                            BitmapCacheUtil.getInstanse().init().putBitmapByPath(result, bitmap);
+                    }
+                } else
+                    bitmap = latexDrawable(result);
+                int startPosition = latexBean.getStartPosition();
+                int endPosition = latexBean.getEndPosition();
+                if (spannableString != null
+                        && startPosition <= spannableString.length()
+                        && endPosition <= spannableString.length()
+                        && startPosition <= endPosition
+                        && bitmap != null) {
+                    // 显示图片
+                    spannableString.setSpan(
+                            new VerticalImageSpan(getContext(), bitmap),
+                            startPosition,
+                            endPosition,
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    latexClickSpan.setOnLatexClickSpan(onLatexClickSpan);
+                    // 设置Latex点击事件
+                    if (onLatexClickSpan != null) {
+                        LatexClickSpan latexClickSpan = new LatexClickSpan(latexBean.getLatex(), bitmap);
+                        spannableString.setSpan(latexClickSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        latexClickSpan.setOnLatexClickSpan(onLatexClickSpan);
+                    }
                 }
             }
         }
