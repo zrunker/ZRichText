@@ -9,5 +9,6 @@
         </attr>
         <attr name="backGroundColor" format="string" />
         <attr name="tintColor" format="string" />
+        <attr name="isLatexOneStr" format="boolean" />
     </declare-styleable>
 </resources>

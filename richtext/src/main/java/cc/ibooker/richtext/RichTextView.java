@@ -76,6 +76,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private String tintColor;// 文字颜色
     private boolean isResetData = true;// 是否重置数据
     private CharSequence richText;// 文本内容
+    private boolean isLatexOneStr = false;// 是否将Latex公式当成一个字符串处理
 
     public RichTextView(Context context) {
         this(context, null);
@@ -95,6 +96,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             loadImgModel = typeArray.getInt(R.styleable.RichTextView_loadImgModel, 0);
             backGroundColor = typeArray.getString(R.styleable.RichTextView_backGroundColor);
             tintColor = typeArray.getString(R.styleable.RichTextView_tintColor);
+            isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
             typeArray.recycle();
         }
         setRichTvScroll();
@@ -118,9 +120,34 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 设置是否能够滚动
-    public void setScroll(boolean scroll) {
+    public RichTextView setScroll(boolean scroll) {
         this.isScroll = scroll;
         setRichTvScroll();
+        return this;
+    }
+
+    // 设置默认图片
+    public RichTextView setDefaultDrawable(Drawable defaultDrawable) {
+        this.defaultDrawable = defaultDrawable;
+        return this;
+    }
+
+    // 设置背景颜色
+    public RichTextView setBackGroundColor(String backGroundColor) {
+        this.backGroundColor = backGroundColor;
+        return this;
+    }
+
+    // 设置Latex公式是否为一个字符串
+    public RichTextView setLatexOneStr(boolean latexOneStr) {
+        this.isLatexOneStr = latexOneStr;
+        return this;
+    }
+
+    // 设置字体颜色
+    public RichTextView setTintColor(String tintColor) {
+        this.tintColor = tintColor;
+        return this;
     }
 
     @Override
@@ -140,6 +167,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         return richText;
     }
 
+    // 设置是否能够滚动
     private void setRichTvScroll() {
         if (isScroll && richMaxLines <= 0)
             setMovementMethod(LinkMovementMethod.getInstance());
@@ -231,8 +259,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             spannableString = new SpannableString(richText);
             setText(spannableString);
             // 处理Latex
+            this.isLatexOneStr = isLatexOneStr;
             if (richTvWidth > 0) {
-                dealWithLatex(text, isLatexOneStr);
+                dealWithLatex(text);
                 setText(spannableString);
             } else {
                 ViewTreeObserver vto = getViewTreeObserver();
@@ -242,7 +271,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
-                        dealWithLatex(text, isLatexOneStr);
+                        dealWithLatex(text);
                         setText(spannableString);
                     }
                 });
@@ -443,7 +472,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         richText = stringBuilder.toString();
         spannableString = new SpannableString(richText);
         setText(spannableString);
-        dealWithLatex(richText, false);
+        dealWithLatex(richText);
 
         // 重新刷新数据
         updateRichTvView();
@@ -1446,7 +1475,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         richText = stringBuilder.toString();
         spannableString = new SpannableString(richText);
         setText(spannableString);
-        dealWithLatex(richText, false);
+        dealWithLatex(richText);
 
         // 重新刷新数据
         updateRichTvImgView();
@@ -1461,7 +1490,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 处理LaTeX数学公式
-    private synchronized RichTextView dealWithLatex(CharSequence text, boolean isLatexOneStr) {
+    private synchronized RichTextView dealWithLatex(CharSequence text) {
         if (!TextUtils.isEmpty(text)) {
             String latexPattern = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
             Pattern pattern = Pattern.compile(latexPattern);
