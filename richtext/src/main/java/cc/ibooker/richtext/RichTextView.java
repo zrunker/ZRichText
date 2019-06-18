@@ -720,7 +720,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景
      *
-     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
      */
     public synchronized RichTextView updateBackgroundColor(final String backgroundColor,
                                                            final int startPosition,
@@ -774,7 +774,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景2
      *
-     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
      */
     public synchronized RichTextView updateBackgroundColor(final int backgroundColor,
                                                            final int startPosition,
@@ -827,7 +827,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 更新文本圆角背景
      *
-     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
      */
     public synchronized RichTextView updateBackgroundColorRound(
             final String backgroundColor,
@@ -1503,8 +1503,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 tempList.add(data.getText());
             } else {// 图片
                 loadImgTatol++;
-                // 设置占位符 - 唯一值
-                tempList.add("" + i);
+                // 设置占位符 - 空格
+                tempList.add("\t");
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());

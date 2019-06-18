@@ -3,6 +3,7 @@ package cc.ibooker.zrichtext;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -17,12 +18,15 @@ import cc.ibooker.richtext.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
 public class MainActivity extends AppCompatActivity {
-    private RichTextView richTextView, richTextView2, richTextView3;
+    private RichTextView richTextView, richTextView2, richTextView3, richTextView4;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         richTextView.onDestory();
+        richTextView2.onDestory();
+        richTextView3.onDestory();
+        richTextView4.onDestory();
     }
 
     @Override
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         richTextView = findViewById(R.id.richTextView);
         richTextView2 = findViewById(R.id.richTextView2);
         richTextView3 = findViewById(R.id.richTextView3);
+        richTextView4 = findViewById(R.id.richTextView4);
 
 
         ArrayList<RichBean> richBeans = new ArrayList<>();
@@ -199,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 "$$f(x_1,x_x,\\ldots,x_n) = x_1^2 + x_2^2 + \\cdots + x_n^2 $$" +
                 "水电费感受到个人身体根深蒂固防守打法跟不上的根本是赶不上的根本是人工";
 
-//        richTextView.setRichText(richText, new LatexClickSpan.OnLatexClickSpan() {
+//        richTextView4.setRichText(richText, new LatexClickSpan.OnLatexClickSpan() {
 //            @Override
 //            public void onLatexClickSpan(String latex, Bitmap bitmap) {
 //                Toast.makeText(MainActivity.this, latex, Toast.LENGTH_SHORT).show();
@@ -208,14 +213,14 @@ public class MainActivity extends AppCompatActivity {
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                richTextView.updateBackgroundColor(Color.parseColor("#40aff2"), 0, 31);
+//                richTextView4.updateBackgroundColor(Color.parseColor("#40aff2"), 0, 31, 1);
 //            }
 //        }, 2000);
 //
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                richTextView.updateForegroundColor(Color.parseColor("#40aff2"), 61, 101);
+//                richTextView4.updateForegroundColor(Color.parseColor("#40aff2"), 61, 101);
 //            }
 //        }, 3000);
 
@@ -290,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             list.add(richBean);
         }
 
-//        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//        richTextView4.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
 //            @Override
 //            public void onClickSpan(String txt) {
 //                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
@@ -302,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }).setRichText(list);
 
-//        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//        richTextView4.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
 //            @Override
 //            public void onClickSpan(String txt) {
 //                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
@@ -314,111 +319,111 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }).setRichText(list, R.mipmap.ic_launcher);
 
-//        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
-//            @Override
-//            public void onClickSpan(String txt) {
-//                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
-//            }
-//        }).setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
-//            @Override
-//            public void onClickSpan(String txt) {
-//                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
-//            }
-//        }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+        richTextView4.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
+            @Override
+            public void onClickSpan(String txt) {
+                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+            }
+        }).setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
+            @Override
+            public void onClickSpan(String txt) {
+                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+            }
+        }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateBackgroundColor("#FFF000", 2, 18);
-//            }
-//        }, 1000);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateBackgroundColor("#FFF000", 19, 27);
-//            }
-//        }, 2000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateBackgroundColor("#FFF000", 2, 18, 1);
+            }
+        }, 1000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateBackgroundColor("#FFF000", 19, 27, 1);
+            }
+        }, 2000);
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateBackgroundColor("#FFF000", 2, 3);
-//                richTextView.updateBackgroundColor("#FFF000", 5, 30);
-//                richTextView.updateBackgroundColor("#FFF000", 30, 34);
-//                richTextView.updateBackgroundColor("#FFF000", 35, 39);
-//            }
-//        }, 3000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateBackgroundColor("#FFF000", 2, 3, 1);
+                richTextView4.updateBackgroundColor("#FFF000", 5, 30, 1);
+                richTextView4.updateBackgroundColor("#FFF000", 30, 34, 1);
+                richTextView4.updateBackgroundColor("#FFF000", 35, 39, 1);
+            }
+        }, 3000);
 
-//        // 3s之后修改单项数据
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                RichBean richBean = list.get(0);
-//                richBean.setBackgroundColor("#55FF00");
-//                richTextView.updateItem(richBean, 0);
-//            }
-//        }, 3000);
-//
-//        // 5s之后修改单项数据
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                RichBean richBean = list.get(9);
-//                richBean.setText("下面是加载图片对比图：");
-//                richTextView.updateItem(richBean, 9);
-//            }
-//        }, 5000);
-//
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateBackgroundColor("#5643f5", 0, 20);
-//            }
-//        }, 7000);
-//
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateForegroundColor("#5643f5", 20, 40);
-//            }
-//        }, 9000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.updateBackgroundColorRound("#5643f5", 8, 35, 65);
-//            }
-//        }, 10000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.clearBackgroundColor();
-//            }
-//        }, 11000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.resetBackgroundColor();
-//            }
-//        }, 12000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.resetTextColor();
-//            }
-//        }, 13000);
-//
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                richTextView.resetForegroundColor();
-//            }
-//        }, 14000);
+        // 3s之后修改单项数据
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RichBean richBean = list.get(0);
+                richBean.setBackgroundColor("#55FF00");
+                richTextView4.updateItem(richBean, 0);
+            }
+        }, 3000);
+
+        // 5s之后修改单项数据
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RichBean richBean = list.get(9);
+                richBean.setText("下面是加载图片对比图：");
+                richTextView4.updateItem(richBean, 9);
+            }
+        }, 5000);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateBackgroundColor("#5643f5", 0, 20, 1);
+            }
+        }, 7000);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateForegroundColor("#5643f5", 20, 40);
+            }
+        }, 9000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.updateBackgroundColorRound("#5643f5", 8, 35, 65, 1);
+            }
+        }, 10000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.clearBackgroundColor();
+            }
+        }, 11000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.resetBackgroundColor();
+            }
+        }, 12000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.resetTextColor();
+            }
+        }, 13000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView4.resetForegroundColor();
+            }
+        }, 14000);
 
 
         ImageView image = findViewById(R.id.image);
