@@ -22,11 +22,14 @@ public class RoundBackgroundColorSpan extends ReplacementSpan {
 
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+//        int originalColor = paint.getColor();
         RectF rect = new RectF(x, top, x + measureText(paint, text, start, end), bottom);
         paint.setColor(backgroundColor);
         canvas.drawRoundRect(rect, radius, radius, paint);
         paint.setColor(textColor);
         canvas.drawText(text, start, end, x, y, paint);
+//        // 将paint复原
+//        paint.setColor(originalColor);
     }
 
     @Override

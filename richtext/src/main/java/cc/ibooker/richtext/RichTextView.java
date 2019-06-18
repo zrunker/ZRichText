@@ -666,8 +666,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 清空背景颜色
      */
     public synchronized RichTextView clearBackgroundColor() {
-        if (spannableString != null)
-            updateBackgroundColor("#00FFFFFF", 0, spannableString.length());
+        if (spannableString != null) {
+            // 移除EHeightRoundBackgroundColorSpan
+            EHeightRoundBackgroundColorSpan[] eHeightRoundBackgroundColorSpans = spannableString.getSpans(0, spannableString.length(), EHeightRoundBackgroundColorSpan.class);
+            for (EHeightRoundBackgroundColorSpan span : eHeightRoundBackgroundColorSpans)
+                spannableString.removeSpan(span);
+            // 修改图片背景
+            updateBackgroundColor("#00FFFFFF", 0, spannableString.length(), 1);
+        }
         return this;
     }
 
@@ -675,11 +681,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 重置背景颜色
      */
     public synchronized RichTextView resetBackgroundColor() {
+        // 清空背景
+        clearBackgroundColor();
+        // 修改背景
         Drawable drawable = getBackground();
         if (drawable != null && spannableString != null) {
             ColorDrawable colorDrawable = (ColorDrawable) drawable;
             int color = colorDrawable.getColor();
-            updateBackgroundColor(color, 0, spannableString.length());
+            // 修改图片背景
+            updateBackgroundColor(color, 0, spannableString.length(), 1);
         }
         return this;
     }
@@ -709,8 +719,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本背景
+     *
+     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
      */
-    public synchronized RichTextView updateBackgroundColor(final String backgroundColor, final int startPosition, final int endPosition) {
+    public synchronized RichTextView updateBackgroundColor(final String backgroundColor,
+                                                           final int startPosition,
+                                                           final int endPosition,
+                                                           final int updateBackGroundColorModel) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
@@ -718,17 +733,26 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     && startPosition <= endPosition
                     && !TextUtils.isEmpty(backgroundColor)) {
                 try {
-                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
-                    spannableString.setSpan(backgroundColorSpan,
-                            startPosition, endPosition,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (updateBackGroundColorModel == 0) {
+                        EHeightRoundBackgroundColorSpan eHeightRoundBackgroundColorSpan = new EHeightRoundBackgroundColorSpan(startPosition, endPosition, Color.parseColor(backgroundColor));
+                        spannableString.setSpan(eHeightRoundBackgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else if (updateBackGroundColorModel == 1) {
+                        // 只适用于文本
+                        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor(backgroundColor));
+                        spannableString.setSpan(backgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
-                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
-                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                            // DST_OVER 背景-DARKEN
-                            verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(backgroundColor),
-                                    PorterDuff.Mode.DARKEN);
+                        VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                        if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                            for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                                verticalImageSpan.getDrawable().getIntrinsicHeight();
+                                // DST_OVER 背景-DARKEN
+                                verticalImageSpan.getDrawable().setColorFilter(Color.parseColor(backgroundColor),
+                                        PorterDuff.Mode.DARKEN);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -740,7 +764,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    updateBackgroundColor(backgroundColor, startPosition, endPosition);
+                    updateBackgroundColor(backgroundColor, startPosition, endPosition, updateBackGroundColorModel);
                 }
             }, 100);
         }
@@ -749,25 +773,38 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本背景2
+     *
+     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
      */
-    public synchronized RichTextView updateBackgroundColor(final int backgroundColor, final int startPosition, final int endPosition) {
+    public synchronized RichTextView updateBackgroundColor(final int backgroundColor,
+                                                           final int startPosition,
+                                                           final int endPosition,
+                                                           final int updateBackGroundColorModel) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition) {
                 try {
-                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(backgroundColor);
-                    spannableString.setSpan(backgroundColorSpan,
-                            startPosition, endPosition,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (updateBackGroundColorModel == 0) {
+                        EHeightRoundBackgroundColorSpan eHeightRoundBackgroundColorSpan = new EHeightRoundBackgroundColorSpan(startPosition, endPosition, backgroundColor);
+                        spannableString.setSpan(eHeightRoundBackgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else if (updateBackGroundColorModel == 1) {
+                        // 只适用文本
+                        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(backgroundColor);
+                        spannableString.setSpan(backgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
-                    if (verticalImageSpans != null && verticalImageSpans.length > 0) {
-                        for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
-                            // DST_OVER 背景-DARKEN
-                            verticalImageSpan.getDrawable().setColorFilter(backgroundColor,
-                                    PorterDuff.Mode.DARKEN);
+                        VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
+                        if (verticalImageSpans != null && verticalImageSpans.length > 0) {
+                            for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
+                                // DST_OVER 背景-DARKEN
+                                verticalImageSpan.getDrawable().setColorFilter(backgroundColor,
+                                        PorterDuff.Mode.DARKEN);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -780,7 +817,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    updateBackgroundColor(backgroundColor, startPosition, endPosition);
+                    updateBackgroundColor(backgroundColor, startPosition, endPosition, updateBackGroundColorModel);
                 }
             }, 100);
         }
@@ -788,9 +825,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 更新文本圆角背景 - 只适合文字部分
+     * 更新文本圆角背景
+     *
+     * @param updateBackGroundColorModel = 0;// 修改背景模式，0-等高修改，1-不等高修改
      */
-    public synchronized RichTextView updateBackgroundColorRound(final String backgroundColor, final int radius, final int startPosition, final int endPosition) {
+    public synchronized RichTextView updateBackgroundColorRound(
+            final String backgroundColor,
+            final int radius,
+            final int startPosition,
+            final int endPosition,
+            final int updateBackGroundColorModel) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
@@ -798,10 +842,18 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     && startPosition <= endPosition
                     && !TextUtils.isEmpty(backgroundColor)) {
                 try {
-                    RoundBackgroundColorSpan backgroundColorSpan = new RoundBackgroundColorSpan(Color.parseColor(backgroundColor), getCurrentTextColor(), radius);
-                    spannableString.setSpan(backgroundColorSpan,
-                            startPosition, endPosition,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    if (updateBackGroundColorModel == 0) {
+                        EHeightRoundBackgroundColorSpan eHeightRoundBackgroundColorSpan = new EHeightRoundBackgroundColorSpan(startPosition, endPosition, Color.parseColor(backgroundColor), radius);
+                        spannableString.setSpan(eHeightRoundBackgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else if (updateBackGroundColorModel == 1) {
+                        // 只适合文字部分
+                        RoundBackgroundColorSpan backgroundColorSpan = new RoundBackgroundColorSpan(Color.parseColor(backgroundColor), getCurrentTextColor(), radius);
+                        spannableString.setSpan(backgroundColorSpan,
+                                startPosition, endPosition,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("RichTextView", e.getMessage());
@@ -812,7 +864,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    updateBackgroundColorRound(backgroundColor, radius, startPosition, endPosition);
+                    updateBackgroundColorRound(backgroundColor, radius, startPosition, endPosition, updateBackGroundColorModel);
                 }
             }, 100);
         }
@@ -1505,7 +1557,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 for (LatexBean latexBean : latexBeanList) {
                     String latex = latexBean.getLatex();
                     int index = tempText.indexOf(latex);
-                    tempText = tempText.replaceFirst(latexPattern, " ");
+                    tempText = tempText.replaceFirst(latexPattern, "\t");
                     latexBean.setStartPosition(index);
                     latexBean.setEndPosition(index + 1);
                 }

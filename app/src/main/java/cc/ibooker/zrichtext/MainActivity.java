@@ -3,7 +3,6 @@ package cc.ibooker.zrichtext;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -18,7 +17,7 @@ import cc.ibooker.richtext.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
 public class MainActivity extends AppCompatActivity {
-    private RichTextView richTextView;
+    private RichTextView richTextView, richTextView2, richTextView3;
 
     @Override
     protected void onDestroy() {
@@ -32,9 +31,149 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         richTextView = findViewById(R.id.richTextView);
+        richTextView2 = findViewById(R.id.richTextView2);
+        richTextView3 = findViewById(R.id.richTextView3);
 
-        String source = "设$F_1$, $F_2$分别是椭圆$E$: $x^2+\\frac{y^2}{b^2}=1(0\\lt b\\lt 1)$的左、右焦点, 过点$F_1$的直线交椭圆$E$于$A$、$B$两点, 若$|AF_1|=3|F_1B|$, $AF_2\\perp x$轴, 则椭圆$E$的方程为( )";
-//        richTextView.setRichText(source);
+
+        ArrayList<RichBean> richBeans = new ArrayList<>();
+        RichBean richBean1 = new RichBean();
+        richBean1.setHeight(0);
+        richBean1.setWidth(0);
+        richBean1.setText("椭圆E: ");
+        richBean1.setType(0);
+        richBeans.add(richBean1);
+
+        RichBean richBean2 = new RichBean();
+        richBean2.setHeight(80);
+        richBean2.setWidth(124);
+        richBean2.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_1.png");
+        richBean2.setType(1);
+        richBeans.add(richBean2);
+
+        RichBean richBean3 = new RichBean();
+        richBean3.setHeight(0);
+        richBean3.setWidth(0);
+        richBean3.setText(" ");
+        richBean3.setType(0);
+        richBeans.add(richBean3);
+
+        RichBean richBean4 = new RichBean();
+        richBean4.setHeight(25);
+        richBean4.setWidth(52);
+        richBean4.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_3.png");
+        richBean4.setType(1);
+        richBeans.add(richBean4);
+
+        RichBean richBean5 = new RichBean();
+        richBean5.setHeight(0);
+        richBean5.setWidth(0);
+        richBean5.setText(" ");
+        richBean5.setType(0);
+        richBeans.add(richBean5);
+
+        RichBean richBean6 = new RichBean();
+        richBean6.setHeight(37);
+        richBean6.setWidth(172);
+        richBean6.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_5.png");
+        richBean6.setType(1);
+        richBeans.add(richBean6);
+
+        RichBean richBean7 = new RichBean();
+        richBean7.setHeight(0);
+        richBean7.setWidth(0);
+        richBean7.setText("的离心率是");
+        richBean7.setType(0);
+        richBeans.add(richBean7);
+
+        RichBean richBean8 = new RichBean();
+        richBean8.setHeight(81);
+        richBean8.setWidth(49);
+        richBean8.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_7.png");
+        richBean8.setType(1);
+        richBeans.add(richBean8);
+
+        RichBean richBean9 = new RichBean();
+        richBean9.setHeight(0);
+        richBean9.setWidth(0);
+        richBean9.setText(", 点");
+        richBean9.setType(0);
+        richBeans.add(richBean9);
+
+        RichBean richBean10 = new RichBean();
+        richBean10.setHeight(37);
+        richBean10.setWidth(105);
+        richBean10.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_9.png");
+        richBean10.setType(1);
+        richBeans.add(richBean10);
+
+        RichBean richBean11 = new RichBean();
+        richBean11.setHeight(0);
+        richBean11.setWidth(0);
+        richBean11.setText("在短轴");
+        richBean11.setType(0);
+        richBeans.add(richBean11);
+
+        RichBean richBean12 = new RichBean();
+        richBean12.setHeight(27);
+        richBean12.setWidth(56);
+        richBean12.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_11.png");
+        richBean12.setType(1);
+        richBeans.add(richBean12);
+
+        RichBean richBean13 = new RichBean();
+        richBean13.setHeight(0);
+        richBean13.setWidth(0);
+        richBean13.setText("上, 且");
+        richBean13.setType(0);
+        richBeans.add(richBean13);
+
+        RichBean richBean14 = new RichBean();
+        richBean14.setHeight(37);
+        richBean14.setWidth(235);
+        richBean14.setText("http://192.168.1.203:10000/equation_v2/question_5238_stem_13.png");
+        richBean14.setType(1);
+        richBeans.add(richBean14);
+
+        RichBean richBean15 = new RichBean();
+        richBean15.setHeight(0);
+        richBean15.setWidth(0);
+        richBean15.setText(", 椭圆E的方程为( )");
+        richBean15.setType(0);
+        richBeans.add(richBean15);
+
+        richTextView.setRichText(richBeans, null, false);
+
+        richTextView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView.updateBackgroundColor("#FFE892", 18, 20, 1);
+                richTextView.updateBackgroundColor("#FFE892", 21, 24, 1);
+                richTextView.updateBackgroundColor("#FFE892", 28, 29, 1);
+            }
+        }, 100);
+
+
+        String source = "椭圆$E$: $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$ $=1$ $(a\\gt b\\gt 0)$的离心率是$\\frac{\\sqrt{2}}{2}$, 点$P(0, 1)$在短轴$CD$上, 且$\\vec{PC}\\cdot \\vec{PD}=-1$, 椭圆$E$的方程为( )";
+
+        richTextView2.setRichText(source, true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView2.updateBackgroundColor("#FFE892", 18, 20, 1);
+                richTextView2.updateBackgroundColor("#FFE892", 21, 24, 1);
+                richTextView2.updateBackgroundColor("#FFE892", 28, 29, 1);
+            }
+        }, 100);
+
+        richTextView3.setRichText(source, true);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                richTextView3.updateBackgroundColor("#FFE892", 18, 20, 0);
+                richTextView3.updateBackgroundColor("#FFE892", 21, 24, 0);
+                richTextView3.updateBackgroundColor("#FFE892", 28, 29, 0);
+            }
+        }, 100);
 
 
         // 数学公式
@@ -175,89 +314,111 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }).setRichText(list, R.mipmap.ic_launcher);
 
-        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
-            @Override
-            public void onClickSpan(String txt) {
-                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
-            }
-        }).setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
-            @Override
-            public void onClickSpan(String txt) {
-                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
-            }
-        }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
+//        richTextView.setOnLongImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+//                Toast.makeText(MainActivity.this, "长图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+//            }
+//        }).setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+//                Toast.makeText(MainActivity.this, "图片点击事件，图片地址：" + txt, Toast.LENGTH_SHORT).show();
+//            }
+//        }).setRichText(list, ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
 
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColor("#FFF000", 2, 18);
+//            }
+//        }, 1000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColor("#FFF000", 19, 27);
+//            }
+//        }, 2000);
 
-        // 3s之后修改单项数据
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                RichBean richBean = list.get(0);
-                richBean.setBackgroundColor("#55FF00");
-                richTextView.updateItem(richBean, 0);
-            }
-        }, 3000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColor("#FFF000", 2, 3);
+//                richTextView.updateBackgroundColor("#FFF000", 5, 30);
+//                richTextView.updateBackgroundColor("#FFF000", 30, 34);
+//                richTextView.updateBackgroundColor("#FFF000", 35, 39);
+//            }
+//        }, 3000);
 
-        // 5s之后修改单项数据
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                RichBean richBean = list.get(9);
-                richBean.setText("下面是加载图片对比图：");
-                richTextView.updateItem(richBean, 9);
-            }
-        }, 5000);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.updateBackgroundColor("#5643f5", 0, 20);
-            }
-        }, 7000);
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.updateForegroundColor("#5643f5", 20, 40);
-            }
-        }, 9000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.updateBackgroundColorRound("#5643f5", 8, 35, 65);
-            }
-        }, 10000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.clearBackgroundColor();
-            }
-        }, 11000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.resetBackgroundColor();
-            }
-        }, 12000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.resetTextColor();
-            }
-        }, 13000);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                richTextView.resetForegroundColor();
-            }
-        }, 14000);
+//        // 3s之后修改单项数据
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                RichBean richBean = list.get(0);
+//                richBean.setBackgroundColor("#55FF00");
+//                richTextView.updateItem(richBean, 0);
+//            }
+//        }, 3000);
+//
+//        // 5s之后修改单项数据
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                RichBean richBean = list.get(9);
+//                richBean.setText("下面是加载图片对比图：");
+//                richTextView.updateItem(richBean, 9);
+//            }
+//        }, 5000);
+//
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColor("#5643f5", 0, 20);
+//            }
+//        }, 7000);
+//
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateForegroundColor("#5643f5", 20, 40);
+//            }
+//        }, 9000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.updateBackgroundColorRound("#5643f5", 8, 35, 65);
+//            }
+//        }, 10000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.clearBackgroundColor();
+//            }
+//        }, 11000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.resetBackgroundColor();
+//            }
+//        }, 12000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.resetTextColor();
+//            }
+//        }, 13000);
+//
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                richTextView.resetForegroundColor();
+//            }
+//        }, 14000);
 
 
         ImageView image = findViewById(R.id.image);
