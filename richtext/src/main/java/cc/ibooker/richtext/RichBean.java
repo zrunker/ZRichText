@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
 
+import java.util.Arrays;
+
 /**
  * 富文本相关数据
  *
@@ -42,6 +44,7 @@ public class RichBean {
     private int bitmapPad;// 待出入图片内边距
     private Layout.Alignment align;// 文本方向
     private String family;// 文字字体
+    private int[] colors;
 
     public RichBean() {
         super();
@@ -71,7 +74,7 @@ public class RichBean {
         this.richImgBean = richImgBean;
     }
 
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip, Bitmap bitmap, int bitmapPad, Layout.Alignment align, String family) {
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip, Bitmap bitmap, int bitmapPad, Layout.Alignment align, String family, int[] colors) {
         this.text = text;
         this.res = res;
         this.type = type;
@@ -102,6 +105,7 @@ public class RichBean {
         this.bitmapPad = bitmapPad;
         this.align = align;
         this.family = family;
+        this.colors = colors;
     }
 
     public String getText() {
@@ -344,6 +348,14 @@ public class RichBean {
         this.family = family;
     }
 
+    public int[] getColors() {
+        return colors;
+    }
+
+    public void setColors(int[] colors) {
+        this.colors = colors;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -377,6 +389,7 @@ public class RichBean {
                 ", bitmapPad=" + bitmapPad +
                 ", align=" + align +
                 ", family='" + family + '\'' +
+                ", colors=" + Arrays.toString(colors) +
                 '}';
     }
 }

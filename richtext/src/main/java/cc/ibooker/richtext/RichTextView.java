@@ -1498,6 +1498,24 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 设置颜色数组
+     */
+    public synchronized RichTextView updateColors(int startPosition, int endPosition, int[] colors) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition
+                && colors != null) {
+            ColorsSpan colorsSpan = new ColorsSpan(colors);
+            spannableString.setSpan(colorsSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
      * 设置span
      */
     public synchronized RichTextView setSpan(Object what, int startPosition, int endPosition, int flags) {
@@ -1670,6 +1688,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (!TextUtils.isEmpty(richBean.getFamily())) {
                 TypefaceSpan typefaceSpan = new TypefaceSpan(richBean.getFamily());
                 spannableString.setSpan(typefaceSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 设置颜色数组
+            if (richBean.getColors() != null) {
+                ColorsSpan colorsSpan = new ColorsSpan(richBean.getColors());
+                spannableString.setSpan(colorsSpan,
                         startPosition, endPosition,
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }
