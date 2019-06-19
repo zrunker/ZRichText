@@ -27,6 +27,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.AlignmentSpan;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.BulletSpan;
 import android.text.style.DrawableMarginSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
@@ -1427,8 +1428,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 修改文本样式2
      */
-    public synchronized RichTextView updateTextAppearance2(int startPosition, int endPosition,
-                                                           int appearance, int colorList) {
+    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
+                                                          int appearance, int colorList) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1445,8 +1446,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 修改文本样式3
      */
-    public synchronized RichTextView updateTextAppearance3(int startPosition, int endPosition,
-                                                           int appearance) {
+    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
+                                                          int appearance) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1482,7 +1483,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 文本字体2
      */
     @RequiresApi(api = 28)
-    public synchronized RichTextView updateTypeface2(int startPosition, int endPosition, Typeface typeface) {
+    public synchronized RichTextView updateTypeface(int startPosition, int endPosition, Typeface typeface) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1508,6 +1509,75 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 && colors != null) {
             ColorsSpan colorsSpan = new ColorsSpan(colors);
             spannableString.setSpan(colorsSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 段落层次-小圆点
+     */
+    public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            BulletSpan bulletSpan = new BulletSpan(gapWidth, color);
+            spannableString.setSpan(bulletSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 段落层次-小圆点2
+     */
+    public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            BulletSpan bulletSpan = new BulletSpan(gapWidth);
+            spannableString.setSpan(bulletSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 段落层次-小圆点3
+     */
+    @RequiresApi(api = 28)
+    public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color, int bulletRadius) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            BulletSpan bulletSpan = new BulletSpan(gapWidth, color, bulletRadius);
+            spannableString.setSpan(bulletSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 设置文本环绕
+     */
+    public synchronized RichTextView updateTextRound(int startPosition, int endPosition, int lines, int margin) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TextRoundSpan textRoundSpan = new TextRoundSpan(lines, margin);
+            spannableString.setSpan(textRoundSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
