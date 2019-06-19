@@ -28,6 +28,7 @@ public class RichBean {
     private ClickSpan.OnClickSpan onClickSpan;// 点击事件
     private LatexClickSpan.OnLatexClickSpan onLatexClickSpan;
     private RichImgBean richImgBean; // 图片相关信息
+    private String borderColor;// 边框颜色
 
     public RichBean() {
         super();
@@ -132,6 +133,30 @@ public class RichBean {
         this.onClickSpan = onClickSpan;
         this.onLatexClickSpan = onLatexClickSpan;
         this.richImgBean = richImgBean;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
+        this.richImgBean = richImgBean;
+        this.borderColor = borderColor;
     }
 
     public String getText() {
@@ -294,6 +319,14 @@ public class RichBean {
         this.onLatexClickSpan = onLatexClickSpan;
     }
 
+    public String getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -317,6 +350,7 @@ public class RichBean {
                 ", onClickSpan=" + onClickSpan +
                 ", onLatexClickSpan=" + onLatexClickSpan +
                 ", richImgBean=" + richImgBean +
+                ", borderColor='" + borderColor + '\'' +
                 '}';
     }
 }

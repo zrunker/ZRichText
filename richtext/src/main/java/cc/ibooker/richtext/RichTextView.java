@@ -185,7 +185,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-    // 设置加载模式
+    // 设置图片加载模式
     public RichTextView setLoadImgModel(int loadImgModel) {
         if (loadImgModel == 0 || loadImgModel == 1)
             this.loadImgModel = loadImgModel;
@@ -1187,6 +1187,27 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 添加边框
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param borderColor   边框颜色
+     */
+    public synchronized RichTextView updateBorder(int startPosition, int endPosition, int borderColor) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            BorderSpan borderSpan = new BorderSpan(borderColor);
+            spannableString.setSpan(borderSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
      * 设置Span事件
      */
     private synchronized void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
@@ -1289,6 +1310,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (richBean.getScaleXMultiple() > 0) {
                 ScaleXSpan scaleXSpan = new ScaleXSpan(richBean.getScaleXMultiple());
                 spannableString.setSpan(scaleXSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 添加边框
+            if (!TextUtils.isEmpty(richBean.getBorderColor())) {
+                BorderSpan borderSpan = new BorderSpan(richBean.getBorderColor());
+                spannableString.setSpan(borderSpan,
                         startPosition, endPosition,
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }
