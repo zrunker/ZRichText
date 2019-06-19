@@ -1659,7 +1659,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 Object object = data.getText();
                 if (TextUtils.isEmpty(data.getText()))
                     object = data.getRes();
-                if (loadImgModel == 0) {
+                if (loadImgModel == 0 || TextUtils.isEmpty(data.getText())) {
                     // 采用Glide加载图片
                     Glide.with(getContext())
                             .load(object)
