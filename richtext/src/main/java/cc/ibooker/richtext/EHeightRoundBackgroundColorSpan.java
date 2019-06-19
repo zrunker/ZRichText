@@ -9,6 +9,10 @@ import android.text.style.LineBackgroundSpan;
 
 /**
  * 背景-文字和图片等高+设置圆角
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class EHeightRoundBackgroundColorSpan implements LineBackgroundSpan {
     private int start, end;

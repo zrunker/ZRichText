@@ -7,6 +7,10 @@ import android.view.View;
 
 /**
  * Latex点击事件
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class LatexClickSpan extends ClickableSpan {
     private String latex;

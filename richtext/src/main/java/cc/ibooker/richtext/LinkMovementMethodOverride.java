@@ -11,6 +11,8 @@ import android.widget.TextView;
  * 设置TextView的触摸事件
  *
  * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class LinkMovementMethodOverride implements View.OnTouchListener {
 

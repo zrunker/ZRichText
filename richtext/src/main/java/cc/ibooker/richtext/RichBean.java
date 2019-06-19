@@ -2,6 +2,10 @@ package cc.ibooker.richtext;
 
 /**
  * 富文本相关数据
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class RichBean {
     private String text;// 文本或图片URL/图片文件地址

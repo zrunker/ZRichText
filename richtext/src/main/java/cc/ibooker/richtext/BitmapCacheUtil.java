@@ -5,6 +5,10 @@ import android.util.LruCache;
 
 /**
  * 图片加载缓存类
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class BitmapCacheUtil {
     private LruCache<String, Bitmap> mLruCache;

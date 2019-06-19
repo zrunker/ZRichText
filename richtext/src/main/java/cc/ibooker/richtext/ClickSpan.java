@@ -6,6 +6,10 @@ import android.view.View;
 
 /**
  * 可点击ClickableSpan
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class ClickSpan extends ClickableSpan {
     private String txt;

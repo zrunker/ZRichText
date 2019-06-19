@@ -4,6 +4,10 @@ import android.graphics.drawable.Drawable;
 
 /**
  * 下载图片相关Bean文件
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class DownLoadBean {
     private Drawable drawable;

@@ -7,6 +7,10 @@ import android.util.LruCache;
 
 /**
  * 图片加载缓存类
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class DrawableCacheUtil {
     private LruCache<String, Drawable> mLruCache;

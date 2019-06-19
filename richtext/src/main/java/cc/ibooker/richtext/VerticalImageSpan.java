@@ -10,6 +10,10 @@ import android.text.style.ImageSpan;
 
 /**
  * 垂直居中ImageSpan
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class VerticalImageSpan extends ImageSpan {
     private Bitmap bitmap;

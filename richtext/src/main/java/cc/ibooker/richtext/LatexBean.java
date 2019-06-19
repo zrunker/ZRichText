@@ -2,6 +2,10 @@ package cc.ibooker.richtext;
 
 /**
  * 公式相关数据
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class LatexBean {
     private String latex;

@@ -11,6 +11,10 @@ import android.graphics.drawable.BitmapDrawable;
 
 /**
  * 圆角图片实现
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class RoundDrawable extends BitmapDrawable {
     private final Paint paint;

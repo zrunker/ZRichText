@@ -8,6 +8,10 @@ import android.text.style.ReplacementSpan;
 
 /**
  * 圆角BackgroundColorSpan
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class RoundBackgroundColorSpan extends ReplacementSpan {
     private int radius;
@@ -21,7 +25,7 @@ public class RoundBackgroundColorSpan extends ReplacementSpan {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
 //        int originalColor = paint.getColor();
         RectF rect = new RectF(x, top, x + measureText(paint, text, start, end), bottom);
         paint.setColor(backgroundColor);

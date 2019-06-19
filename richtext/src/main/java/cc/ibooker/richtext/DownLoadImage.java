@@ -14,6 +14,8 @@ import java.util.concurrent.Executors;
  * 用来获取网络图片-没有缓存
  *
  * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class DownLoadImage {
     private ArrayList<MyHandler> handlers;

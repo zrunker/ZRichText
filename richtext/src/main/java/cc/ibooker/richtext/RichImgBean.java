@@ -2,6 +2,10 @@ package cc.ibooker.richtext;
 
 /**
  * 与ImageSpan相关数据
+ *
+ * @author 邹峰立
+ * <p>
+ * https://github.com/zrunker/ZRichText
  */
 public class RichImgBean {
     private String realText;// 真实文本 一般是Url
