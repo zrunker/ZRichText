@@ -1232,7 +1232,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && style != null) {
             BlurMaskFilter blurMaskFilter = new BlurMaskFilter(radius, style);
             spannableString.setSpan(blurMaskFilter,
                     startPosition, endPosition,
@@ -1250,7 +1251,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && direction != null) {
             EmbossMaskFilter embossMaskFilter = new EmbossMaskFilter(direction, ambient, specular, blurRadius);
             spannableString.setSpan(embossMaskFilter,
                     startPosition, endPosition,
@@ -1273,7 +1275,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && drawable != null) {
             DrawableMarginSpan drawableMarginSpan = new DrawableMarginSpan(drawable, pad);
             spannableString.setSpan(drawableMarginSpan,
                     startPosition, endPosition,
@@ -1316,7 +1319,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && size > 0) {
             AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(size, dip);
             spannableString.setSpan(absoluteSizeSpan,
                     startPosition, endPosition,
@@ -1338,7 +1342,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && drawable != null) {
             DynamicDrawableSpan dynamicDrawableSpan = new DynamicDrawableSpan(verticalAlignment) {
                 @Override
                 public Drawable getDrawable() {
@@ -1365,7 +1370,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && bitmap != null) {
             IconMarginSpan iconMarginSpan = new IconMarginSpan(bitmap, pad);
             spannableString.setSpan(iconMarginSpan,
                     startPosition, endPosition,
@@ -1386,7 +1392,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && align != null) {
             AlignmentSpan.Standard standard = new AlignmentSpan.Standard(align);
             spannableString.setSpan(standard,
                     startPosition, endPosition,
@@ -1404,7 +1411,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(family)
+                && color != null
+                && linkColor != null) {
             TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(family, style, size, color, linkColor);
             spannableString.setSpan(textAppearanceSpan,
                     startPosition, endPosition,
@@ -1457,7 +1467,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && !TextUtils.isEmpty(family)) {
             TypefaceSpan typefaceSpan = new TypefaceSpan(family);
             spannableString.setSpan(typefaceSpan,
                     startPosition, endPosition,
@@ -1475,11 +1486,29 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && typeface != null) {
             TypefaceSpan typefaceSpan = new TypefaceSpan(typeface);
             spannableString.setSpan(typefaceSpan,
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 设置span
+     */
+    public synchronized RichTextView setSpan(Object what, int startPosition, int endPosition, int flags) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition
+                && what != null) {
+            spannableString.setSpan(what,
+                    startPosition, endPosition,
+                    flags);
             setText(spannableString);
         }
         return this;
