@@ -1,6 +1,7 @@
 package cc.ibooker.zrichtext;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -154,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
                 richTextView.updateBackgroundColor("#FFE892", 18, 20, 1);
                 richTextView.updateBackgroundColor("#FFE892", 21, 24, 1);
                 richTextView.updateBackgroundColor("#FFE892", 28, 29, 1);
+
+                richTextView.updateBorder(1, 3, Color.BLUE);
             }
         }, 100);
 
@@ -278,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                 if (i == 7) {
                     richBean.setUnderline(true);
                     richBean.setItalic(true);
+                    richBean.setBorderColor("#FF4501");
                     richBean.setOnClickSpan(new ClickSpan.OnClickSpan() {
                         @Override
                         public void onClickSpan(String txt) {
