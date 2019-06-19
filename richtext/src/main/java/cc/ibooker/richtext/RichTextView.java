@@ -2,6 +2,7 @@ package cc.ibooker.richtext;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
@@ -15,6 +16,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -22,6 +25,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.AlignmentSpan;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.DrawableMarginSpan;
 import android.text.style.DynamicDrawableSpan;
@@ -34,6 +38,8 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
+import android.text.style.TextAppearanceSpan;
+import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
@@ -1370,6 +1376,116 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 设置文本方向
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param align         方向
+     */
+    public synchronized RichTextView updateAlignmentStandard(int startPosition, int endPosition, Layout.Alignment align) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            AlignmentSpan.Standard standard = new AlignmentSpan.Standard(align);
+            spannableString.setSpan(standard,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 修改文本样式
+     */
+    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
+                                                          String family, int style, int size, ColorStateList color, ColorStateList linkColor) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(family, style, size, color, linkColor);
+            spannableString.setSpan(textAppearanceSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 修改文本样式2
+     */
+    public synchronized RichTextView updateTextAppearance2(int startPosition, int endPosition,
+                                                           int appearance, int colorList) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(getContext(), appearance, colorList);
+            spannableString.setSpan(textAppearanceSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 修改文本样式3
+     */
+    public synchronized RichTextView updateTextAppearance3(int startPosition, int endPosition,
+                                                           int appearance) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TextAppearanceSpan textAppearanceSpan = new TextAppearanceSpan(getContext(), appearance);
+            spannableString.setSpan(textAppearanceSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 文本字体
+     */
+    public synchronized RichTextView updateTypeface(int startPosition, int endPosition, String family) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TypefaceSpan typefaceSpan = new TypefaceSpan(family);
+            spannableString.setSpan(typefaceSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 文本字体2
+     */
+    @RequiresApi(api = 28)
+    public synchronized RichTextView updateTypeface2(int startPosition, int endPosition, Typeface typeface) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            TypefaceSpan typefaceSpan = new TypefaceSpan(typeface);
+            spannableString.setSpan(typefaceSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
      * 设置Span事件
      */
     private synchronized void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
@@ -1511,6 +1627,20 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (richBean.getBitmap() != null) {
                 IconMarginSpan iconMarginSpan = new IconMarginSpan(richBean.getBitmap(), richBean.getBitmapPad());
                 spannableString.setSpan(iconMarginSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 文本方向
+            if (richBean.getAlign() != null) {
+                AlignmentSpan.Standard standard = new AlignmentSpan.Standard(richBean.getAlign());
+                spannableString.setSpan(standard,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 字体样式
+            if (!TextUtils.isEmpty(richBean.getFamily())) {
+                TypefaceSpan typefaceSpan = new TypefaceSpan(richBean.getFamily());
+                spannableString.setSpan(typefaceSpan,
                         startPosition, endPosition,
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }

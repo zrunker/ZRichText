@@ -2,6 +2,7 @@ package cc.ibooker.richtext;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.text.Layout;
 
 /**
  * 富文本相关数据
@@ -39,6 +40,8 @@ public class RichBean {
     private boolean isAbsoluteSizeDip;// 绝对大小是否dp为单位
     private Bitmap bitmap;// 待插入图片
     private int bitmapPad;// 待出入图片内边距
+    private Layout.Alignment align;// 文本方向
+    private String family;// 文字字体
 
     public RichBean() {
         super();
@@ -68,190 +71,7 @@ public class RichBean {
         this.richImgBean = richImgBean;
     }
 
-    public RichBean(String text, int type, int height, int width, String backgroundColor, String color, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
-        this.text = text;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.onClickSpan = onClickSpan;
-        this.richImgBean = richImgBean;
-    }
-
-    public RichBean(String text, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
-        this.text = text;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.richImgBean = richImgBean;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, RichImgBean richImgBean) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.richImgBean = richImgBean;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.onLatexClickSpan = onLatexClickSpan;
-        this.richImgBean = richImgBean;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.onLatexClickSpan = onLatexClickSpan;
-        this.richImgBean = richImgBean;
-        this.borderColor = borderColor;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.onLatexClickSpan = onLatexClickSpan;
-        this.richImgBean = richImgBean;
-        this.borderColor = borderColor;
-        this.drawable = drawable;
-        this.pad = pad;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.onLatexClickSpan = onLatexClickSpan;
-        this.richImgBean = richImgBean;
-        this.borderColor = borderColor;
-        this.drawable = drawable;
-        this.pad = pad;
-        this.quoteColor = quoteColor;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip) {
-        this.text = text;
-        this.res = res;
-        this.type = type;
-        this.height = height;
-        this.width = width;
-        this.backgroundColor = backgroundColor;
-        this.color = color;
-        this.addUrl = addUrl;
-        this.textSizeMultiple = textSizeMultiple;
-        this.isUnderline = isUnderline;
-        this.isStrikethrough = isStrikethrough;
-        this.isSuperscript = isSuperscript;
-        this.isSubscript = isSubscript;
-        this.isBold = isBold;
-        this.isItalic = isItalic;
-        this.isBoldItalic = isBoldItalic;
-        this.scaleXMultiple = scaleXMultiple;
-        this.onClickSpan = onClickSpan;
-        this.onLatexClickSpan = onLatexClickSpan;
-        this.richImgBean = richImgBean;
-        this.borderColor = borderColor;
-        this.drawable = drawable;
-        this.pad = pad;
-        this.quoteColor = quoteColor;
-        this.absoluteSize = absoluteSize;
-        this.isAbsoluteSizeDip = isAbsoluteSizeDip;
-    }
-
-    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip, Bitmap bitmap, int bitmapPad) {
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip, Bitmap bitmap, int bitmapPad, Layout.Alignment align, String family) {
         this.text = text;
         this.res = res;
         this.type = type;
@@ -280,6 +100,8 @@ public class RichBean {
         this.isAbsoluteSizeDip = isAbsoluteSizeDip;
         this.bitmap = bitmap;
         this.bitmapPad = bitmapPad;
+        this.align = align;
+        this.family = family;
     }
 
     public String getText() {
@@ -506,6 +328,22 @@ public class RichBean {
         this.bitmapPad = bitmapPad;
     }
 
+    public Layout.Alignment getAlign() {
+        return align;
+    }
+
+    public void setAlign(Layout.Alignment align) {
+        this.align = align;
+    }
+
+    public String getFamily() {
+        return family;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -537,6 +375,8 @@ public class RichBean {
                 ", isAbsoluteSizeDip=" + isAbsoluteSizeDip +
                 ", bitmap=" + bitmap +
                 ", bitmapPad=" + bitmapPad +
+                ", align=" + align +
+                ", family='" + family + '\'' +
                 '}';
     }
 }
