@@ -4,8 +4,10 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.EmbossMaskFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -19,8 +21,13 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.DrawableMarginSpan;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.IconMarginSpan;
+import android.text.style.QuoteSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.ScaleXSpan;
 import android.text.style.StrikethroughSpan;
@@ -1208,6 +1215,161 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 添加模糊效果
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param radius        模糊半径，越大越模糊
+     * @param style         样式
+     */
+    public synchronized RichTextView updateBlurMaskFilter(int startPosition, int endPosition, float radius, BlurMaskFilter.Blur style) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            BlurMaskFilter blurMaskFilter = new BlurMaskFilter(radius, style);
+            spannableString.setSpan(blurMaskFilter,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 浮雕效果
+     */
+    public synchronized RichTextView updateEmbossMaskFilter(int startPosition, int endPosition,
+                                                            float[] direction, float ambient, float specular, float blurRadius) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            EmbossMaskFilter embossMaskFilter = new EmbossMaskFilter(direction, ambient, specular, blurRadius);
+            spannableString.setSpan(embossMaskFilter,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 文本插入图片
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param drawable      待插入图片
+     * @param pad           内边距
+     */
+    public synchronized RichTextView updateDrawableMargin(int startPosition, int endPosition,
+                                                          Drawable drawable, int pad) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            DrawableMarginSpan drawableMarginSpan = new DrawableMarginSpan(drawable, pad);
+            spannableString.setSpan(drawableMarginSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 添加竖线
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   解释位置
+     * @param quoteColor    竖线颜色
+     */
+    public synchronized RichTextView updateQuote(int startPosition, int endPosition, int quoteColor) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            QuoteSpan quoteSpan = new QuoteSpan(quoteColor);
+            spannableString.setSpan(quoteSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 绝对大小
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param size          大小
+     * @param dip           是否为dp
+     */
+    public synchronized RichTextView updateAbsoluteSize(int startPosition, int endPosition, int size, boolean dip) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(size, dip);
+            spannableString.setSpan(absoluteSizeSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 设置图片，基于文本基线或底部对齐
+     *
+     * @param startPosition     开始位置
+     * @param endPosition       结束位置
+     * @param verticalAlignment 位置 DynamicDrawableSpan.ALIGN_BASELINE、 DynamicDrawableSpan.ALIGN_BOTTOM
+     * @param drawable          带显示图片
+     */
+    public synchronized RichTextView updateDynamicDrawable(int startPosition, int endPosition, int verticalAlignment, final Drawable drawable) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            DynamicDrawableSpan dynamicDrawableSpan = new DynamicDrawableSpan(verticalAlignment) {
+                @Override
+                public Drawable getDrawable() {
+                    return drawable;
+                }
+            };
+            spannableString.setSpan(dynamicDrawableSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
+     * 插入图片
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param bitmap        待插入bitmap
+     * @param pad           内边距
+     */
+    public synchronized RichTextView updateIconMargin(int startPosition, int endPosition, Bitmap bitmap, int pad) {
+        if (spannableString != null
+                && startPosition <= spannableString.length()
+                && endPosition <= spannableString.length()
+                && startPosition <= endPosition) {
+            IconMarginSpan iconMarginSpan = new IconMarginSpan(bitmap, pad);
+            spannableString.setSpan(iconMarginSpan,
+                    startPosition, endPosition,
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            setText(spannableString);
+        }
+        return this;
+    }
+
+    /**
      * 设置Span事件
      */
     private synchronized void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
@@ -1317,6 +1479,38 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (!TextUtils.isEmpty(richBean.getBorderColor())) {
                 BorderSpan borderSpan = new BorderSpan(richBean.getBorderColor());
                 spannableString.setSpan(borderSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 待插入图片
+            if (richBean.getDrawable() != null) {
+                DrawableMarginSpan drawableMarginSpan = new DrawableMarginSpan(richBean.getDrawable(), richBean.getPad());
+                spannableString.setSpan(drawableMarginSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 插入竖线
+            if (!TextUtils.isEmpty(richBean.getQuoteColor())) {
+                try {
+                    QuoteSpan quoteSpan = new QuoteSpan(Color.parseColor(richBean.getQuoteColor()));
+                    spannableString.setSpan(quoteSpan,
+                            startPosition, endPosition,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            // 绝对大小
+            if (richBean.getAbsoluteSize() > 0) {
+                AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(richBean.getAbsoluteSize(), richBean.isAbsoluteSizeDip());
+                spannableString.setSpan(absoluteSizeSpan,
+                        startPosition, endPosition,
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            // 插入图片
+            if (richBean.getBitmap() != null) {
+                IconMarginSpan iconMarginSpan = new IconMarginSpan(richBean.getBitmap(), richBean.getBitmapPad());
+                spannableString.setSpan(iconMarginSpan,
                         startPosition, endPosition,
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }

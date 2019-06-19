@@ -1,5 +1,8 @@
 package cc.ibooker.richtext;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 /**
  * 富文本相关数据
  *
@@ -29,6 +32,13 @@ public class RichBean {
     private LatexClickSpan.OnLatexClickSpan onLatexClickSpan;
     private RichImgBean richImgBean; // 图片相关信息
     private String borderColor;// 边框颜色
+    private Drawable drawable;// 待插入图片
+    private int pad;// 待出入图片边距
+    private String quoteColor;// 竖线颜色
+    private int absoluteSize;// 绝对大小
+    private boolean isAbsoluteSizeDip;// 绝对大小是否dp为单位
+    private Bitmap bitmap;// 待插入图片
+    private int bitmapPad;// 待出入图片内边距
 
     public RichBean() {
         super();
@@ -157,6 +167,119 @@ public class RichBean {
         this.onLatexClickSpan = onLatexClickSpan;
         this.richImgBean = richImgBean;
         this.borderColor = borderColor;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
+        this.richImgBean = richImgBean;
+        this.borderColor = borderColor;
+        this.drawable = drawable;
+        this.pad = pad;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
+        this.richImgBean = richImgBean;
+        this.borderColor = borderColor;
+        this.drawable = drawable;
+        this.pad = pad;
+        this.quoteColor = quoteColor;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
+        this.richImgBean = richImgBean;
+        this.borderColor = borderColor;
+        this.drawable = drawable;
+        this.pad = pad;
+        this.quoteColor = quoteColor;
+        this.absoluteSize = absoluteSize;
+        this.isAbsoluteSizeDip = isAbsoluteSizeDip;
+    }
+
+    public RichBean(String text, int res, int type, int height, int width, String backgroundColor, String color, String addUrl, float textSizeMultiple, boolean isUnderline, boolean isStrikethrough, boolean isSuperscript, boolean isSubscript, boolean isBold, boolean isItalic, boolean isBoldItalic, float scaleXMultiple, ClickSpan.OnClickSpan onClickSpan, LatexClickSpan.OnLatexClickSpan onLatexClickSpan, RichImgBean richImgBean, String borderColor, Drawable drawable, int pad, String quoteColor, int absoluteSize, boolean isAbsoluteSizeDip, Bitmap bitmap, int bitmapPad) {
+        this.text = text;
+        this.res = res;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+        this.backgroundColor = backgroundColor;
+        this.color = color;
+        this.addUrl = addUrl;
+        this.textSizeMultiple = textSizeMultiple;
+        this.isUnderline = isUnderline;
+        this.isStrikethrough = isStrikethrough;
+        this.isSuperscript = isSuperscript;
+        this.isSubscript = isSubscript;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isBoldItalic = isBoldItalic;
+        this.scaleXMultiple = scaleXMultiple;
+        this.onClickSpan = onClickSpan;
+        this.onLatexClickSpan = onLatexClickSpan;
+        this.richImgBean = richImgBean;
+        this.borderColor = borderColor;
+        this.drawable = drawable;
+        this.pad = pad;
+        this.quoteColor = quoteColor;
+        this.absoluteSize = absoluteSize;
+        this.isAbsoluteSizeDip = isAbsoluteSizeDip;
+        this.bitmap = bitmap;
+        this.bitmapPad = bitmapPad;
     }
 
     public String getText() {
@@ -327,6 +450,62 @@ public class RichBean {
         this.borderColor = borderColor;
     }
 
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
+    }
+
+    public int getPad() {
+        return pad;
+    }
+
+    public void setPad(int pad) {
+        this.pad = pad;
+    }
+
+    public String getQuoteColor() {
+        return quoteColor;
+    }
+
+    public void setQuoteColor(String quoteColor) {
+        this.quoteColor = quoteColor;
+    }
+
+    public int getAbsoluteSize() {
+        return absoluteSize;
+    }
+
+    public void setAbsoluteSize(int absoluteSize) {
+        this.absoluteSize = absoluteSize;
+    }
+
+    public boolean isAbsoluteSizeDip() {
+        return isAbsoluteSizeDip;
+    }
+
+    public void setAbsoluteSizeDip(boolean absoluteSizeDip) {
+        isAbsoluteSizeDip = absoluteSizeDip;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public int getBitmapPad() {
+        return bitmapPad;
+    }
+
+    public void setBitmapPad(int bitmapPad) {
+        this.bitmapPad = bitmapPad;
+    }
+
     @Override
     public String toString() {
         return "RichBean{" +
@@ -351,6 +530,13 @@ public class RichBean {
                 ", onLatexClickSpan=" + onLatexClickSpan +
                 ", richImgBean=" + richImgBean +
                 ", borderColor='" + borderColor + '\'' +
+                ", drawable=" + drawable +
+                ", pad=" + pad +
+                ", quoteColor='" + quoteColor + '\'' +
+                ", absoluteSize=" + absoluteSize +
+                ", isAbsoluteSizeDip=" + isAbsoluteSizeDip +
+                ", bitmap=" + bitmap +
+                ", bitmapPad=" + bitmapPad +
                 '}';
     }
 }
