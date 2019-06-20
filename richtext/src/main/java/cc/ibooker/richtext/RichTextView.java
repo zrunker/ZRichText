@@ -183,7 +183,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 设置是否能够滚动
     private void setRichTvScroll() {
-        if (isScroll && richMaxLines <= 0)
+        if (isScroll && richMaxLines > 0)
             setMovementMethod(LinkMovementMethod.getInstance());
         else
             setOnTouchListener(new LinkMovementMethodOverride());
