@@ -1,5 +1,5 @@
 # ZRichText
-自定义富文本控件RichTextView，用于显示图片+文字，支持图片点击和文本点击事件，支持文本特殊处理，支持图片颜色和背景色更改。
+自定义富文本控件RichTextView，用于显示图片+文字+Latex公式，支持图片点击、文本点击、Latex点击事件，支持文本特殊处理，支持图片颜色和背景色更改，支持富文局部操作：下划线、删除线、背景色、前景色、上标、下标等等，支持任意富文本显示，以及自动识别Latex公式并显示。
 
 >微信公众号：书客创作
 
@@ -16,7 +16,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.zrunker:ZRichText:v1.0.5'
+	implementation 'com.github.zrunker:ZRichText:v1.1.6.1'
 }
 ```
 B. maven方式：
@@ -31,7 +31,7 @@ B. maven方式：
 <dependency>
 	<groupId>com.github.zrunker</groupId>
 	<artifactId>ZRichText</artifactId>
-	<version>v1.0.5</version>
+	<version>v1.1.6.1</version>
 </dependency>
 ```
 **2、引用**
@@ -165,11 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 richTextView.updateItem(richBean, 9);
             }
         }, 10000);
-
-        ImageView image = findViewById(R.id.image);
-        Glide.with(this)
-                .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
-                .into(image);
     }
 
 //    @Override
