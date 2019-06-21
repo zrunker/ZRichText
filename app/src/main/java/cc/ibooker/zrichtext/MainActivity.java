@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -19,6 +21,7 @@ import cc.ibooker.richtext.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView textView;
     private RichTextView richTextView, richTextView2, richTextView3, richTextView4;
 
     @Override
@@ -35,10 +38,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        textView = findViewById(R.id.textView);
         richTextView = findViewById(R.id.richTextView);
         richTextView2 = findViewById(R.id.richTextView2);
         richTextView3 = findViewById(R.id.richTextView3);
         richTextView4 = findViewById(R.id.richTextView4);
+        textView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        textView.setText("阿搜噶搜噶是否噶是购房人个人过去而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话");
 
 
         ArrayList<RichBean> richBeans = new ArrayList<>();
