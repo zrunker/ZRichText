@@ -44,7 +44,7 @@ public class RichBean {
     private int bitmapPad;// 待出入图片内边距
     private Layout.Alignment align;// 文本方向
     private String family;// 文字字体
-    private int[] colors;
+    private int[] colors;// 文字颜色集合
 
     public RichBean() {
         super();
