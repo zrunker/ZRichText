@@ -207,3 +207,10 @@ public class RichBean {
 最终显示效果：
 ![图片描述](http://www.ibookerfile.cc/upload/images/acontents/1_1550577253961acontentimage.jpg)
 ![图片描述](http://www.ibookerfile.cc/upload/images/acontents/1_1554988318078acontentimage.jpg)
+
+**混淆规则**
+在proguard-rules.pro文件中添加以下代码：
+```
+# RichTextView
+-keep class cc.ibooker.richtext.jlatexmath.** { *; }
+```
