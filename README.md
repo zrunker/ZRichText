@@ -647,6 +647,7 @@ public class RichBean {
 ```
 # RichTextView
 -keep class cc.ibooker.richtext.jlatexmath.** { *; }
+-keep class cc.ibooker.richtext.bean.** { *; }
 ```
 同时注意Glide的混淆：
 ```
