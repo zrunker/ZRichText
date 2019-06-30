@@ -1,4 +1,7 @@
-package cc.ibooker.richtext;
+package cc.ibooker.richtext.bean;
+
+import cc.ibooker.richtext.ClickSpan;
+import cc.ibooker.richtext.VerticalImageSpan;
 
 /**
  * 与ImageSpan相关数据

@@ -1,4 +1,6 @@
-package cc.ibooker.richtext;
+package cc.ibooker.richtext.bean;
+
+import cc.ibooker.richtext.LatexClickSpan;
 
 /**
  * 公式相关数据

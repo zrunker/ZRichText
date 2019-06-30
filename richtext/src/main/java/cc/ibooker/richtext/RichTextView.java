@@ -58,6 +58,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cc.ibooker.richtext.bean.LatexBean;
+import cc.ibooker.richtext.bean.RichBean;
+import cc.ibooker.richtext.bean.RichImgBean;
 import cc.ibooker.richtext.jlatexmath.core.AjLatexMath;
 import cc.ibooker.richtext.jlatexmath.core.Insets;
 import cc.ibooker.richtext.jlatexmath.core.TeXConstants;
@@ -2090,67 +2093,73 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 将latex文本转换为Bitmap
     private synchronized Bitmap latexDrawable(String latex, LatexBean latexBean) {
-        TextPaint paint = getPaint();
-        float density = paint.density;
-        float textSize = paint.getTextSize();
-        float proportion = textSize / density;
+        try {
+            TextPaint paint = getPaint();
+            float density = paint.density;
+            float textSize = paint.getTextSize();
+            float proportion = textSize / density;
 
-        TeXFormula formula = TeXFormula.getPartialTeXFormula(latex);
-        TeXIcon icon = formula.new TeXIconBuilder()
-                .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(proportion)
-                .setWidth(TeXConstants.UNIT_SP, proportion, TeXConstants.ALIGN_LEFT)
-                .setIsMaxWidth(true)
-                .setInterLineSpacing(TeXConstants.UNIT_SP, AjLatexMath.getLeading(proportion))
-                .build();
-        icon.setInsets(new Insets(5, 5, 5, 5));
+            TeXFormula formula = TeXFormula.getPartialTeXFormula(latex);
+            TeXIcon icon = formula.new TeXIconBuilder()
+                    .setStyle(TeXConstants.STYLE_DISPLAY)
+                    .setSize(proportion)
+                    .setWidth(TeXConstants.UNIT_SP, proportion, TeXConstants.ALIGN_LEFT)
+                    .setIsMaxWidth(true)
+                    .setInterLineSpacing(TeXConstants.UNIT_SP, AjLatexMath.getLeading(proportion))
+                    .build();
+            icon.setInsets(new Insets(5, 5, 5, 5));
 
-        Bitmap image = Bitmap.createBitmap(icon.getIconWidth(), icon.getIconHeight(),
-                Bitmap.Config.ARGB_8888);
+            Bitmap image = Bitmap.createBitmap(icon.getIconWidth(), icon.getIconHeight(),
+                    Bitmap.Config.ARGB_8888);
 
 //        Canvas g2 = new Canvas(image);
 //        g2.drawColor(Color.TRANSPARENT);
 //        icon.paintIcon(g2, 0, 0);
 
-        // 设置背景
-        Canvas g2 = new Canvas(image);
-        int drawColor = Color.TRANSPARENT;
-        if (!TextUtils.isEmpty(backGroundColor)) {
-            try {
-                drawColor = Color.parseColor(backGroundColor);
-            } catch (Exception e) {
-                e.printStackTrace();
+            // 设置背景
+            Canvas g2 = new Canvas(image);
+            int drawColor = Color.TRANSPARENT;
+            if (!TextUtils.isEmpty(backGroundColor)) {
+                try {
+                    drawColor = Color.parseColor(backGroundColor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        g2.drawColor(drawColor);
-        icon.paintIcon(g2, 0, 0);
+            g2.drawColor(drawColor);
+            icon.paintIcon(g2, 0, 0);
 
-        // 设置颜色
-        if (!TextUtils.isEmpty(tintColor)) {
-            try {
-                Canvas canvas = new Canvas(image);
-                Paint paint1 = new Paint();
-                paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(tintColor), PorterDuff.Mode.SRC_IN));
-                canvas.drawBitmap(image, 0, 0, paint1);
-            } catch (Exception e) {
-                e.printStackTrace();
+            // 设置颜色
+            if (!TextUtils.isEmpty(tintColor)) {
+                try {
+                    Canvas canvas = new Canvas(image);
+                    Paint paint1 = new Paint();
+                    paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(tintColor), PorterDuff.Mode.SRC_IN));
+                    canvas.drawBitmap(image, 0, 0, paint1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        // 如果image的宽度>RichTextView的宽度，改变image的大小
-        if (image.getWidth() > richTvWidth) {
-            image = Bitmap.createScaledBitmap(image, richTvWidth,
-                    image.getHeight() * richTvWidth / image.getWidth(),
-                    false);
-            if (onLongLatexClickSpanListener != null)
-                latexBean.setOnLatexClickSpanListener(onLongLatexClickSpanListener);
-        }
+            // 如果image的宽度>RichTextView的宽度，改变image的大小
+            if (image.getWidth() > richTvWidth) {
+                image = Bitmap.createScaledBitmap(image, richTvWidth,
+                        image.getHeight() * richTvWidth / image.getWidth(),
+                        false);
+                if (onLongLatexClickSpanListener != null)
+                    latexBean.setOnLatexClickSpanListener(onLongLatexClickSpanListener);
+            }
 
-        return image;
+            return image;
 
 //        return new BitmapDrawable(getResources(), image);
 //        return new BitmapDrawable( bitmap);
 //        return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("RichTextView", "Latex异常" + latex);
+            return null;
+        }
     }
 
     /**

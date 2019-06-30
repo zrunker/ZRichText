@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import cc.ibooker.richtext.ClickSpan;
 import cc.ibooker.richtext.LatexClickSpan;
-import cc.ibooker.richtext.RichBean;
+import cc.ibooker.richtext.bean.RichBean;
 import cc.ibooker.richtext.RichTextView;
 
 public class MainActivity extends AppCompatActivity {

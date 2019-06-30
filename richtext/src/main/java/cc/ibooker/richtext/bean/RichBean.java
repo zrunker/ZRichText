@@ -1,10 +1,13 @@
-package cc.ibooker.richtext;
+package cc.ibooker.richtext.bean;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
 
 import java.util.Arrays;
+
+import cc.ibooker.richtext.ClickSpan;
+import cc.ibooker.richtext.LatexClickSpan;
 
 /**
  * 富文本相关数据
