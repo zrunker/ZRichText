@@ -353,7 +353,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         resetData();
         this.isOpenImgCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
-            richBeanList = datas;
+            richBeanList = (ArrayList<RichBean>) datas.clone();
             if (richTvWidth > 0) {
                 updateRichTvData1();
             } else {
@@ -419,7 +419,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         resetData();
         this.isOpenImgCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
-            richBeanList = datas;
+            richBeanList = (ArrayList<RichBean>) datas.clone();
             defaultDrawable = drawable;
             if (richTvWidth > 0) {
                 updateRichTvData2();
@@ -2157,7 +2157,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //        return bitmap;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("RichTextView", "Latex异常" + latex);
+            Log.d("RichTextView", "Latex异常：" + latex);
             return null;
         }
     }
