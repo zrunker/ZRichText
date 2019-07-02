@@ -161,7 +161,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 设置背景颜色 包括图片背景颜色
      *
-     * @param backGroundColor 背景颜色 String 16进制
+     * @param backGroundColor 背景颜色 String 16进制 "#FFF000"
      */
     public RichTextView setBackGroundColor(String backGroundColor) {
         this.backGroundColor = backGroundColor;
@@ -181,7 +181,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 设置字体颜色 包括图片颜色
      *
-     * @param tintColor 字体颜色 String 16进制
+     * @param tintColor 字体颜色 String 16进制 "#FFF000"
      */
     public RichTextView setTintColor(String tintColor) {
         this.tintColor = tintColor;
@@ -219,6 +219,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 销毁
      */
     public RichTextView onDestory() {
+        resetData();
         DownLoadImage.getInstance().deStory();
         try {
             Glide.with(getContext()).pauseRequests();
@@ -769,7 +770,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景
      *
-     * @param backgroundColor            背景颜色 16进制
+     * @param backgroundColor            背景颜色 16进制  "#FFF000"
      * @param startPosition              开始位置
      * @param endPosition                结束位置
      * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改（图片与文本背景是否等高）
@@ -883,7 +884,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 更新文本圆角背景
      *
-     * @param backgroundColor            背景颜色 16进制
+     * @param backgroundColor            背景颜色 16进制  "#FFF000"
      * @param radius                     圆角半径
      * @param startPosition              开始位置
      * @param endPosition                结束位置
@@ -935,7 +936,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本颜色
      *
-     * @param color         文本颜色 16进制
+     * @param color         文本颜色 16进制  "#FFF000"
      * @param startPosition 开始位置
      * @param endPosition   结束位置
      */
@@ -1071,7 +1072,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本颜色4
      *
-     * @param color         文本颜色 String 16进制 单纯修改文本
+     * @param color         文本颜色 String 16进制 单纯修改文本  "#FFF000"
      * @param startPosition 开始位置
      * @param endPosition   结束位置
      */
