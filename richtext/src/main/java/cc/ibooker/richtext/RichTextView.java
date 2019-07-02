@@ -137,32 +137,52 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         AjLatexMath.init(getContext().getApplicationContext());
     }
 
-    // 设置是否能够滚动
+    /**
+     * 设置是否能够滚动
+     *
+     * @param scroll boolean
+     */
     public RichTextView setScroll(boolean scroll) {
         this.isScroll = scroll;
         setRichTvScroll();
         return this;
     }
 
-    // 设置默认图片
+    /**
+     * 设置默认显示图片
+     *
+     * @param defaultDrawable 默认显示图片Drawable
+     */
     public RichTextView setDefaultDrawable(Drawable defaultDrawable) {
         this.defaultDrawable = defaultDrawable;
         return this;
     }
 
-    // 设置背景颜色
+    /**
+     * 设置背景颜色 包括图片背景颜色
+     *
+     * @param backGroundColor 背景颜色 String 16进制
+     */
     public RichTextView setBackGroundColor(String backGroundColor) {
         this.backGroundColor = backGroundColor;
         return this;
     }
 
-    // 设置Latex公式是否为一个字符串
+    /**
+     * 设置Latex公式是否为一个字符串
+     *
+     * @param latexOneStr boolean
+     */
     public RichTextView setLatexOneStr(boolean latexOneStr) {
         this.isLatexOneStr = latexOneStr;
         return this;
     }
 
-    // 设置字体颜色
+    /**
+     * 设置字体颜色 包括图片颜色
+     *
+     * @param tintColor 字体颜色 String 16进制
+     */
     public RichTextView setTintColor(String tintColor) {
         this.tintColor = tintColor;
         return this;
@@ -182,6 +202,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     @Override
     public CharSequence getText() {
+        if (TextUtils.isEmpty(richText))
+            return super.getText();
         return richText;
     }
 
@@ -193,24 +215,35 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             setOnTouchListener(new LinkMovementMethodOverride());
     }
 
-    // 销毁
-    public void onDestory() {
+    /**
+     * 销毁
+     */
+    public RichTextView onDestory() {
         DownLoadImage.getInstance().deStory();
         try {
             Glide.with(getContext()).pauseRequests();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return this;
     }
 
-    // 设置图片加载模式
+    /**
+     * 设置图片加载模式
+     *
+     * @param loadImgModel 加载图片模式，0-Glide，1-DownLoadImage，默认0
+     */
     public RichTextView setLoadImgModel(int loadImgModel) {
         if (loadImgModel == 0 || loadImgModel == 1)
             this.loadImgModel = loadImgModel;
         return this;
     }
 
-    // 设置是否打开缓存
+    /**
+     * 设置是否打开缓存
+     *
+     * @param openImgCache boolean
+     */
     public RichTextView setOpenImgCache(boolean openImgCache) {
         this.isOpenImgCache = openImgCache;
         return this;
@@ -267,7 +300,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      *
      * @param text          待显示数据
      * @param isLatexOneStr 是否将Latex公式当中1位字符串处理
-     * @return
      */
     public RichTextView setRichText(final CharSequence text, final boolean isLatexOneStr) {
         if (!TextUtils.isEmpty(text)) {
@@ -303,7 +335,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      *
      * @param text                     待显示数据
      * @param onLatexClickSpanListener Latex公式点击事件
-     * @return
      */
     public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpanListener) {
         this.onLatexClickSpanListener = onLatexClickSpanListener;
@@ -325,7 +356,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 显示数据
      *
      * @param richBean    待显示数据
-     * @param isOpenCache 是否开始图片缓存 默认缓存
+     * @param isOpenCache 是否开始图片缓存 默认缓存true
      */
     public RichTextView setRichText(RichBean richBean, boolean isOpenCache) {
         ArrayList<RichBean> datas = new ArrayList<>();
@@ -337,7 +368,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 展示数据到TextView上，图片预显示为：多空格·多空格，总宽度与图片大小一致  或者  空格i空格
      *
-     * @param datas 待显示数据
+     * @param datas 待显示数据列表
      */
     public RichTextView setRichText(ArrayList<RichBean> datas) {
         setRichText(datas, true);
@@ -738,7 +769,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景
      *
-     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
+     * @param backgroundColor            背景颜色 16进制
+     * @param startPosition              开始位置
+     * @param endPosition                结束位置
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改（图片与文本背景是否等高）
      */
     public synchronized RichTextView updateBackgroundColor(final String backgroundColor,
                                                            final int startPosition,
@@ -792,7 +826,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 文本背景2
      *
-     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
+     * @param backgroundColor            背景颜色 int
+     * @param startPosition              开始位置
+     * @param endPosition                结束位置
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改（图片与文本背景是否等高）
      */
     public synchronized RichTextView updateBackgroundColor(final int backgroundColor,
                                                            final int startPosition,
@@ -802,7 +839,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
-                    && startPosition <= endPosition) {
+                    && startPosition <= endPosition
+                    && backgroundColor != 0) {
                 try {
                     if (updateBackGroundColorModel == 0) {
                         EHeightRoundBackgroundColorSpan eHeightRoundBackgroundColorSpan = new EHeightRoundBackgroundColorSpan(startPosition, endPosition, backgroundColor);
@@ -845,7 +883,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 更新文本圆角背景
      *
-     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改
+     * @param backgroundColor            背景颜色 16进制
+     * @param radius                     圆角半径
+     * @param startPosition              开始位置
+     * @param endPosition                结束位置
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改-只适合文字部分（图片与文本背景是否等高）
      */
     public synchronized RichTextView updateBackgroundColorRound(
             final String backgroundColor,
@@ -858,6 +900,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
+                    && radius >= 0
                     && !TextUtils.isEmpty(backgroundColor)) {
                 try {
                     if (updateBackGroundColorModel == 0) {
@@ -891,8 +934,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本颜色
+     *
+     * @param color         文本颜色 16进制
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
-    public synchronized RichTextView updateForegroundColor(final String color, final int startPosition, final int endPosition) {
+    public synchronized RichTextView updateForegroundColor(final String color,
+                                                           final int startPosition,
+                                                           final int endPosition) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
@@ -939,13 +988,20 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本颜色2
+     *
+     * @param color         文本颜色 int
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
-    public synchronized RichTextView updateForegroundColor(final int color, final int startPosition, final int endPosition) {
+    public synchronized RichTextView updateForegroundColor(final int color,
+                                                           final int startPosition,
+                                                           final int endPosition) {
         if (loadImgTatol == loadImgComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
-                    && startPosition <= endPosition) {
+                    && startPosition <= endPosition
+                    && color != 0) {
                 try {
                     ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(color);
                     spannableString.setSpan(foregroundColorSpan,
@@ -986,12 +1042,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本颜色3
+     *
+     * @param color         文本颜色 int 单纯修改文本
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
-    public synchronized RichTextView updateTextColor(int color, int startPosition, int endPosition) {
+    public synchronized RichTextView updateTextColor(int color,
+                                                     int startPosition,
+                                                     int endPosition) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && color != 0) {
             try {
                 ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(color);
                 spannableString.setSpan(foregroundColorSpan,
@@ -1007,8 +1070,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本颜色4
+     *
+     * @param color         文本颜色 String 16进制 单纯修改文本
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
-    public synchronized RichTextView updateTextColor(String color, int startPosition, int endPosition) {
+    public synchronized RichTextView updateTextColor(String color,
+                                                     int startPosition,
+                                                     int endPosition) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1029,8 +1098,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 添加超链接
+     *
+     * @param addUrl        超链接地址
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
-    public synchronized RichTextView updateURL(String addUrl, int startPosition, int endPosition) {
+    public synchronized RichTextView updateURL(String addUrl,
+                                               int startPosition,
+                                               int endPosition) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1053,8 +1128,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 字体倍数
+     *
+     * @param textSizeMultiple 字体倍数
+     * @param startPosition    开始位置
+     * @param endPosition      结束位置
      */
-    public synchronized RichTextView updateRelativeSize(float textSizeMultiple, int startPosition, int endPosition) {
+    public synchronized RichTextView updateRelativeSize(float textSizeMultiple,
+                                                        int startPosition,
+                                                        int endPosition) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1070,6 +1151,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 是否添加删除线
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateUnderline(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1087,6 +1171,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 是否添加删除线
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateStrikethrough(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1104,6 +1191,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 是否为上标
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateSuperscript(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1121,6 +1211,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 是否为下标
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateSubscript(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1137,7 +1230,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 是否加粗
+     * 加粗
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateStyleBold(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1154,7 +1250,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 是否斜体
+     * 斜体
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateStyleItalic(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1171,7 +1270,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
-     * 是否加粗并斜体
+     * 加粗并斜体
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
      */
     public synchronized RichTextView updateStyleBoldItalic(int startPosition, int endPosition) {
         if (spannableString != null
@@ -1189,6 +1291,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * X轴缩放倍数
+     *
+     * @param scaleXMultiple X轴缩放倍数
+     * @param startPosition  开始位置
+     * @param endPosition    结束位置
      */
     public synchronized RichTextView updateScaleX(float scaleXMultiple, int startPosition, int endPosition) {
         if (spannableString != null
@@ -1215,7 +1321,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && borderColor != 0) {
             BorderSpan borderSpan = new BorderSpan(borderColor);
             spannableString.setSpan(borderSpan,
                     startPosition, endPosition,
@@ -1233,7 +1340,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param radius        模糊半径，越大越模糊
      * @param style         样式
      */
-    public synchronized RichTextView updateBlurMaskFilter(int startPosition, int endPosition, float radius, BlurMaskFilter.Blur style) {
+    public synchronized RichTextView updateBlurMaskFilter(int startPosition,
+                                                          int endPosition,
+                                                          float radius,
+                                                          BlurMaskFilter.Blur style) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1250,14 +1360,27 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 浮雕效果
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param direction     该参数必须是一个长度为3的浮点型数组，表示光源从x、y、z照射曲线的方向
+     * @param ambient       表示周围光源的数量，取值范围是0..1
+     * @param specular      光照的反射系数 如6
+     * @param blurRadius    在光照前喷涂的范围
      */
-    public synchronized RichTextView updateEmbossMaskFilter(int startPosition, int endPosition,
-                                                            float[] direction, float ambient, float specular, float blurRadius) {
+    public synchronized RichTextView updateEmbossMaskFilter(int startPosition,
+                                                            int endPosition,
+                                                            float[] direction,
+                                                            float ambient,
+                                                            float specular,
+                                                            float blurRadius) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
-                && direction != null) {
+                && direction != null
+                && direction.length > 0
+                && ambient > 0) {
             EmbossMaskFilter embossMaskFilter = new EmbossMaskFilter(direction, ambient, specular, blurRadius);
             spannableString.setSpan(embossMaskFilter,
                     startPosition, endPosition,
@@ -1275,8 +1398,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param drawable      待插入图片
      * @param pad           内边距
      */
-    public synchronized RichTextView updateDrawableMargin(int startPosition, int endPosition,
-                                                          Drawable drawable, int pad) {
+    public synchronized RichTextView updateDrawableMargin(int startPosition,
+                                                          int endPosition,
+                                                          Drawable drawable,
+                                                          int pad) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1302,7 +1427,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && quoteColor != 0) {
             QuoteSpan quoteSpan = new QuoteSpan(quoteColor);
             spannableString.setSpan(quoteSpan,
                     startPosition, endPosition,
@@ -1410,9 +1536,22 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 修改文本样式
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param family        字体样式 monospace serif sans-serif
+     * @param style         字体形式 Typeface.NORMAL Typeface.BOLD Typeface.ITALIC Typeface.BOLD_ITALIC
+     * @param size          字体大小（单位px）
+     * @param color         文字颜色
+     * @param linkColor     链接文字颜色
      */
-    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
-                                                          String family, int style, int size, ColorStateList color, ColorStateList linkColor) {
+    public synchronized RichTextView updateTextAppearance(int startPosition,
+                                                          int endPosition,
+                                                          String family,
+                                                          int style,
+                                                          int size,
+                                                          ColorStateList color,
+                                                          ColorStateList linkColor) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1431,9 +1570,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 修改文本样式2
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param appearance    appearance资源id（例如：android.R.style.TextAppearance_Small）
+     * @param colorList     文本的颜色资源id（例如：android.R.styleable.Theme_textColorPrimary）
      */
-    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
-                                                          int appearance, int colorList) {
+    public synchronized RichTextView updateTextAppearance(int startPosition,
+                                                          int endPosition,
+                                                          int appearance,
+                                                          int colorList) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
@@ -1449,8 +1595,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 修改文本样式3
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param appearance    appearance资源id（例如：android.R.style.TextAppearance_Small）
      */
-    public synchronized RichTextView updateTextAppearance(int startPosition, int endPosition,
+    public synchronized RichTextView updateTextAppearance(int startPosition,
+                                                          int endPosition,
                                                           int appearance) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
@@ -1467,6 +1618,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本字体
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param family        字体样式 monospace serif sans-serif
      */
     public synchronized RichTextView updateTypeface(int startPosition, int endPosition, String family) {
         if (spannableString != null
@@ -1485,6 +1640,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 文本字体2
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param typeface      自定义字体
      */
     @RequiresApi(api = 28)
     public synchronized RichTextView updateTypeface(int startPosition, int endPosition, Typeface typeface) {
@@ -1504,13 +1663,18 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 设置颜色数组
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param colors        颜色数组
      */
     public synchronized RichTextView updateColors(int startPosition, int endPosition, int[] colors) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
-                && colors != null) {
+                && colors != null
+                && colors.length > 0) {
             ColorsSpan colorsSpan = new ColorsSpan(colors);
             spannableString.setSpan(colorsSpan,
                     startPosition, endPosition,
@@ -1522,12 +1686,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 段落层次-小圆点
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param gapWidth      小圆点的宽度
+     * @param color         小圆点的颜色
      */
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && gapWidth > 0
+                && color != 0) {
             BulletSpan bulletSpan = new BulletSpan(gapWidth, color);
             spannableString.setSpan(bulletSpan,
                     startPosition, endPosition,
@@ -1539,12 +1710,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 段落层次-小圆点2
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param gapWidth      小圆点的宽度
      */
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && gapWidth > 0) {
             BulletSpan bulletSpan = new BulletSpan(gapWidth);
             spannableString.setSpan(bulletSpan,
                     startPosition, endPosition,
@@ -1556,13 +1732,21 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 段落层次-小圆点3
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param gapWidth      小圆点的宽度
+     * @param color         小圆点颜色
+     * @param bulletRadius  半径
      */
     @RequiresApi(api = 28)
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color, int bulletRadius) {
         if (spannableString != null
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
-                && startPosition <= endPosition) {
+                && startPosition <= endPosition
+                && gapWidth > 0
+                && color != 0) {
             BulletSpan bulletSpan = new BulletSpan(gapWidth, color, bulletRadius);
             spannableString.setSpan(bulletSpan,
                     startPosition, endPosition,
@@ -1574,6 +1758,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 设置文本环绕
+     *
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param lines         所占行数
+     * @param margin        外边距
      */
     public synchronized RichTextView updateTextRound(int startPosition, int endPosition, int lines, int margin) {
         if (spannableString != null
@@ -1591,6 +1780,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     /**
      * 设置span
+     *
+     * @param what          span对象
+     * @param startPosition 开始位置
+     * @param endPosition   结束位置
+     * @param flags         如 Spanned.SPAN_INCLUSIVE_EXCLUSIVE
      */
     public synchronized RichTextView setSpan(Object what, int startPosition, int endPosition, int flags) {
         if (spannableString != null
