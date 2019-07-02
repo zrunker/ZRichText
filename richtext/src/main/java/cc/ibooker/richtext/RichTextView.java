@@ -3,6 +3,7 @@ package cc.ibooker.richtext;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
@@ -1820,6 +1821,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                         height = drawable.getIntrinsicHeight();
 
                                     // 图片宽度大于文本控件的宽度设置点击事件
+                                    if (richTvWidth < 0)
+                                        richTvWidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * 0.8);
                                     if (richTvWidth < width && width != 0) {
                                         float fl = new BigDecimal((float) richTvWidth / width)
                                                 .setScale(5, BigDecimal.ROUND_HALF_UP)
@@ -1877,6 +1880,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             int height = drawable.getIntrinsicHeight();
 
                             // 图片宽度大于文本控件的宽度设置点击事件
+                            if (richTvWidth < 0)
+                                richTvWidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * 0.8);
                             if (richTvWidth < width && width != 0) {
                                 float fl = new BigDecimal((float) richTvWidth / width)
                                         .setScale(5, BigDecimal.ROUND_HALF_UP)
@@ -2142,6 +2147,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             }
 
             // 如果image的宽度>RichTextView的宽度，改变image的大小
+            if (richTvWidth < 0)
+                richTvWidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * 0.8);
             if (image.getWidth() > richTvWidth) {
                 image = Bitmap.createScaledBitmap(image, richTvWidth,
                         image.getHeight() * richTvWidth / image.getWidth(),
