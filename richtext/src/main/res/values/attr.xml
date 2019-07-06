@@ -8,7 +8,9 @@
             <flag name="MODE_1" value="1" />
         </attr>
         <attr name="backGroundColor" format="string" />
+        <attr name="backGroundColorI" format="integer" />
         <attr name="tintColor" format="string" />
+        <attr name="tintColorI" format="integer" />
         <attr name="isLatexOneStr" format="boolean" />
     </declare-styleable>
 </resources>

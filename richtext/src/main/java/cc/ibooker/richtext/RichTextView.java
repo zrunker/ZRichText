@@ -1,6 +1,5 @@
 package cc.ibooker.richtext;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -86,15 +85,22 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     private boolean isScroll;// 是否可以滚动
     private int richMaxLines;// 最大行数
-    private int loadImgTatol = 0;// 待加载图片总数
-    private int loadImgComplete = 0;// 已加载图片总数
     private boolean isOpenImgCache = true;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
-    private String backGroundColor;// 背景颜色
-    private String tintColor;// 文字颜色
+    //    private String backGroundColor;// 背景颜色
+    private int backGroundColorI;// 背景颜色
+    //    private String tintColor;// 文字颜色
+    private int tintColorI;// 文字颜色int
     private boolean isResetData = true;// 是否重置数据
     private CharSequence richText;// 文本内容
     private boolean isLatexOneStr = false;// 是否将Latex公式当成一个字符串处理
+    private int loadImgTatol = 0;// 待加载图片总数
+    private int loadImgComplete = 0;// 已加载图片总数
+    private boolean isImgLoadComplete = true;// 图片是否加载完成
+    private int loadLatexTatol = 0;// 待加载公式总数
+    private int loadLatexComplete = 0;// 已加载公式总数
+    private boolean isLatexLoadComplete = true;// 公式是否加载完成
+    private boolean isTextLoadComplete = true;// Text是否加载完成
 
     public RichTextView(Context context) {
         this(context, null);
@@ -107,34 +113,73 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
+        String tintColor = null, backGroundColor = null;
         if (attrs != null) {
             TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
             isScroll = typeArray.getBoolean(R.styleable.RichTextView_isScroll, true);
             isOpenImgCache = typeArray.getBoolean(R.styleable.RichTextView_isOpenImgCache, true);
             loadImgModel = typeArray.getInt(R.styleable.RichTextView_loadImgModel, 0);
             backGroundColor = typeArray.getString(R.styleable.RichTextView_backGroundColor);
+            backGroundColorI = typeArray.getInteger(R.styleable.RichTextView_backGroundColorI, 0);
             tintColor = typeArray.getString(R.styleable.RichTextView_tintColor);
+            tintColorI = typeArray.getInteger(R.styleable.RichTextView_tintColorI, 0);
             isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
             typeArray.recycle();
         }
         setRichTvScroll();
         if (!TextUtils.isEmpty(backGroundColor))
             try {
-                setBackgroundColor(Color.parseColor(backGroundColor));
+                backGroundColorI = Color.parseColor(backGroundColor);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        if (backGroundColorI == 0) {
+            Drawable drawable = getBackground();
+            if (drawable != null) {
+                ColorDrawable colorDrawable = (ColorDrawable) drawable;
+                backGroundColorI = colorDrawable.getColor();
+            }
+        }
+        if (backGroundColorI != 0)
+            setBackgroundColor(backGroundColorI);
         if (!TextUtils.isEmpty(tintColor))
             try {
-                setTextColor(Color.parseColor(tintColor));
+                tintColorI = Color.parseColor(tintColor);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        if (tintColorI == 0) {
+            int color = getCurrentTextColor();
+            if (color != 0)
+                tintColorI = color;
+        }
+        if (tintColorI != 0)
+            setTextColor(tintColorI);
         richText = getText();
         // 重置数据
         resetData();
         // 初始化AjLatexMath
         AjLatexMath.init(getContext().getApplicationContext());
+    }
+
+    public int getLoadImgComplete() {
+        return loadImgComplete;
+    }
+
+    public int getLoadLatexComplete() {
+        return loadLatexComplete;
+    }
+
+    @Override
+    public void setTextColor(int color) {
+        super.setTextColor(color);
+        this.tintColorI = color;
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        super.setBackgroundColor(color);
+        this.backGroundColorI = color;
     }
 
     /**
@@ -164,7 +209,22 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param backGroundColor 背景颜色 String 16进制 "#FFF000"
      */
     public RichTextView setBackGroundColor(String backGroundColor) {
-        this.backGroundColor = backGroundColor;
+//        this.backGroundColor = backGroundColor;
+        try {
+            this.backGroundColorI = Color.parseColor(backGroundColor);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    /**
+     * 设置背景颜色 包括图片背景颜色
+     *
+     * @param backGroundColor 背景颜色 int
+     */
+    public RichTextView setBackGroundColor(int backGroundColor) {
+        this.backGroundColorI = backGroundColor;
         return this;
     }
 
@@ -184,7 +244,22 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param tintColor 字体颜色 String 16进制 "#FFF000"
      */
     public RichTextView setTintColor(String tintColor) {
-        this.tintColor = tintColor;
+        try {
+            this.tintColorI = Color.parseColor(tintColor);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        this.tintColor = tintColor;
+        return this;
+    }
+
+    /**
+     * 设置字体颜色 包括图片颜色
+     *
+     * @param tintColor 字体颜色 int
+     */
+    public RichTextView setTintColor(int tintColor) {
+        this.tintColorI = tintColor;
         return this;
     }
 
@@ -290,9 +365,23 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      *
      * @param text 待显示数据
      */
+    public RichTextView setText(String text) {
+        isTextLoadComplete = false;
+        setRichText(text);
+        isTextLoadComplete = true;
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param text 待显示数据
+     */
     public RichTextView setRichText(final CharSequence text) {
+        isTextLoadComplete = false;
         richText = text;
         setRichText(richText, false);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -302,7 +391,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text          待显示数据
      * @param isLatexOneStr 是否将Latex公式当中1位字符串处理
      */
-    public RichTextView setRichText(final CharSequence text, final boolean isLatexOneStr) {
+    public RichTextView setRichText(CharSequence text, final boolean isLatexOneStr) {
+        isTextLoadComplete = false;
         if (!TextUtils.isEmpty(text)) {
             resetData();
             // 显示数据
@@ -312,22 +402,25 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             // 处理Latex
             this.isLatexOneStr = isLatexOneStr;
             if (richTvWidth > 0) {
-                dealWithLatex(text);
+                dealWithLatex(richText);
                 setText(spannableString);
+                isTextLoadComplete = true;
             } else {
-                ViewTreeObserver vto = getViewTreeObserver();
+                final ViewTreeObserver vto = getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
-                        dealWithLatex(text);
+                        dealWithLatex(richText);
                         setText(spannableString);
+                        isTextLoadComplete = true;
                     }
                 });
             }
-        }
+        } else
+            isTextLoadComplete = true;
         return this;
     }
 
@@ -338,8 +431,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param onLatexClickSpanListener Latex公式点击事件
      */
     public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpanListener) {
+        isTextLoadComplete = false;
         this.onLatexClickSpanListener = onLatexClickSpanListener;
         setRichText(text);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -349,7 +444,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param richBean 待显示数据
      */
     public RichTextView setRichText(RichBean richBean) {
+        isTextLoadComplete = false;
         setRichText(richBean, true);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -360,9 +457,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isOpenCache 是否开始图片缓存 默认缓存true
      */
     public RichTextView setRichText(RichBean richBean, boolean isOpenCache) {
+        isTextLoadComplete = false;
         ArrayList<RichBean> datas = new ArrayList<>();
         datas.add(richBean);
         setRichText(datas, isOpenCache);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -372,7 +471,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param datas 待显示数据列表
      */
     public RichTextView setRichText(ArrayList<RichBean> datas) {
+        isTextLoadComplete = false;
         setRichText(datas, true);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -383,25 +484,29 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isOpenCache 是否开始图片缓存 默认缓存
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, boolean isOpenCache) {
+        isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
             richBeanList = (ArrayList<RichBean>) datas.clone();
             if (richTvWidth > 0) {
                 updateRichTvData1();
+                isTextLoadComplete = true;
             } else {
-                ViewTreeObserver vto = getViewTreeObserver();
+                final ViewTreeObserver vto = getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
                         updateRichTvData1();
+                        isTextLoadComplete = true;
                     }
                 });
             }
-        }
+        } else
+            isTextLoadComplete = true;
         return this;
     }
 
@@ -425,8 +530,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
 
     public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
+        isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
+        isTextLoadComplete = true;
         return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
     }
 
@@ -437,7 +544,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param drawable 默认预显示图片
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
+        isTextLoadComplete = false;
         setRichText(datas, drawable, true);
+        isTextLoadComplete = true;
         return this;
     }
 
@@ -449,6 +558,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isOpenCache 是否开启图片缓存 默认true
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable, boolean isOpenCache) {
+        isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
         if (datas != null && datas.size() > 0) {
@@ -456,19 +566,23 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             defaultDrawable = drawable;
             if (richTvWidth > 0) {
                 updateRichTvData2();
+                isTextLoadComplete = true;
             } else {
-                ViewTreeObserver vto = getViewTreeObserver();
+                final ViewTreeObserver vto = getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                     @Override
                     public void onGlobalLayout() {
-                        getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
                         updateRichTvData2();
+                        isTextLoadComplete = true;
                     }
                 });
             }
-        }
+        } else
+            isTextLoadComplete = true;
+
         return this;
     }
 
@@ -492,6 +606,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (data.getType() == 0) {// 文本
                 tempList.add(data.getText());
             } else {// 图片
+                isImgLoadComplete = false;
                 loadImgTatol++;
                 StringBuilder strBuilder = new StringBuilder();
                 // 设置占位符 - 要是唯一值
@@ -779,7 +894,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int startPosition,
                                                            final int endPosition,
                                                            final int updateBackGroundColorModel) {
-        if (loadImgTatol == loadImgComplete) {
+        if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
@@ -836,7 +951,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int startPosition,
                                                            final int endPosition,
                                                            final int updateBackGroundColorModel) {
-        if (loadImgTatol == loadImgComplete) {
+        if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
@@ -896,7 +1011,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             final int startPosition,
             final int endPosition,
             final int updateBackGroundColorModel) {
-        if (loadImgTatol == loadImgComplete) {
+        if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
@@ -943,7 +1058,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public synchronized RichTextView updateForegroundColor(final String color,
                                                            final int startPosition,
                                                            final int endPosition) {
-        if (loadImgTatol == loadImgComplete) {
+        if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
@@ -997,7 +1112,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public synchronized RichTextView updateForegroundColor(final int color,
                                                            final int startPosition,
                                                            final int endPosition) {
-        if (loadImgTatol == loadImgComplete) {
+        if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
@@ -1998,6 +2113,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                     if (isSign) {
                                         if (loadImgTatol > loadImgComplete)
                                             loadImgComplete++;
+                                        isImgLoadComplete = (loadImgTatol == loadImgComplete);
                                     }
                                 }
 
@@ -2058,6 +2174,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                     if (isSign) {
                                         if (loadImgTatol > loadImgComplete)
                                             loadImgComplete++;
+                                        isImgLoadComplete = (loadImgTatol == loadImgComplete);
                                     }
                                 }
                             });
@@ -2117,6 +2234,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             if (isSign) {
                                 if (loadImgTatol > loadImgComplete)
                                     loadImgComplete++;
+                                isImgLoadComplete = (loadImgTatol == loadImgComplete);
                             }
                         }
 
@@ -2126,6 +2244,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             if (isSign) {
                                 if (loadImgTatol > loadImgComplete)
                                     loadImgComplete++;
+                                isImgLoadComplete = (loadImgTatol == loadImgComplete);
                             }
                         }
                     });
@@ -2181,6 +2300,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             if (data.getType() == 0) {
                 tempList.add(data.getText());
             } else {// 图片
+                isImgLoadComplete = false;
                 loadImgTatol++;
                 // 设置占位符 - 空格
                 tempList.add("\t");
@@ -2230,6 +2350,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 LatexBean latexBean = new LatexBean(matcher.group(), matcher.start(), matcher.end());
                 latexBeanList.add(latexBean);
             }
+            loadLatexTatol = latexBeanList.size();
+            if (loadLatexTatol > 0)
+                isLatexLoadComplete = false;
+
             // 替换公式为空格
             if (isLatexOneStr) {
                 String tempText = text.toString();
@@ -2316,25 +2440,41 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //        g2.drawColor(Color.TRANSPARENT);
 //        icon.paintIcon(g2, 0, 0);
 
-            // 设置背景
+//            // 设置背景
+//            Canvas g2 = new Canvas(image);
+//            int drawColor = Color.TRANSPARENT;
+//            if (!TextUtils.isEmpty(backGroundColor)) {
+//                try {
+//                    drawColor = Color.parseColor(backGroundColor);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            g2.drawColor(drawColor);
+//            icon.paintIcon(g2, 0, 0);
             Canvas g2 = new Canvas(image);
             int drawColor = Color.TRANSPARENT;
-            if (!TextUtils.isEmpty(backGroundColor)) {
-                try {
-                    drawColor = Color.parseColor(backGroundColor);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            if (backGroundColorI != 0)
+                drawColor = backGroundColorI;
             g2.drawColor(drawColor);
             icon.paintIcon(g2, 0, 0);
 
             // 设置颜色
-            if (!TextUtils.isEmpty(tintColor)) {
+//            if (!TextUtils.isEmpty(tintColor)) {
+//                try {
+//                    Canvas canvas = new Canvas(image);
+//                    Paint paint1 = new Paint();
+//                    paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(tintColor), PorterDuff.Mode.SRC_IN));
+//                    canvas.drawBitmap(image, 0, 0, paint1);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+            if (tintColorI != 0) {
                 try {
                     Canvas canvas = new Canvas(image);
                     Paint paint1 = new Paint();
-                    paint1.setColorFilter(new PorterDuffColorFilter(Color.parseColor(tintColor), PorterDuff.Mode.SRC_IN));
+                    paint1.setColorFilter(new PorterDuffColorFilter(tintColorI, PorterDuff.Mode.SRC_IN));
                     canvas.drawBitmap(image, 0, 0, paint1);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -2352,6 +2492,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     latexBean.setOnLatexClickSpanListener(onLongLatexClickSpanListener);
             }
 
+            if (loadLatexTatol > loadLatexComplete)
+                loadLatexComplete++;
+            isLatexLoadComplete = (loadLatexTatol == loadLatexComplete);
+
             return image;
 
 //        return new BitmapDrawable(getResources(), image);
@@ -2360,6 +2504,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("RichTextView", "Latex异常：" + latex);
+
+            if (loadLatexTatol > loadLatexComplete)
+                loadLatexComplete++;
+            isLatexLoadComplete = (loadLatexTatol == loadLatexComplete);
             return null;
         }
     }

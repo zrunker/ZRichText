@@ -155,16 +155,16 @@ public class MainActivity extends AppCompatActivity {
 
         richTextView.setRichText(richBeans, null, false);
 
-        richTextView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+//        richTextView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
                 richTextView.updateBackgroundColor("#FFE892", 18, 20, 1);
                 richTextView.updateBackgroundColor("#FFE892", 21, 24, 1);
                 richTextView.updateBackgroundColor("#FFE892", 28, 29, 1);
 
                 richTextView.updateBorder(1, 3, Color.BLUE);
-            }
-        }, 100);
+//            }
+//        }, 100);
 
 
         String source = "椭圆$E$: $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$ $=1$ $(a\\gt b\\gt 0)$的离心率是$\\frac{\\sqrt{2}}{2}$, 点$P(0, 1)$在短轴$CD$上, 且$\\vec{PC}\\cdot \\vec{PD}=-1$, 椭圆$E$的方程为( )";
