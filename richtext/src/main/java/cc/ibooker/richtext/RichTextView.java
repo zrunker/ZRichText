@@ -136,8 +136,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (backGroundColorI == 0) {
             Drawable drawable = getBackground();
             if (drawable != null) {
-                ColorDrawable colorDrawable = (ColorDrawable) drawable;
-                backGroundColorI = colorDrawable.getColor();
+                try {
+                    ColorDrawable colorDrawable = (ColorDrawable) drawable;
+                    backGroundColorI = colorDrawable.getColor();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (backGroundColorI != 0)
@@ -851,10 +855,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         // 修改背景
         Drawable drawable = getBackground();
         if (drawable != null && spannableString != null) {
-            ColorDrawable colorDrawable = (ColorDrawable) drawable;
-            int color = colorDrawable.getColor();
-            // 修改图片背景
-            updateBackgroundColor(color, 0, spannableString.length(), 1);
+            try {
+                ColorDrawable colorDrawable = (ColorDrawable) drawable;
+                int color = colorDrawable.getColor();
+                // 修改图片背景
+                updateBackgroundColor(color, 0, spannableString.length(), 1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return this;
     }
