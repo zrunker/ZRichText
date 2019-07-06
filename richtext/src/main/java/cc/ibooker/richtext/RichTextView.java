@@ -272,7 +272,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     @Override
     public void setMaxLines(int maxLines) {
         super.setMaxLines(maxLines);
-        if (maxLines > 0 && maxLines < Integer.MAX_VALUE) {
+        if (maxLines > 1 && maxLines < Integer.MAX_VALUE) {
             this.richMaxLines = maxLines;
             this.isScroll = true;
         } else {
@@ -290,8 +290,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 设置是否能够滚动
     private void setRichTvScroll() {
-        if (isScroll && richMaxLines > 0)
+        if (isScroll && richMaxLines > 1)
             setMovementMethod(LinkMovementMethod.getInstance());
+//            setMovementMethod(ScrollingMovementMethod.getInstance());
         else
             setOnTouchListener(new LinkMovementMethodOverride());
     }
@@ -381,6 +382,80 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 显示数据
      *
+     * @param content     待显示数据
+     * @param replacement 代替字段
+     * @param targetRes   目标图片res
+     */
+    public RichTextView setText(String content, String replacement, int targetRes) {
+        if (!TextUtils.isEmpty(content)) {
+            ArrayList<RichBean> datas = new ArrayList<>();
+            if (!TextUtils.isEmpty(replacement)) {
+                String[] strs = content.split(replacement);
+                if (strs.length > 0) {
+                    for (String str : strs) {
+                        RichBean richBean = new RichBean();
+                        richBean.setText(str);
+                        richBean.setType(0);
+                        datas.add(richBean);
+                        // 添加图片
+                        RichBean richBean1 = new RichBean();
+                        richBean1.setRes(targetRes);
+                        richBean1.setType(1);
+                        datas.add(richBean1);
+                    }
+                }
+            }
+            if (datas.size() <= 0) {
+                RichBean richBean = new RichBean();
+                richBean.setText(content);
+                richBean.setType(0);
+                datas.add(richBean);
+            }
+            setRichText(datas);
+        }
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
+     * @param content       待显示数据
+     * @param replacement   代替字段
+     * @param targetImgPath 目标图片地址
+     */
+    public RichTextView setText(String content, String replacement, String targetImgPath) {
+        if (!TextUtils.isEmpty(content)) {
+            ArrayList<RichBean> datas = new ArrayList<>();
+            if (!TextUtils.isEmpty(replacement)) {
+                String[] strs = content.split(replacement);
+                if (strs.length > 0) {
+                    for (String str : strs) {
+                        RichBean richBean = new RichBean();
+                        richBean.setText(str);
+                        richBean.setType(0);
+                        datas.add(richBean);
+                        // 添加图片
+                        RichBean richBean1 = new RichBean();
+                        richBean1.setText(targetImgPath);
+                        richBean1.setType(1);
+                        datas.add(richBean1);
+                    }
+                }
+            }
+            if (datas.size() <= 0) {
+                RichBean richBean = new RichBean();
+                richBean.setText(content);
+                richBean.setType(0);
+                datas.add(richBean);
+            }
+            setRichText(datas);
+        }
+        return this;
+    }
+
+    /**
+     * 显示数据
+     *
      * @param text 待显示数据
      */
     public RichTextView setRichText(final CharSequence text) {
@@ -418,7 +493,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth();
+                        richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
                         dealWithLatex(richText);
@@ -507,7 +582,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth();
+                        richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
                         updateRichTvData1();
@@ -584,7 +659,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth();
+                        richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
                         updateRichTvData2();
