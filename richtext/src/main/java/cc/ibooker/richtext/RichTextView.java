@@ -45,6 +45,7 @@ import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.bumptech.glide.Glide;
@@ -112,6 +113,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setMovementMethod(LinkMovementMethod.getInstance());
+//        setRichTvScroll();
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
         String tintColor = null, backGroundColor = null;
         if (attrs != null) {
@@ -126,7 +129,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
             typeArray.recycle();
         }
-        setRichTvScroll();
         if (!TextUtils.isEmpty(backGroundColor))
             try {
                 backGroundColorI = Color.parseColor(backGroundColor);
@@ -417,6 +419,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
+                        if (richTvWidth <= 0)
+                            richTvWidth = ((ViewGroup) getParent()).getWidth();
                         dealWithLatex(richText);
                         setText(spannableString);
                         isTextLoadComplete = true;
@@ -504,6 +508,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
+                        if (richTvWidth <= 0)
+                            richTvWidth = ((ViewGroup) getParent()).getWidth();
                         updateRichTvData1();
                         isTextLoadComplete = true;
                     }
@@ -579,6 +585,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         richTvWidth = getMeasuredWidth();
+                        if (richTvWidth <= 0)
+                            richTvWidth = ((ViewGroup) getParent()).getWidth();
                         updateRichTvData2();
                         isTextLoadComplete = true;
                     }
@@ -2290,6 +2298,40 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 }
             } else {// 图片
                 downLoadImage(richBean, false);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 修改所有图片item
+     *
+     * @param res 图片res地址
+     */
+    public synchronized RichTextView updateImageItems(int res) {
+        for (int i = 0; i < richBeanList.size(); i++) {
+            RichBean richBean = richBeanList.get(i);
+            if (richBean.getType() == 1) {// 图片
+                richBean.setRes(res);
+                richBean.setText("");
+                updateItem(richBean, i);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * 修改所有图片item
+     *
+     * @param imgPath 图片地址
+     */
+    public synchronized RichTextView updateImageItems(String imgPath) {
+        for (int i = 0; i < richBeanList.size(); i++) {
+            RichBean richBean = richBeanList.get(i);
+            if (richBean.getType() == 1) {// 图片
+                richBean.setRes(0);
+                richBean.setText(imgPath);
+                updateItem(richBean, i);
             }
         }
         return this;

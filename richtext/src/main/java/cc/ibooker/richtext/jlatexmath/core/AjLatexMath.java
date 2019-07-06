@@ -17,12 +17,14 @@ public class AjLatexMath {
      * @param context
      */
     public static void init(Context context) {
-        mContext = context;
-        st = new Paint();
-        st.setStyle(Style.FILL_AND_STROKE);
-        st.setColor(Color.BLACK);
-        st.setStrokeWidth(0);
-        TeXFormula.getPartialTeXFormula("{x^{2}+ x-1= 0 }").setDEBUG(false);
+        if (mContext == null || st == null) {
+            mContext = context;
+            st = new Paint();
+            st.setStyle(Style.FILL_AND_STROKE);
+            st.setColor(Color.BLACK);
+            st.setStrokeWidth(0);
+            TeXFormula.getPartialTeXFormula("{x^{2}+ x-1= 0 }").setDEBUG(false);
+        }
     }
 
     public static AssetManager getAssetManager() {
