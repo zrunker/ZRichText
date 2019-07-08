@@ -1,11 +1,8 @@
 最近写了一个富文本插件：[ZRichText](https://github.com/zrunker/ZRichText)
 
-# ZRichText
-自定义富文本控件RichTextView，用于显示图片+文字+Latex公式，支持图片点击、文本点击、Latex点击事件，支持文本特殊处理，支持图片颜色和背景色更改，支持富文局部操作：下划线、删除线、背景色、前景色、上标、下标等等，支持任意富文本显示，以及自动识别Latex公式并显示。
-
 >微信公众号：书客创作
 
-![书客创作](https://upload-images.jianshu.io/upload_images/3480018-94d5f20e4f88d0ae.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![书客创作](https://upload-images.jianshu.io/upload_images/3480018-94d5f20e4f88d0ae.jpg)
 
 现在越来越多的APP需要富文本的支持，网上也有比较成熟的富文本支持框架，而今天给大家推荐的富文本ZRichText，不仅仅能够很灵活的支持富文本显示、操作，而且还支持Latex公式。
 
@@ -20,7 +17,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.zrunker:ZRichText:v1.1.6.5'
+	implementation 'com.github.zrunker:ZRichText:v1.1.7.3'
 }
 ```
 B. maven方式：
@@ -35,7 +32,7 @@ B. maven方式：
 <dependency>
 	<groupId>com.github.zrunker</groupId>
 	<artifactId>ZRichText</artifactId>
-	<version>v1.1.6.5</version>
+	<version>v1.1.7.3</version>
 </dependency>
 ```
 #### 2、引用
@@ -212,6 +209,7 @@ public class RichBean {
         android:layout_height="wrap_content"
 	// 背景色，同时修改图片的背景
         app:backGroundColor="#40aff2"
+        app:backGroundColorI="@color/blank"
 	// Latex公式是否当作1个字符处理
         app:isLatexOneStr="true"
 	// 是否支持图片缓存
@@ -221,10 +219,17 @@ public class RichBean {
 	// 图片加载模式，MODE_0-Glide,1-DownLoadImage
         app:loadImgModel="MODE_0"
 	// 文字颜色，同事修改图片的颜色
-        app:tintColor="#fff000" />
+        app:tintColor="#fff000"
+        app:tintColorI="@color/blank" />
 ```
 #### 5、方法
 ```
+    // 图片是否已经加载完成
+    public int getLoadImgComplete();
+
+    // Latex公式是否已经加载完成
+    public int getLoadLatexComplete();
+
     /**
      * 设置是否能够滚动
      *
@@ -245,6 +250,7 @@ public class RichBean {
      * @param backGroundColor 背景颜色 String 16进制 "#FFF000"
      */
     public RichTextView setBackGroundColor(String backGroundColor);
+    public RichTextView setBackGroundColor(int backGroundColor);
 
     /**
      * 设置字体颜色 包括图片颜色
@@ -252,11 +258,43 @@ public class RichBean {
      * @param tintColor 字体颜色 String 16进制
      */
     public RichTextView setTintColor(String tintColor);
+    public RichTextView setTintColor(int tintColor);
+
+    // 设置水平滚动
+    public RichTextView setHorizontallyScroll();
+
+    // 设置竖直滚动
+    public RichTextView setVerticalScroll(int maxLines);
 
     /**
      * 销毁
      */
     public RichTextView onDestory();
+
+    /**
+     * 显示数据
+     *
+     * @param text 待显示数据
+     */
+    public RichTextView setText(String text);
+
+    /**
+     * 显示数据
+     *
+     * @param content     待显示数据
+     * @param replacement 代替字段
+     * @param targetRes   目标图片res
+     */
+    public RichTextView setText(String content, String replacement, int targetRes);
+
+    /**
+     * 显示数据
+     *
+     * @param content       待显示数据
+     * @param replacement   代替字段
+     * @param targetImgPath 目标图片地址
+     */
+    public RichTextView setText(String content, String replacement, String targetImgPath);
 
     /**
      * 设置图片加载模式
@@ -278,6 +316,20 @@ public class RichBean {
      * @param text 待显示数据
      */
     public RichTextView setRichText(final CharSequence text);
+
+    /**
+     * 修改所有图片item
+     *
+     * @param imgPath 图片地址
+     */
+    public RichTextView updateImageItems(String imgPath);
+
+    /**
+     * 修改所有图片item
+     *
+     * @param res 图片res地址
+     */
+    public RichTextView updateImageItems(int res);
 
     /**
      * 显示数据
