@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -17,16 +15,16 @@ import java.util.ArrayList;
 
 import cc.ibooker.richtext.ClickSpan;
 import cc.ibooker.richtext.LatexClickSpan;
-import cc.ibooker.richtext.bean.RichBean;
 import cc.ibooker.richtext.RichTextView;
+import cc.ibooker.richtext.bean.RichBean;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView textView;
-    private RichTextView richTextView, richTextView2, richTextView3, richTextView4;
+    private RichTextView textView, richTextView, richTextView2, richTextView3, richTextView4, richTextView5;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        textView.onDestory();
         richTextView.onDestory();
         richTextView2.onDestory();
         richTextView3.onDestory();
@@ -43,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
         richTextView2 = findViewById(R.id.richTextView2);
         richTextView3 = findViewById(R.id.richTextView3);
         richTextView4 = findViewById(R.id.richTextView4);
-        textView.setMovementMethod(ScrollingMovementMethod.getInstance());
-        textView.setText("阿搜噶搜噶是否噶是购房人个人过去而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话");
-
+        richTextView5 = findViewById(R.id.richTextView5);
+        textView.setText("阿搜噶搜噶是否噶是购房人个人过去而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话")
+                .setHorizontallyScroll();
 
         ArrayList<RichBean> richBeans = new ArrayList<>();
         RichBean richBean1 = new RichBean();
@@ -158,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
 //        richTextView.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-                richTextView.updateBackgroundColor("#FFE892", 18, 20, 1);
-                richTextView.updateBackgroundColor("#FFE892", 21, 24, 1);
-                richTextView.updateBackgroundColor("#FFE892", 28, 29, 1);
+        richTextView.updateBackgroundColor("#FFE892", 18, 20, 1);
+        richTextView.updateBackgroundColor("#FFE892", 21, 24, 1);
+        richTextView.updateBackgroundColor("#FFE892", 28, 29, 1);
 
-                richTextView.updateBorder(1, 3, Color.BLUE);
+        richTextView.updateBorder(1, 3, Color.BLUE);
 //            }
 //        }, 100);
 
@@ -440,6 +438,51 @@ public class MainActivity extends AppCompatActivity {
         Glide.with(this)
                 .load("https://graph.baidu.com/resource/101de050033f9aea1f04601554958922.jpg")
                 .into(image);
+
+
+        ArrayList<RichBean> list2 = new ArrayList<>();
+        RichBean richBean41 = new RichBean();
+        richBean41.setType(0);
+        richBean41.setText("爱人发噶尔尕尔发电房");
+        list2.add(richBean41);
+
+        final RichBean richBean42 = new RichBean();
+        richBean42.setType(1);
+        richBean42.setRes(R.drawable.xizhi_topic_img_pencil_tiankong);
+//        richBean42.setOnClickSpan(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+////                richBean42.setRes(R.drawable.xizhi_topic_img_line_tiankong);
+////                richTextView5.updateItem(richBean42, 1);
+//                richTextView5.updateImageItems(R.drawable.xizhi_topic_img_line_tiankong);
+//            }
+//        });
+        list2.add(richBean42);
+
+        RichBean richBean43 = new RichBean();
+        richBean43.setType(0);
+        richBean43.setText("爱人发噶尔尕尔发电房");
+        list2.add(richBean43);
+
+        final RichBean richBean44 = new RichBean();
+        richBean44.setType(1);
+        richBean44.setRes(R.drawable.xizhi_topic_img_pencil_tiankong);
+//        richBean44.setOnClickSpan(new ClickSpan.OnClickSpan() {
+//            @Override
+//            public void onClickSpan(String txt) {
+//                Toast.makeText(MainActivity.this, "点击", Toast.LENGTH_LONG).show();
+//            }
+//        });
+        list2.add(richBean44);
+        richTextView5.setOnImageSpanClickListener(new ClickSpan.OnClickSpan() {
+            @Override
+            public void onClickSpan(String txt) {
+                richTextView5.updateImageItems(R.drawable.xizhi_topic_img_line_tiankong);
+            }
+        });
+//        richTextView5.setRichText(list2);
+
+        richTextView5.setText("________江东 $$f(n)$$ 父老________接受的(公式开始) $$f(n)=\\[ \\sum_{k=1}^n k^2 = \\frac{1}{2} n (n+1)\\]$$公式结束________", "________", R.drawable.xizhi_topic_img_pencil_tiankong);
     }
 
 }

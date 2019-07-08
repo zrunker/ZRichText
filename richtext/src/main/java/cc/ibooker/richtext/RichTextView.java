@@ -114,7 +114,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setMovementMethod(LinkMovementMethod.getInstance());
-//        setRichTvScroll();
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
         String tintColor = null, backGroundColor = null;
         if (attrs != null) {
@@ -272,12 +271,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     @Override
     public void setMaxLines(int maxLines) {
         super.setMaxLines(maxLines);
-        if (maxLines > 1 && maxLines < Integer.MAX_VALUE) {
-            this.richMaxLines = maxLines;
-            this.isScroll = true;
-        } else {
-            this.isScroll = false;
-        }
+        this.richMaxLines = maxLines;
+        this.isScroll = maxLines > 0 && maxLines < Integer.MAX_VALUE;
         setRichTvScroll();
     }
 
@@ -290,11 +285,27 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 设置是否能够滚动
     private void setRichTvScroll() {
-        if (isScroll && richMaxLines > 1)
+        if (isScroll) // 默认竖直滚动
             setMovementMethod(LinkMovementMethod.getInstance());
-//            setMovementMethod(ScrollingMovementMethod.getInstance());
         else
             setOnTouchListener(new LinkMovementMethodOverride());
+    }
+
+    // 设置水平滚动
+    public RichTextView setHorizontallyScroll() {
+        this.isScroll = true;
+        setHorizontallyScrolling(true);
+        setRichTvScroll();
+        return this;
+    }
+
+    // 设置竖直滚动
+    public RichTextView setVerticalScroll(int maxLines) {
+        this.richMaxLines = maxLines;
+        this.isScroll = true;
+        setHorizontallyScrolling(false);
+        setMaxLines(maxLines);
+        return this;
     }
 
     /**
