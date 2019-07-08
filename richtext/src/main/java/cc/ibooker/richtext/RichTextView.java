@@ -167,10 +167,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         AjLatexMath.init(getContext().getApplicationContext());
     }
 
+    // 图片是否已经加载完成
     public int getLoadImgComplete() {
         return loadImgComplete;
     }
 
+    // Latex公式是否已经加载完成
     public int getLoadLatexComplete() {
         return loadLatexComplete;
     }
