@@ -12,5 +12,7 @@
         <attr name="tintColor" format="string" />
         <attr name="tintColorI" format="integer" />
         <attr name="isLatexOneStr" format="boolean" />
+        <attr name="horizontallyScroll" format="boolean" />
+        <attr name="verticalScroll" format="integer" />
     </declare-styleable>
 </resources>

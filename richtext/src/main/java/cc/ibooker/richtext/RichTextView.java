@@ -85,7 +85,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private Drawable defaultDrawable;
 
     private boolean isScroll;// 是否可以滚动
-    private int richMaxLines;// 最大行数
     private boolean isOpenImgCache = true;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
     //    private String backGroundColor;// 背景颜色
@@ -113,9 +112,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     public RichTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setMovementMethod(LinkMovementMethod.getInstance());
+//        setMovementMethod(LinkMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
         String tintColor = null, backGroundColor = null;
+        boolean horizontallyScroll = false;
+        int verticalScroll = 0;
         if (attrs != null) {
             TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
             isScroll = typeArray.getBoolean(R.styleable.RichTextView_isScroll, true);
@@ -126,6 +127,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             tintColor = typeArray.getString(R.styleable.RichTextView_tintColor);
             tintColorI = typeArray.getInteger(R.styleable.RichTextView_tintColorI, 0);
             isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
+            horizontallyScroll = typeArray.getBoolean(R.styleable.RichTextView_horizontallyScroll, false);
+            verticalScroll = typeArray.getInteger(R.styleable.RichTextView_verticalScroll, 0);
             typeArray.recycle();
         }
         if (!TextUtils.isEmpty(backGroundColor))
@@ -163,6 +166,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         richText = getText();
         // 重置数据
         resetData();
+        // 设置Scroll-默认状态可滚动
+        setRichTvScroll();
+        if (horizontallyScroll)
+            setHorizontallyScroll();
+        if (verticalScroll > 0)
+            setVerticalScroll(verticalScroll);
         // 初始化AjLatexMath
         AjLatexMath.init(getContext().getApplicationContext());
     }
@@ -271,14 +280,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     @Override
-    public void setMaxLines(int maxLines) {
-        super.setMaxLines(maxLines);
-        this.richMaxLines = maxLines;
-        this.isScroll = maxLines > 0 && maxLines < Integer.MAX_VALUE;
-        setRichTvScroll();
-    }
-
-    @Override
     public CharSequence getText() {
         if (TextUtils.isEmpty(richText))
             return super.getText();
@@ -289,13 +290,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private void setRichTvScroll() {
         if (isScroll) // 默认竖直滚动
             setMovementMethod(LinkMovementMethod.getInstance());
-        else
+        else {
+            setHorizontallyScrolling(false);
+            setVerticalScrollBarEnabled(false);
             setOnTouchListener(new LinkMovementMethodOverride());
+        }
     }
 
     // 设置水平滚动
     public RichTextView setHorizontallyScroll() {
         this.isScroll = true;
+        setMaxLines(1);
         setHorizontallyScrolling(true);
         setRichTvScroll();
         return this;
@@ -303,7 +308,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 
     // 设置竖直滚动
     public RichTextView setVerticalScroll(int maxLines) {
-        this.richMaxLines = maxLines;
         this.isScroll = true;
         setHorizontallyScrolling(false);
         setMaxLines(maxLines);
