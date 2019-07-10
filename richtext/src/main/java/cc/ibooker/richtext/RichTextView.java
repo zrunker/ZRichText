@@ -402,9 +402,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param content     待显示数据
      * @param replacement 代替字段
      * @param targetRes   目标图片res
-     * @param placeholder 图片占位符
      */
-    public RichTextView setText(String content, String replacement, int targetRes, String placeholder) {
+    public RichTextView setText(String content, String replacement, int targetRes) {
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -431,10 +430,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 richBean.setType(0);
                 datas.add(richBean);
             }
-            if (TextUtils.isEmpty(placeholder))
-                setRichText(datas, null, false);
-            else
-                setRichText(datas, placeholder);
+            setRichText(datas);
         }
         return this;
     }
@@ -445,9 +441,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param content       待显示数据
      * @param replacement   代替字段
      * @param targetImgPath 目标图片地址
-     * @param placeholder   图片占位符
      */
-    public RichTextView setText(String content, String replacement, String targetImgPath, String placeholder) {
+    public RichTextView setText(String content, String replacement, String targetImgPath) {
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -472,10 +467,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 richBean.setType(0);
                 datas.add(richBean);
             }
-            if (TextUtils.isEmpty(placeholder))
-                setRichText(datas, null, false);
-            else
-                setRichText(datas, placeholder);
+            setRichText(datas);
         }
         return this;
     }
