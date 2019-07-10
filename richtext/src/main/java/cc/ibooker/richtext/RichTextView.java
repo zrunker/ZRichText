@@ -411,10 +411,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 String[] strs = content.split(replacement);
                 if (strs.length > 0) {
                     for (String str : strs) {
-                        RichBean richBean = new RichBean();
-                        richBean.setText(str);
-                        richBean.setType(0);
-                        datas.add(richBean);
+                        if (!TextUtils.isEmpty(str)) {
+                            RichBean richBean = new RichBean();
+                            richBean.setText(str);
+                            richBean.setType(0);
+                            datas.add(richBean);
+                        }
                         // 添加图片
                         RichBean richBean1 = new RichBean();
                         richBean1.setRes(targetRes);
@@ -433,9 +435,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 setRichText(datas);
             else {
                 isLatexOneStr = true;
-
                 setRichText(datas, placeholder);
-
             }
         }
         return this;
@@ -783,6 +783,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
                 richImgBean.setRealText(data.getText());
+                richImgBean.setRes(data.getRes());
                 if (defaultDrawable != null) {
                     int width = defaultDrawable.getIntrinsicWidth();
                     int height = defaultDrawable.getIntrinsicHeight();
@@ -1081,6 +1082,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                 startPosition, endPosition,
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                        // 修改图片
                         VerticalImageSpan[] verticalImageSpans = spannableString.getSpans(startPosition, endPosition, VerticalImageSpan.class);
                         if (verticalImageSpans != null && verticalImageSpans.length > 0) {
                             for (VerticalImageSpan verticalImageSpan : verticalImageSpans) {
@@ -2511,6 +2513,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
                 richImgBean.setRealText(data.getText());
+                richImgBean.setRes(data.getRes());
                 if (defaultDrawable != null) {
                     int width = defaultDrawable.getIntrinsicWidth();
                     int height = defaultDrawable.getIntrinsicHeight();
@@ -2568,6 +2571,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
                 richImgBean.setRealText(data.getText());
+                richImgBean.setRes(data.getRes());
                 if (defaultDrawable != null) {
                     int width = defaultDrawable.getIntrinsicWidth();
                     int height = defaultDrawable.getIntrinsicHeight();
@@ -2623,6 +2627,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     tempText = tempText.replaceFirst(latexPattern, "\t");
                     latexBean.setStartPosition(index);
                     latexBean.setEndPosition(index + 1);
+
+                    // 替换tempList
+                    if (tempList != null)
+                        for (int i = 0; i < tempList.size(); i++) {
+                            String temp = tempList.get(i);
+                            if (temp.contains(latex)) {
+                                tempList.set(i, temp.replaceFirst(latexPattern, "\t"));
+                                break;
+                            }
+                        }
                 }
                 richText = tempText;
                 spannableString = new SpannableString(richText);
