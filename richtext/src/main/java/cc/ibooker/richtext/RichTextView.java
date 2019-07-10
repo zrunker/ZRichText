@@ -101,6 +101,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int loadLatexComplete = 0;// 已加载公式总数
     private boolean isLatexLoadComplete = true;// 公式是否加载完成
     private boolean isTextLoadComplete = true;// Text是否加载完成
+    private int updateRichTvDataModel = 2;// 加载数据形式，1-2-3
 
     public RichTextView(Context context) {
         this(context, null);
@@ -130,6 +131,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             horizontallyScroll = typeArray.getBoolean(R.styleable.RichTextView_horizontallyScroll, false);
             verticalScroll = typeArray.getInteger(R.styleable.RichTextView_verticalScroll, 0);
             imgPlaceholder = typeArray.getString(R.styleable.RichTextView_imgPlaceholder);
+            updateRichTvDataModel = typeArray.getInteger(R.styleable.RichTextView_updateRichTvDataModel, 2);
             typeArray.recycle();
         }
         if (!TextUtils.isEmpty(backGroundColor))
@@ -577,12 +579,18 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param placeholder 占位符
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, final String placeholder) {
+        this.imgPlaceholder = placeholder;
         isTextLoadComplete = false;
         resetData();
         if (datas != null && datas.size() > 0) {
             richBeanList = (ArrayList<RichBean>) datas.clone();
             if (richTvWidth > 0) {
-                updateRichTvData3(placeholder);
+                if (updateRichTvDataModel == 1)
+                    updateRichTvData1();
+                else if (updateRichTvDataModel == 2)
+                    updateRichTvData2();
+                else if (updateRichTvDataModel == 3)
+                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -594,7 +602,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
-                        updateRichTvData3(placeholder);
+                        if (updateRichTvDataModel == 1)
+                            updateRichTvData1();
+                        else if (updateRichTvDataModel == 2)
+                            updateRichTvData2();
+                        else if (updateRichTvDataModel == 3)
+                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -617,7 +630,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (datas != null && datas.size() > 0) {
             richBeanList = (ArrayList<RichBean>) datas.clone();
             if (richTvWidth > 0) {
-                updateRichTvData1();
+                if (updateRichTvDataModel == 1)
+                    updateRichTvData1();
+                else if (updateRichTvDataModel == 2)
+                    updateRichTvData2();
+                else if (updateRichTvDataModel == 3)
+                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -629,7 +647,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
-                        updateRichTvData1();
+                        if (updateRichTvDataModel == 1)
+                            updateRichTvData1();
+                        else if (updateRichTvDataModel == 2)
+                            updateRichTvData2();
+                        else if (updateRichTvDataModel == 3)
+                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -689,7 +712,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             richBeanList = (ArrayList<RichBean>) datas.clone();
             defaultDrawable = drawable;
             if (richTvWidth > 0) {
-                updateRichTvData2();
+                if (updateRichTvDataModel == 1)
+                    updateRichTvData1();
+                else if (updateRichTvDataModel == 2)
+                    updateRichTvData2();
+                else if (updateRichTvDataModel == 3)
+                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -701,7 +729,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         richTvWidth = getWidth();
                         if (richTvWidth <= 0)
                             richTvWidth = ((ViewGroup) getParent()).getWidth();
-                        updateRichTvData2();
+                        if (updateRichTvDataModel == 1)
+                            updateRichTvData1();
+                        else if (updateRichTvDataModel == 2)
+                            updateRichTvData2();
+                        else if (updateRichTvDataModel == 3)
+                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -2527,7 +2560,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 更新数据，刷新界面-自定义占位符
-    private synchronized void updateRichTvData3(String placeholder) {
+    private synchronized void updateRichTvData3() {
         if (tempList == null)
             tempList = new ArrayList<>();
         else
@@ -2544,10 +2577,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 loadImgTatol++;
                 // 设置占位符 - placeholder
                 if (TextUtils.isEmpty(imgPlaceholder))
-                    if (!TextUtils.isEmpty(placeholder))
-                        tempList.add(placeholder);
-                    else
-                        tempList.add("\t");
+                    tempList.add("\t");
                 else
                     tempList.add(imgPlaceholder);
                 // 添加默认图片

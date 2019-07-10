@@ -15,5 +15,10 @@
         <attr name="horizontallyScroll" format="boolean" />
         <attr name="verticalScroll" format="integer" />
         <attr name="imgPlaceholder" format="string" />
+        <attr name="updateRichTvDataModel" format="integer">
+            <flag name="MODE_1" value="1" />
+            <flag name="MODE_2" value="2" />
+            <flag name="MODE_3" value="3" />
+        </attr>
     </declare-styleable>
 </resources>
