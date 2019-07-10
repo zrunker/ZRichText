@@ -402,8 +402,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param content     待显示数据
      * @param replacement 代替字段
      * @param targetRes   目标图片res
+     * @param placeholder 图片占位符
      */
-    public RichTextView setText(String content, String replacement, int targetRes) {
+    public RichTextView setText(String content, String replacement, int targetRes, String placeholder) {
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -428,7 +429,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 richBean.setType(0);
                 datas.add(richBean);
             }
-            setRichText(datas);
+            if (TextUtils.isEmpty(placeholder))
+                setRichText(datas);
+            else {
+                isLatexOneStr = true;
+
+                setRichText(datas, placeholder);
+
+            }
         }
         return this;
     }
@@ -439,8 +447,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param content       待显示数据
      * @param replacement   代替字段
      * @param targetImgPath 目标图片地址
+     * @param placeholder   图片占位符
      */
-    public RichTextView setText(String content, String replacement, String targetImgPath) {
+    public RichTextView setText(String content, String replacement, String targetImgPath, String placeholder) {
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -465,7 +474,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 richBean.setType(0);
                 datas.add(richBean);
             }
-            setRichText(datas);
+            if (TextUtils.isEmpty(placeholder))
+                setRichText(datas);
+            else
+                setRichText(datas, placeholder);
         }
         return this;
     }
@@ -574,6 +586,40 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         isTextLoadComplete = false;
         setRichText(datas, true);
         isTextLoadComplete = true;
+        return this;
+    }
+
+    /**
+     * 展示数据到TextView上，图片预显示为：placeholder
+     *
+     * @param datas       待显示数据列表
+     * @param placeholder 占位符
+     */
+    public RichTextView setRichText(ArrayList<RichBean> datas, final String placeholder) {
+        isTextLoadComplete = false;
+        resetData();
+        if (datas != null && datas.size() > 0) {
+            richBeanList = (ArrayList<RichBean>) datas.clone();
+            if (richTvWidth > 0) {
+                updateRichTvData3(placeholder);
+                isTextLoadComplete = true;
+            } else {
+                final ViewTreeObserver vto = getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        richTvWidth = getWidth();
+                        if (richTvWidth <= 0)
+                            richTvWidth = ((ViewGroup) getParent()).getWidth();
+                        updateRichTvData3(placeholder);
+                        isTextLoadComplete = true;
+                    }
+                });
+            }
+        } else
+            isTextLoadComplete = true;
         return this;
     }
 
@@ -690,17 +736,19 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         return this;
     }
 
-    // 更新数据，刷新界面
+    // 更新数据，刷新界面-空格·空格占位符
     private synchronized void updateRichTvData1() {
         float size = getTextSize();
         if (tempList == null)
             tempList = new ArrayList<>();
-        tempList.clear();
+        else
+            tempList.clear();
 
         // 初始化文本
         if (imgTextList == null)
             imgTextList = new ArrayList<>();
-        imgTextList.clear();
+        else
+            imgTextList.clear();
 
         // 循环遍历获取文本
         for (int i = 0; i < richBeanList.size(); i++) {
@@ -731,6 +779,18 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             .append("\t");
                 }
                 tempList.add(strBuilder.toString());
+                // 添加默认图片
+                RichImgBean richImgBean = new RichImgBean();
+                richImgBean.setOnClickSpan(data.getOnClickSpan());
+                richImgBean.setRealText(data.getText());
+                if (defaultDrawable != null) {
+                    int width = defaultDrawable.getIntrinsicWidth();
+                    int height = defaultDrawable.getIntrinsicHeight();
+                    defaultDrawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
+                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
+                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+                }
+                data.setRichImgBean(richImgBean);
             }
         }
 
@@ -2429,11 +2489,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         return this;
     }
 
-    // 更新数据，刷新界面
+    // 更新数据，刷新界面-空格占位符
     private synchronized void updateRichTvData2() {
         if (tempList == null)
             tempList = new ArrayList<>();
-        tempList.clear();
+        else
+            tempList.clear();
         // 循环遍历获取文本
         for (int i = 0; i < richBeanList.size(); i++) {
             final RichBean data = richBeanList.get(i);
@@ -2446,6 +2507,63 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 loadImgTatol++;
                 // 设置占位符 - 空格
                 tempList.add("\t");
+                // 添加默认图片
+                RichImgBean richImgBean = new RichImgBean();
+                richImgBean.setOnClickSpan(data.getOnClickSpan());
+                richImgBean.setRealText(data.getText());
+                if (defaultDrawable != null) {
+                    int width = defaultDrawable.getIntrinsicWidth();
+                    int height = defaultDrawable.getIntrinsicHeight();
+                    defaultDrawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
+                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
+                    richImgBean.setVerticalImageSpan(verticalImageSpan);
+                }
+                data.setRichImgBean(richImgBean);
+            }
+        }
+
+        // 设置TextView
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String str : tempList)
+            stringBuilder.append(str);
+        richText = stringBuilder.toString();
+        spannableString = new SpannableString(richText);
+        setText(spannableString);
+        dealWithLatex(richText);
+
+        // 重新刷新数据
+        updateRichTvImgView();
+
+        // 循环遍历显示图片
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
+            if (data.getType() == 0)
+                continue;
+            downLoadImage(data, true);
+        }
+    }
+
+    // 更新数据，刷新界面-自定义占位符
+    private synchronized void updateRichTvData3(String placeholder) {
+        if (tempList == null)
+            tempList = new ArrayList<>();
+        else
+            tempList.clear();
+        // 循环遍历获取文本
+        for (int i = 0; i < richBeanList.size(); i++) {
+            final RichBean data = richBeanList.get(i);
+            if (onLatexClickSpanListener == null)
+                onLatexClickSpanListener = data.getOnLatexClickSpan();
+            if (data.getType() == 0) {
+                tempList.add(data.getText());
+            } else {// 图片
+                isImgLoadComplete = false;
+                loadImgTatol++;
+                // 设置占位符 - placeholder
+                if (!TextUtils.isEmpty(placeholder))
+                    tempList.add(placeholder);
+                else
+                    tempList.add("\t");
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
