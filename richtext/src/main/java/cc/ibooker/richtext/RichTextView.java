@@ -390,10 +390,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setText(String text) {
-        isTextLoadComplete = false;
-        setRichText(text);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(text);
     }
 
     /**
@@ -433,10 +430,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             }
             if (TextUtils.isEmpty(placeholder))
                 setRichText(datas);
-            else {
-                isLatexOneStr = true;
+            else
                 setRichText(datas, placeholder);
-            }
         }
         return this;
     }
@@ -488,11 +483,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setRichText(final CharSequence text) {
-        isTextLoadComplete = false;
         richText = text;
-        setRichText(richText, false);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(richText, false);
     }
 
     /**
@@ -543,11 +535,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param onLatexClickSpanListener Latex公式点击事件
      */
     public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpanListener) {
-        isTextLoadComplete = false;
         this.onLatexClickSpanListener = onLatexClickSpanListener;
-        setRichText(text);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(text);
     }
 
     /**
@@ -556,10 +545,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param richBean 待显示数据
      */
     public RichTextView setRichText(RichBean richBean) {
-        isTextLoadComplete = false;
-        setRichText(richBean, true);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(richBean, true);
     }
 
     /**
@@ -569,12 +555,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isOpenCache 是否开始图片缓存 默认缓存true
      */
     public RichTextView setRichText(RichBean richBean, boolean isOpenCache) {
-        isTextLoadComplete = false;
         ArrayList<RichBean> datas = new ArrayList<>();
         datas.add(richBean);
-        setRichText(datas, isOpenCache);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(datas, isOpenCache);
     }
 
     /**
@@ -583,10 +566,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param datas 待显示数据列表
      */
     public RichTextView setRichText(ArrayList<RichBean> datas) {
-        isTextLoadComplete = false;
-        setRichText(datas, true);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(datas, true);
     }
 
     /**
@@ -678,10 +658,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
 
     public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
-        isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
-        isTextLoadComplete = true;
         return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
     }
 
@@ -692,10 +670,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param drawable 默认预显示图片
      */
     public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
-        isTextLoadComplete = false;
-        setRichText(datas, drawable, true);
-        isTextLoadComplete = true;
-        return this;
+        return setRichText(datas, drawable, true);
     }
 
     /**
