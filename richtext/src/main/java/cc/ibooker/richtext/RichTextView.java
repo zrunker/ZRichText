@@ -101,7 +101,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int loadLatexComplete = 0;// 已加载公式总数
     private boolean isLatexLoadComplete = true;// 公式是否加载完成
     private boolean isTextLoadComplete = true;// Text是否加载完成
-    private int updateRichTvDataModel = 2;// 加载数据形式，1-2-3
+    private int updateRichTvDataModel = 2;// 加载数据形式，1-2
 
     public RichTextView(Context context) {
         this(context, null);
@@ -589,8 +589,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     updateRichTvData1();
                 else if (updateRichTvDataModel == 2)
                     updateRichTvData2();
-                else if (updateRichTvDataModel == 3)
-                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -606,8 +604,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
-                        else if (updateRichTvDataModel == 3)
-                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -634,8 +630,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     updateRichTvData1();
                 else if (updateRichTvDataModel == 2)
                     updateRichTvData2();
-                else if (updateRichTvDataModel == 3)
-                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -651,8 +645,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
-                        else if (updateRichTvDataModel == 3)
-                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -716,8 +708,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     updateRichTvData1();
                 else if (updateRichTvDataModel == 2)
                     updateRichTvData2();
-                else if (updateRichTvDataModel == 3)
-                    updateRichTvData3();
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
@@ -733,8 +723,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
-                        else if (updateRichTvDataModel == 3)
-                            updateRichTvData3();
                         isTextLoadComplete = true;
                     }
                 });
@@ -2518,64 +2506,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isImgLoadComplete = false;
                 loadImgTatol++;
                 // 设置占位符 - 空格
-                if (TextUtils.isEmpty(imgPlaceholder))
-                    tempList.add("\t");
-                else
-                    tempList.add(imgPlaceholder);
-                // 添加默认图片
-                RichImgBean richImgBean = new RichImgBean();
-                richImgBean.setOnClickSpan(data.getOnClickSpan());
-                richImgBean.setRealText(data.getText());
-                richImgBean.setRes(data.getRes());
-                if (defaultDrawable != null) {
-                    int width = defaultDrawable.getIntrinsicWidth();
-                    int height = defaultDrawable.getIntrinsicHeight();
-                    defaultDrawable.setBounds(0, 0, DensityUtil.dp2px(getContext(), width), DensityUtil.dp2px(getContext(), height));
-                    VerticalImageSpan verticalImageSpan = new VerticalImageSpan(defaultDrawable);
-                    richImgBean.setVerticalImageSpan(verticalImageSpan);
-                }
-                data.setRichImgBean(richImgBean);
-            }
-        }
-
-        // 设置TextView
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String str : tempList)
-            stringBuilder.append(str);
-        richText = stringBuilder.toString();
-        spannableString = new SpannableString(richText);
-        setText(spannableString);
-        dealWithLatex(richText);
-
-        // 重新刷新数据
-        updateRichTvImgView();
-
-        // 循环遍历显示图片
-        for (int i = 0; i < richBeanList.size(); i++) {
-            final RichBean data = richBeanList.get(i);
-            if (data.getType() == 0)
-                continue;
-            downLoadImage(data, true);
-        }
-    }
-
-    // 更新数据，刷新界面-自定义占位符
-    private synchronized void updateRichTvData3() {
-        if (tempList == null)
-            tempList = new ArrayList<>();
-        else
-            tempList.clear();
-        // 循环遍历获取文本
-        for (int i = 0; i < richBeanList.size(); i++) {
-            final RichBean data = richBeanList.get(i);
-            if (onLatexClickSpanListener == null)
-                onLatexClickSpanListener = data.getOnLatexClickSpan();
-            if (data.getType() == 0) {
-                tempList.add(data.getText());
-            } else {// 图片
-                isImgLoadComplete = false;
-                loadImgTatol++;
-                // 设置占位符 - placeholder
                 if (TextUtils.isEmpty(imgPlaceholder))
                     tempList.add("\t");
                 else
