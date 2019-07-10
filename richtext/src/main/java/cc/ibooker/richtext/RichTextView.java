@@ -83,7 +83,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private ArrayList<LatexBean> latexBeanList;
     private int richTvWidth;
     private Drawable defaultDrawable;
-
+    private String imgPlaceholder;// 图片占位符，默认空格
     private boolean isScroll;// 是否可以滚动
     private boolean isOpenImgCache = true;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
@@ -129,6 +129,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
             horizontallyScroll = typeArray.getBoolean(R.styleable.RichTextView_horizontallyScroll, false);
             verticalScroll = typeArray.getInteger(R.styleable.RichTextView_verticalScroll, 0);
+            imgPlaceholder = typeArray.getString(R.styleable.RichTextView_imgPlaceholder);
             typeArray.recycle();
         }
         if (!TextUtils.isEmpty(backGroundColor))
@@ -429,7 +430,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 datas.add(richBean);
             }
             if (TextUtils.isEmpty(placeholder))
-                setRichText(datas);
+                setRichText(datas, null, false);
             else
                 setRichText(datas, placeholder);
         }
@@ -470,7 +471,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 datas.add(richBean);
             }
             if (TextUtils.isEmpty(placeholder))
-                setRichText(datas);
+                setRichText(datas, null, false);
             else
                 setRichText(datas, placeholder);
         }
@@ -735,25 +736,26 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } else {// 图片
                 isImgLoadComplete = false;
                 loadImgTatol++;
-                StringBuilder strBuilder = new StringBuilder();
-                // 设置占位符 - 要是唯一值
-                if (data.getWidth() > 0) {
-                    int width = DensityUtil.px2sp(getContext(), data.getWidth());
-                    int num = (int) (width / size);
-                    // 判断num是否已存在
-                    numExist(num);
-                    // 设置唯一值
-                    for (int j = 0; j < num; j++)
-                        strBuilder.append("\t");
-                    strBuilder.append("·");
-                    for (int j = 0; j < num; j++)
-                        strBuilder.append("\t");
-                } else {
-                    strBuilder.append("\t")
-                            .append(i)
-                            .append("\t");
-                }
-                tempList.add(strBuilder.toString());
+                if (TextUtils.isEmpty(imgPlaceholder)) {
+                    StringBuilder strBuilder = new StringBuilder();
+                    // 设置占位符 - 要是唯一值
+                    if (data.getWidth() > 0) {
+                        int width = DensityUtil.px2sp(getContext(), data.getWidth());
+                        int num = (int) (width / size);
+                        // 判断num是否已存在
+                        numExist(num);
+                        // 设置唯一值
+                        for (int j = 0; j < num; j++)
+                            strBuilder.append("\t");
+                        strBuilder.append("·");
+                        for (int j = 0; j < num; j++)
+                            strBuilder.append("\t");
+                    } else {
+                        strBuilder.append("\t").append(i).append("\t");
+                    }
+                    tempList.add(strBuilder.toString());
+                } else
+                    tempList.add(imgPlaceholder);
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
@@ -2483,7 +2485,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isImgLoadComplete = false;
                 loadImgTatol++;
                 // 设置占位符 - 空格
-                tempList.add("\t");
+                if (TextUtils.isEmpty(imgPlaceholder))
+                    tempList.add("\t");
+                else
+                    tempList.add(imgPlaceholder);
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());
@@ -2538,10 +2543,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isImgLoadComplete = false;
                 loadImgTatol++;
                 // 设置占位符 - placeholder
-                if (!TextUtils.isEmpty(placeholder))
-                    tempList.add(placeholder);
+                if (TextUtils.isEmpty(imgPlaceholder))
+                    if (!TextUtils.isEmpty(placeholder))
+                        tempList.add(placeholder);
+                    else
+                        tempList.add("\t");
                 else
-                    tempList.add("\t");
+                    tempList.add(imgPlaceholder);
                 // 添加默认图片
                 RichImgBean richImgBean = new RichImgBean();
                 richImgBean.setOnClickSpan(data.getOnClickSpan());

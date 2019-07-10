@@ -14,5 +14,6 @@
         <attr name="isLatexOneStr" format="boolean" />
         <attr name="horizontallyScroll" format="boolean" />
         <attr name="verticalScroll" format="integer" />
+        <attr name="imgPlaceholder" format="string" />
     </declare-styleable>
 </resources>
