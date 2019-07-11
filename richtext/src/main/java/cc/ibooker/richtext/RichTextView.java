@@ -76,6 +76,7 @@ import cc.ibooker.richtext.jlatexmath.core.TeXIcon;
  * https://github.com/zrunker/ZRichText
  */
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
+    private final String LATEXPATTERN = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
     private ArrayList<String> tempList;
     private SpannableString spannableString;
     private ArrayList<Integer> imgTextList;
@@ -1039,6 +1040,53 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             updateTextColor(color, 0, spannableString.length());
         }
         return this;
+    }
+
+    /**
+     * 文本背景
+     *
+     * @param backgroundColor 背景颜色 16进制  "#FFF000"
+     * @param startPosition   开始位置
+     * @param endPosition     结束位置
+     * @param originalContent 原始数据
+     * @param replace         被替换数据
+     */
+    public synchronized RichTextView updateBackgroundColor(final String backgroundColor,
+                                                           final int startPosition,
+                                                           final int endPosition,
+                                                           final CharSequence originalContent,
+                                                           final String replace) {
+        return updateBackgroundColor(backgroundColor, startPosition, endPosition, 0, originalContent, replace);
+    }
+
+    /**
+     * 文本背景
+     *
+     * @param backgroundColor            背景颜色 16进制  "#FFF000"
+     * @param startPosition              开始位置
+     * @param endPosition                结束位置
+     * @param updateBackGroundColorModel 修改背景模式，0-等高修改，1-不等高修改（图片与文本背景是否等高）
+     * @param originalContent            原始数据
+     * @param replace                    被替换数据
+     */
+    public synchronized RichTextView updateBackgroundColor(final String backgroundColor,
+                                                           final int startPosition,
+                                                           final int endPosition,
+                                                           final int updateBackGroundColorModel,
+                                                           final CharSequence originalContent,
+                                                           final String replace) {
+
+        // 拷贝原始字符串
+        String tempStr = new String(originalContent.toString());
+        // 替换Latex公式
+        if (isLatexOneStr)
+            tempStr = tempStr.replaceAll(LATEXPATTERN, "\t");
+        // 提取被选中的值
+        String selectedStr = tempStr.substring(startPosition, endPosition);
+        String selectedStr2 = selectedStr.replace(replace, "\t");
+        // 新的结束位置
+        int newEndPosition = startPosition + selectedStr2.length();
+        return updateBackgroundColor(backgroundColor, startPosition, newEndPosition, updateBackGroundColorModel);
     }
 
     /**
@@ -2542,8 +2590,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     // 处理LaTeX数学公式
     private synchronized RichTextView dealWithLatex(CharSequence text) {
         if (!TextUtils.isEmpty(text)) {
-            String latexPattern = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
-            Pattern pattern = Pattern.compile(latexPattern);
+            Pattern pattern = Pattern.compile(LATEXPATTERN);
             Matcher matcher = pattern.matcher(text);
             while (matcher.find()) {
                 LatexBean latexBean = new LatexBean(matcher.group(), matcher.start(), matcher.end());
@@ -2559,7 +2606,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 for (LatexBean latexBean : latexBeanList) {
                     String latex = latexBean.getLatex();
                     int index = tempText.indexOf(latex);
-                    tempText = tempText.replaceFirst(latexPattern, "\t");
+                    tempText = tempText.replaceFirst(LATEXPATTERN, "\t");
                     latexBean.setStartPosition(index);
                     latexBean.setEndPosition(index + 1);
 
@@ -2568,7 +2615,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         for (int i = 0; i < tempList.size(); i++) {
                             String temp = tempList.get(i);
                             if (temp.contains(latex)) {
-                                tempList.set(i, temp.replaceFirst(latexPattern, "\t"));
+                                tempList.set(i, temp.replaceFirst(LATEXPATTERN, "\t"));
                                 break;
                             }
                         }

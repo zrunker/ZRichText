@@ -482,7 +482,19 @@ public class MainActivity extends AppCompatActivity {
         });
 //        richTextView5.setRichText(list2);
 
-        richTextView5.setText("________江东 $$f(n)$$ 父老________接受的(公式开始) $$f(n)=\\[ \\sum_{k=1}^n k^2 = \\frac{1}{2} n (n+1)\\]$$公式结束________", "________", R.drawable.xizhi_topic_img_pencil_tiankong);
+        String content = "________江东 $$f(n)$$ 父老________接受的(公式开始) $$f(n)=\\[ \\sum_{k=1}^n k^2 = \\frac{1}{2} n (n+1)\\]$$公式结束________";
+        String replace = "________";
+        richTextView5.setLatexOneStr(true)
+                .setText(content, replace, R.drawable.xizhi_topic_img_pencil_tiankong);
+
+        int startPosition = 0;
+        int endPosition = 10 + 14;
+
+        richTextView5.updateBackgroundColor("#40aff2",
+                startPosition,
+                endPosition,
+                content,
+                replace);
     }
 
 }

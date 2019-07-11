@@ -38,8 +38,6 @@
                 android:id="@+id/richTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
                 android:text="Hello World!"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
