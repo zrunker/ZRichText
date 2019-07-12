@@ -86,7 +86,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private Drawable defaultDrawable;
     private String imgPlaceholder;// 图片占位符，默认空格
     private boolean isScroll;// 是否可以滚动
-    private boolean isOpenImgCache = true;// 是否开启图片缓存，默认开启
+    private boolean isOpenImgCache = false;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
     //    private String backGroundColor;// 背景颜色
     private int backGroundColorI;// 背景颜色
@@ -94,12 +94,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int tintColorI;// 文字颜色int
     private boolean isResetData = true;// 是否重置数据
     private CharSequence richText;// 文本内容
-    private boolean isLatexOneStr = false;// 是否将Latex公式当成一个字符串处理
+    private boolean isLatexOneStr = true;// 是否将Latex公式当成一个字符串处理
     private int loadImgTatol = 0;// 待加载图片总数
     private int loadImgComplete = 0;// 已加载图片总数
-    private boolean isImgLoadComplete = true;// 图片是否加载完成
     private int loadLatexTatol = 0;// 待加载公式总数
     private int loadLatexComplete = 0;// 已加载公式总数
+    private boolean isImgLoadComplete = true;// 图片是否加载完成
     private boolean isLatexLoadComplete = true;// 公式是否加载完成
     private boolean isTextLoadComplete = true;// Text是否加载完成
     private int updateRichTvDataModel = 2;// 加载数据形式，1-2
@@ -180,6 +180,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         AjLatexMath.init(getContext().getApplicationContext());
     }
 
+    // 文本是否加载完成
+    public boolean isTextLoadComplete() {
+        return isTextLoadComplete;
+    }
+
     // 图片是否已经加载完成
     public int getLoadImgComplete() {
         return loadImgComplete;
@@ -194,6 +199,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     public void setTextColor(int color) {
         super.setTextColor(color);
         this.tintColorI = color;
+    }
+
+    public void setTextColor(String color) {
+        this.setTintColor(color);
     }
 
     @Override
@@ -510,9 +519,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getWidth();
-                        if (richTvWidth <= 0)
-                            richTvWidth = ((ViewGroup) getParent()).getWidth();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+                        if (richTvWidth <= 0) {
+                            ViewGroup parent = (ViewGroup) getParent();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                        }
                         dealWithLatex(richText);
                         setText(spannableString);
                         isTextLoadComplete = true;
@@ -590,9 +601,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getWidth();
-                        if (richTvWidth <= 0)
-                            richTvWidth = ((ViewGroup) getParent()).getWidth();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+                        if (richTvWidth <= 0) {
+                            ViewGroup parent = (ViewGroup) getParent();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                        }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
@@ -631,9 +644,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getWidth();
-                        if (richTvWidth <= 0)
-                            richTvWidth = ((ViewGroup) getParent()).getWidth();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+                        if (richTvWidth <= 0) {
+                            ViewGroup parent = (ViewGroup) getParent();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                        }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
@@ -709,9 +724,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getWidth();
-                        if (richTvWidth <= 0)
-                            richTvWidth = ((ViewGroup) getParent()).getWidth();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+                        if (richTvWidth <= 0) {
+                            ViewGroup parent = (ViewGroup) getParent();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                        }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
                         else if (updateRichTvDataModel == 2)
