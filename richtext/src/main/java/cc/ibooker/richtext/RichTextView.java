@@ -519,10 +519,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
-                            richTvWidth = parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
                         }
                         dealWithLatex(richText);
                         setText(spannableString);
@@ -601,10 +601,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
-                            richTvWidth = parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
                         }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
@@ -644,10 +644,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
-                            richTvWidth = parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
                         }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
@@ -724,10 +724,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     public void onGlobalLayout() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                             getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        richTvWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
-                            richTvWidth = parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
                         }
                         if (updateRichTvDataModel == 1)
                             updateRichTvData1();
