@@ -102,7 +102,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private boolean isImgLoadComplete = true;// 图片是否加载完成
     private boolean isLatexLoadComplete = true;// 公式是否加载完成
     private boolean isTextLoadComplete = true;// Text是否加载完成
-    private int updateRichTvDataModel = 2;// 加载数据形式，1-2
+    private int updateRichTvDataModel = 2;// 加载数据形式，1\2
 
     public RichTextView(Context context) {
         this(context, null);
@@ -186,13 +186,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 图片是否已经加载完成
-    public int getLoadImgComplete() {
-        return loadImgComplete;
+    public boolean isImgLoadComplete() {
+        return isImgLoadComplete;
     }
 
     // Latex公式是否已经加载完成
-    public int getLoadLatexComplete() {
-        return loadLatexComplete;
+    public boolean isLatexLoadComplete() {
+        return isLatexLoadComplete;
     }
 
     @Override
