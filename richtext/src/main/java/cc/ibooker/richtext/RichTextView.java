@@ -1092,7 +1092,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int updateBackGroundColorModel,
                                                            final CharSequence originalContent,
                                                            final String replace) {
-
         // 拷贝原始字符串
         String tempStr = new String(originalContent.toString());
         // 替换Latex公式
