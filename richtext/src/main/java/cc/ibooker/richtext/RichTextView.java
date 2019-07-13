@@ -139,7 +139,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             updateRichTvDataModel = typeArray.getInteger(R.styleable.RichTextView_updateRichTvDataModel, 2);
             isEqualScreenWidth = typeArray.getBoolean(R.styleable.RichTextView_isEqualScreenWidth, false);
             text = typeArray.getString(R.styleable.RichTextView_text);
-            textSize = typeArray.getFloat(R.styleable.RichTextView_textSize, 12);
+            textSize = typeArray.getFloat(R.styleable.RichTextView_textSize, 0);
             isBold = typeArray.getBoolean(R.styleable.RichTextView_isBold, false);
             typeArray.recycle();
         }
