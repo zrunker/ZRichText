@@ -206,6 +206,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         }, delayMillis);
     }
 
+    // 设置RichTextView的宽度
+    public void setRichTvWidth(int richTvWidth) {
+        this.richTvWidth = richTvWidth;
+    }
+
     @Override
     public void setTextColor(int color) {
         super.setTextColor(color);
