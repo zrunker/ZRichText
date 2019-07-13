@@ -117,7 +117,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //        setMovementMethod(LinkMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
         String tintColor = null, backGroundColor = null;
-        boolean horizontallyScroll = false;
+        boolean horizontallyScroll = false, isEqualScreenWidth = false;
         int verticalScroll = 0;
         if (attrs != null) {
             TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
@@ -133,6 +133,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             verticalScroll = typeArray.getInteger(R.styleable.RichTextView_verticalScroll, 0);
             imgPlaceholder = typeArray.getString(R.styleable.RichTextView_imgPlaceholder);
             updateRichTvDataModel = typeArray.getInteger(R.styleable.RichTextView_updateRichTvDataModel, 2);
+            isEqualScreenWidth = typeArray.getBoolean(R.styleable.RichTextView_isEqualScreenWidth, false);
             typeArray.recycle();
         }
         if (!TextUtils.isEmpty(backGroundColor))
@@ -167,6 +168,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         }
         if (tintColorI != 0)
             setTextColor(tintColorI);
+        // 设置宽度
+        setEqualScreenWidth(isEqualScreenWidth);
         richText = getText();
         // 重置数据
         resetData();
@@ -209,6 +212,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     // 设置RichTextView的宽度
     public void setRichTvWidth(int richTvWidth) {
         this.richTvWidth = richTvWidth;
+    }
+
+    // RichTextView的宽度是否等于屏幕的宽度
+    public void setEqualScreenWidth(boolean equalScreenWidth) {
+        if (equalScreenWidth)
+            richTvWidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * 0.8);
+        else
+            richTvWidth = 0;
     }
 
     @Override

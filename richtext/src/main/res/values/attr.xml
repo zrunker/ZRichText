@@ -19,5 +19,6 @@
             <flag name="MODE_1" value="1" />
             <flag name="MODE_2" value="2" />
         </attr>
+        <attr name="isEqualScreenWidth" format="boolean" />
     </declare-styleable>
 </resources>
