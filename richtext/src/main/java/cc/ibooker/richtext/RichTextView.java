@@ -70,7 +70,6 @@ import cc.ibooker.richtext.jlatexmath.core.TeXIcon;
 
 /**
  * 自定义富文本View
- * 如果是列表中显示RichTextView，建议使用父控件post方法进行实现，因为特定情况下它的大小会随着父控件变化而变化
  *
  * @author 邹峰立
  * <p>
