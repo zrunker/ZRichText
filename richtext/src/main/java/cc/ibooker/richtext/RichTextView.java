@@ -195,6 +195,17 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         return isLatexLoadComplete;
     }
 
+    // 延后刷新界面
+    public void delayedReflushView(long delayMillis) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setText(spannableString);
+                invalidate();
+            }
+        }, delayMillis);
+    }
+
     @Override
     public void setTextColor(int color) {
         super.setTextColor(color);
