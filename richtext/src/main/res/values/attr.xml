@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RichTextView">
-        <attr name="isScroll" format="boolean" />
-        <attr name="isOpenImgCache" format="boolean" />
-        <attr name="loadImgModel" format="integer">
-            <flag name="MODE_0" value="0" />
-            <flag name="MODE_1" value="1" />
-        </attr>
-        <attr name="backGroundColor" format="string" />
-        <attr name="backGroundColorI" format="integer" />
-        <attr name="tintColor" format="string" />
-        <attr name="tintColorI" format="integer" />
-        <attr name="isLatexOneStr" format="boolean" />
-        <attr name="horizontallyScroll" format="boolean" />
-        <attr name="verticalScroll" format="integer" />
-        <attr name="imgPlaceholder" format="string" />
-        <attr name="updateRichTvDataModel" format="integer">
-            <flag name="MODE_1" value="1" />
-            <flag name="MODE_2" value="2" />
-        </attr>
-        <attr name="isEqualScreenWidth" format="boolean" />
-        <attr name="text" format="string" />
-        <attr name="textColor" format="string" />
-        <attr name="textBackgroundColor" format="string" />
-        <attr name="textSize" format="float" />
-        <attr name="isBold" format="boolean" />
-    </declare-styleable>
+<declare-styleable name="RichTextView">
+    <attr name="isScroll" format="boolean" />
+    <attr name="isOpenImgCache" format="boolean" />
+    <attr name="loadImgModel" format="integer">
+        <flag name="MODE_0" value="0" />
+        <flag name="MODE_1" value="1" />
+    </attr>
+    <attr name="backGroundColor" format="string" />
+    <attr name="backGroundColorI" format="integer" />
+    <attr name="tintColor" format="string" />
+    <attr name="tintColorI" format="integer" />
+    <attr name="isLatexOneStr" format="boolean" />
+    <attr name="horizontallyScroll" format="boolean" />
+    <attr name="verticalScroll" format="integer" />
+    <attr name="imgPlaceholder" format="string" />
+    <attr name="updateRichTvDataModel" format="integer">
+        <flag name="MODE_1" value="1" />
+        <flag name="MODE_2" value="2" />
+    </attr>
+    <attr name="isEqualScreenWidth" format="boolean" />
+    <attr name="text" format="string" />
+    <attr name="textColor" format="string" />
+    <attr name="textBackgroundColor" format="string" />
+    <attr name="textSize" format="float" />
+    <attr name="isBold" format="boolean" />
+</declare-styleable>
 </resources>

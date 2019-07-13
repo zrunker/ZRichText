@@ -45,6 +45,7 @@ import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
@@ -191,7 +192,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (!TextUtils.isEmpty(text))
             setText(text);
         if (textSize > 0)
-            setTextSize(textSize);
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         if (isBold)
             setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         richText = getText();
