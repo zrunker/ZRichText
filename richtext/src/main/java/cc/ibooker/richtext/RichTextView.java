@@ -116,8 +116,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         super(context, attrs, defStyleAttr);
 //        setMovementMethod(LinkMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);// 消除点击时的背景色
-        String tintColor = null, backGroundColor = null;
-        boolean horizontallyScroll = false, isEqualScreenWidth = false;
+        String tintColor = null, backGroundColor = null, text = null, textColor = null, textBackgroundColor = null;
+        boolean horizontallyScroll = false, isEqualScreenWidth = false, isBold = false;
+        float textSize = 0;
         int verticalScroll = 0;
         if (attrs != null) {
             TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RichTextView, 0, 0);
@@ -125,8 +126,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             isOpenImgCache = typeArray.getBoolean(R.styleable.RichTextView_isOpenImgCache, true);
             loadImgModel = typeArray.getInt(R.styleable.RichTextView_loadImgModel, 0);
             backGroundColor = typeArray.getString(R.styleable.RichTextView_backGroundColor);
+            textBackgroundColor = typeArray.getString(R.styleable.RichTextView_textBackgroundColor);
             backGroundColorI = typeArray.getInteger(R.styleable.RichTextView_backGroundColorI, 0);
             tintColor = typeArray.getString(R.styleable.RichTextView_tintColor);
+            textColor = typeArray.getString(R.styleable.RichTextView_textColor);
             tintColorI = typeArray.getInteger(R.styleable.RichTextView_tintColorI, 0);
             isLatexOneStr = typeArray.getBoolean(R.styleable.RichTextView_isLatexOneStr, false);
             horizontallyScroll = typeArray.getBoolean(R.styleable.RichTextView_horizontallyScroll, false);
@@ -134,11 +137,20 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             imgPlaceholder = typeArray.getString(R.styleable.RichTextView_imgPlaceholder);
             updateRichTvDataModel = typeArray.getInteger(R.styleable.RichTextView_updateRichTvDataModel, 2);
             isEqualScreenWidth = typeArray.getBoolean(R.styleable.RichTextView_isEqualScreenWidth, false);
+            text = typeArray.getString(R.styleable.RichTextView_text);
+            textSize = typeArray.getFloat(R.styleable.RichTextView_textSize, 12);
+            isBold = typeArray.getBoolean(R.styleable.RichTextView_isBold, false);
             typeArray.recycle();
         }
         if (!TextUtils.isEmpty(backGroundColor))
             try {
                 backGroundColorI = Color.parseColor(backGroundColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        if (!TextUtils.isEmpty(textBackgroundColor))
+            try {
+                backGroundColorI = Color.parseColor(textBackgroundColor);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,6 +173,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        if (!TextUtils.isEmpty(textColor))
+            try {
+                tintColorI = Color.parseColor(textColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         if (tintColorI == 0) {
             int color = getCurrentTextColor();
             if (color != 0)
@@ -170,6 +188,12 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             setTextColor(tintColorI);
         // 设置宽度
         setEqualScreenWidth(isEqualScreenWidth);
+        if (!TextUtils.isEmpty(text))
+            setText(text);
+        if (textSize > 0)
+            setTextSize(textSize);
+        if (isBold)
+            setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         richText = getText();
         // 重置数据
         resetData();

@@ -20,5 +20,10 @@
             <flag name="MODE_2" value="2" />
         </attr>
         <attr name="isEqualScreenWidth" format="boolean" />
+        <attr name="text" format="string" />
+        <attr name="textColor" format="string" />
+        <attr name="textBackgroundColor" format="string" />
+        <attr name="textSize" format="float" />
+        <attr name="isBold" format="boolean" />
     </declare-styleable>
 </resources>
