@@ -455,6 +455,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setText(String text) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(text))
+            return this;
         return setRichText(text);
     }
 
@@ -466,6 +468,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param targetRes   目标图片res
      */
     public RichTextView setText(String content, String replacement, int targetRes) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(content))
+            return this;
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -505,6 +509,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param targetImgPath 目标图片地址
      */
     public RichTextView setText(String content, String replacement, String targetImgPath) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(content))
+            return this;
         if (!TextUtils.isEmpty(content)) {
             ArrayList<RichBean> datas = new ArrayList<>();
             if (!TextUtils.isEmpty(replacement)) {
@@ -539,7 +545,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      *
      * @param text 待显示数据
      */
-    public RichTextView setRichText(final CharSequence text) {
+    public RichTextView setRichText(CharSequence text) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(text))
+            return this;
         richText = text;
         return setRichText(richText, false);
     }
@@ -551,6 +559,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param isLatexOneStr 是否将Latex公式当中1位字符串处理
      */
     public RichTextView setRichText(CharSequence text, final boolean isLatexOneStr) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(text))
+            return this;
         isTextLoadComplete = false;
         if (!TextUtils.isEmpty(text)) {
             resetData();
@@ -594,6 +604,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param onLatexClickSpanListener Latex公式点击事件
      */
     public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpanListener) {
+        if (!TextUtils.isEmpty(richText) && richText.equals(text))
+            return this;
         this.onLatexClickSpanListener = onLatexClickSpanListener;
         return setRichText(text);
     }
