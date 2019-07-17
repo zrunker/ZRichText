@@ -544,8 +544,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setRichText(CharSequence text) {
-        richText = text;
-        return setRichText(richText, false);
+        return setRichText(text, false);
     }
 
     /**
