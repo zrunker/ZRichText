@@ -455,8 +455,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setText(String text) {
-        if (!TextUtils.isEmpty(richText) && richText.equals(text))
-            return this;
         return setRichText(text);
     }
 
@@ -546,8 +544,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param text 待显示数据
      */
     public RichTextView setRichText(CharSequence text) {
-        if (!TextUtils.isEmpty(richText) && richText.equals(text))
-            return this;
         richText = text;
         return setRichText(richText, false);
     }
@@ -604,8 +600,6 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * @param onLatexClickSpanListener Latex公式点击事件
      */
     public RichTextView setRichText(final CharSequence text, LatexClickSpan.OnLatexClickSpan onLatexClickSpanListener) {
-        if (!TextUtils.isEmpty(richText) && richText.equals(text))
-            return this;
         this.onLatexClickSpanListener = onLatexClickSpanListener;
         return setRichText(text);
     }
