@@ -552,7 +552,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      * 显示数据
      *
      * @param text          待显示数据
-     * @param isLatexOneStr 是否将Latex公式当中1位字符串处理
+     * @param isLatexOneStr 是否将Latex公式当作1位字符串处理
      */
     public RichTextView setRichText(CharSequence text, final boolean isLatexOneStr) {
         if (!TextUtils.isEmpty(richText) && richText.equals(text))
