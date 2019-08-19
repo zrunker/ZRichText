@@ -77,6 +77,7 @@ import cc.ibooker.richtext.jlatexmath.core.TeXIcon;
  * https://github.com/zrunker/ZRichText
  */
 public class RichTextView extends android.support.v7.widget.AppCompatTextView {
+    private final String TAG = "RichTextView";
     private final String LATEXPATTERN = "(?i)\\$\\$?((.|\\n)+?)\\$\\$?";
     private ArrayList<String> tempList;
     private SpannableString spannableString;
@@ -86,7 +87,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     private int richTvWidth;
     private Drawable defaultDrawable;
     private String imgPlaceholder;// 图片占位符，默认空格
-    private boolean isScroll;// 是否可以滚动
+    private boolean isScroll = true;// 是否可以滚动
     private boolean isOpenImgCache = false;// 是否开启图片缓存，默认开启
     private int loadImgModel = 0;// 加载图片模式，0-Glide，1-DownLoadImage，默认0
     //    private String backGroundColor;// 背景颜色
@@ -148,12 +149,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 backGroundColorI = Color.parseColor(backGroundColor);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
         if (!TextUtils.isEmpty(textBackgroundColor))
             try {
                 backGroundColorI = Color.parseColor(textBackgroundColor);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
         if (backGroundColorI == 0) {
             Drawable drawable = getBackground();
@@ -163,6 +166,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     backGroundColorI = colorDrawable.getColor();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
             }
         }
@@ -173,12 +177,14 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 tintColorI = Color.parseColor(tintColor);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
         if (!TextUtils.isEmpty(textColor))
             try {
                 tintColorI = Color.parseColor(textColor);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
         if (tintColorI == 0) {
             int color = getCurrentTextColor();
@@ -295,6 +301,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.backGroundColorI = Color.parseColor(backGroundColor);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
         return this;
     }
@@ -329,6 +336,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             this.tintColorI = Color.parseColor(tintColor);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
 //        this.tintColor = tintColor;
         return this;
@@ -362,10 +370,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-    // 设置水平滚动
+    // 设置水平滚动-默认是一行显示
     public RichTextView setHorizontallyScroll() {
         this.isScroll = true;
-        setMaxLines(1);
         setHorizontallyScrolling(true);
         setRichTvScroll();
         return this;
@@ -389,6 +396,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             Glide.with(getContext()).pauseRequests();
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
         return this;
     }
@@ -636,15 +644,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 展示数据到TextView上，图片预显示为：placeholder
      *
-     * @param datas       待显示数据列表
+     * @param list        待显示数据列表
      * @param placeholder 占位符
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final String placeholder) {
+    public RichTextView setRichText(ArrayList<RichBean> list, final String placeholder) {
         this.imgPlaceholder = placeholder;
         isTextLoadComplete = false;
         resetData();
-        if (datas != null && datas.size() > 0) {
-            richBeanList = (ArrayList<RichBean>) datas.clone();
+        if (list != null && list.size() > 0) {
+            richBeanList = (ArrayList<RichBean>) list.clone();
             if (richTvWidth > 0) {
                 if (updateRichTvDataModel == 1)
                     updateRichTvData1();
@@ -679,15 +687,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 展示数据到TextView上，图片预显示为：多空格·多空格，总宽度与图片大小一致  或者  空格i空格
      *
-     * @param datas       待显示数据
+     * @param list        待显示数据
      * @param isOpenCache 是否开始图片缓存 默认缓存
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas, boolean isOpenCache) {
+    public RichTextView setRichText(ArrayList<RichBean> list, boolean isOpenCache) {
         isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
-        if (datas != null && datas.size() > 0) {
-            richBeanList = (ArrayList<RichBean>) datas.clone();
+        if (list != null && list.size() > 0) {
+            richBeanList = (ArrayList<RichBean>) list.clone();
             if (richTvWidth > 0) {
                 if (updateRichTvDataModel == 1)
                     updateRichTvData1();
@@ -722,51 +730,51 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     /**
      * 展示数据到TextView上，图片没预显示
      *
-     * @param datas      待显示数据
+     * @param list       待显示数据
      * @param defaultRes 默认预显示图片
      */
 
-    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes) {
-        return setRichText(datas, defaultRes, true);
+    public RichTextView setRichText(ArrayList<RichBean> list, int defaultRes) {
+        return setRichText(list, defaultRes, true);
     }
 
     /**
      * 展示数据到TextView上，图片没预显示
      *
-     * @param datas       待显示数据
+     * @param list        待显示数据
      * @param defaultRes  默认预显示图片
      * @param isOpenCache 是否开启图片缓存 默认true
      */
 
-    public RichTextView setRichText(ArrayList<RichBean> datas, int defaultRes, boolean isOpenCache) {
+    public RichTextView setRichText(ArrayList<RichBean> list, int defaultRes, boolean isOpenCache) {
         resetData();
         this.isOpenImgCache = isOpenCache;
-        return setRichText(datas, getResources().getDrawable(defaultRes), isOpenCache);
+        return setRichText(list, getResources().getDrawable(defaultRes), isOpenCache);
     }
 
     /**
      * 展示数据到TextView上，图片预显示
      *
-     * @param datas    待显示数据
+     * @param list     待显示数据
      * @param drawable 默认预显示图片
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable) {
-        return setRichText(datas, drawable, true);
+    public RichTextView setRichText(ArrayList<RichBean> list, final Drawable drawable) {
+        return setRichText(list, drawable, true);
     }
 
     /**
      * 展示数据到TextView上，图片预显示
      *
-     * @param datas       待显示数据
+     * @param list        待显示数据
      * @param drawable    默认预显示图片
      * @param isOpenCache 是否开启图片缓存 默认true
      */
-    public RichTextView setRichText(ArrayList<RichBean> datas, final Drawable drawable, boolean isOpenCache) {
+    public RichTextView setRichText(ArrayList<RichBean> list, final Drawable drawable, boolean isOpenCache) {
         isTextLoadComplete = false;
         resetData();
         this.isOpenImgCache = isOpenCache;
-        if (datas != null && datas.size() > 0) {
-            richBeanList = (ArrayList<RichBean>) datas.clone();
+        if (list != null && list.size() > 0) {
+            richBeanList = (ArrayList<RichBean>) list.clone();
             defaultDrawable = drawable;
             if (richTvWidth > 0) {
                 if (updateRichTvDataModel == 1)
@@ -1006,7 +1014,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     // 刷新richTv
                     setText(spannableString);
                 } catch (Exception e) {
-                    Log.d("updateRichTvImgSpan", e.getMessage());
+                    Log.d(TAG, e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -1088,6 +1096,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 updateBackgroundColor(color, 0, spannableString.length(), 1);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
         }
         return this;
@@ -1176,6 +1185,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int updateBackGroundColorModel) {
         if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
+                    && startPosition >= 0
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
@@ -1206,6 +1216,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
                 setText(spannableString);
             }
@@ -1234,6 +1245,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int updateBackGroundColorModel) {
         if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
+                    && startPosition >= 0
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
@@ -1262,7 +1274,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("RichTextView", e.getMessage());
+                    Log.d(TAG, e.getMessage());
                 }
                 setText(spannableString);
             }
@@ -1294,6 +1306,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             final int updateBackGroundColorModel) {
         if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
+                    && startPosition >= 0
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
@@ -1314,7 +1327,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("RichTextView", e.getMessage());
+                    Log.d(TAG, e.getMessage());
                 }
                 setText(spannableString);
             }
@@ -1341,6 +1354,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int endPosition) {
         if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
+                    && startPosition >= 0
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
@@ -1369,6 +1383,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
                 setText(spannableString);
             }
@@ -1395,6 +1410,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                            final int endPosition) {
         if (isImgLoadComplete && isLatexLoadComplete && isTextLoadComplete) {
             if (spannableString != null
+                    && startPosition >= 0
                     && startPosition <= spannableString.length()
                     && endPosition <= spannableString.length()
                     && startPosition <= endPosition
@@ -1423,6 +1439,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
                 setText(spannableString);
             }
@@ -1448,6 +1465,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                      int startPosition,
                                                      int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1459,9 +1477,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1476,6 +1496,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                      int startPosition,
                                                      int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1487,9 +1508,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d(TAG, e.getMessage());
             }
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1504,6 +1527,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                int startPosition,
                                                int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1519,7 +1543,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //                e.printStackTrace();
 //            }
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1534,6 +1559,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                         int startPosition,
                                                         int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1542,7 +1568,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1554,6 +1581,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateUnderline(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1562,7 +1590,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1574,6 +1603,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateStrikethrough(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1582,7 +1612,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1594,6 +1625,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateSuperscript(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1602,7 +1634,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1614,6 +1647,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateSubscript(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1622,7 +1656,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1634,6 +1669,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateStyleBold(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1642,7 +1678,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1654,6 +1691,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateStyleItalic(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1662,7 +1700,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1674,6 +1713,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateStyleBoldItalic(int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1682,7 +1722,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1695,6 +1736,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateScaleX(float scaleXMultiple, int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1703,7 +1745,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1716,6 +1759,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateBorder(int startPosition, int endPosition, int borderColor) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1725,7 +1769,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1742,6 +1787,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                           float radius,
                                                           BlurMaskFilter.Blur style) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1751,7 +1797,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1772,6 +1819,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                             float specular,
                                                             float blurRadius) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1783,7 +1831,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1800,6 +1849,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                           Drawable drawable,
                                                           int pad) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1809,7 +1859,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1822,6 +1873,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateQuote(int startPosition, int endPosition, int quoteColor) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1831,7 +1883,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1845,6 +1898,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateAbsoluteSize(int startPosition, int endPosition, int size, boolean dip) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1854,7 +1908,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1868,6 +1923,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateDynamicDrawable(int startPosition, int endPosition, int verticalAlignment, final Drawable drawable) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1882,7 +1938,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1896,6 +1953,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateIconMargin(int startPosition, int endPosition, Bitmap bitmap, int pad) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1905,7 +1963,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1918,6 +1977,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateAlignmentStandard(int startPosition, int endPosition, Layout.Alignment align) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1927,7 +1987,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1950,6 +2011,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                           ColorStateList color,
                                                           ColorStateList linkColor) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -1961,7 +2023,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -1978,6 +2041,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                           int appearance,
                                                           int colorList) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -1986,7 +2050,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2001,6 +2066,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                                           int endPosition,
                                                           int appearance) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -2009,7 +2075,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2022,6 +2089,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateTypeface(int startPosition, int endPosition, String family) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2031,7 +2099,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2045,6 +2114,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     @RequiresApi(api = 28)
     public synchronized RichTextView updateTypeface(int startPosition, int endPosition, Typeface typeface) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2054,7 +2124,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2067,6 +2138,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateColors(int startPosition, int endPosition, int[] colors) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2077,7 +2149,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2091,6 +2164,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2101,7 +2175,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2114,6 +2189,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2123,7 +2199,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2139,6 +2216,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     @RequiresApi(api = 28)
     public synchronized RichTextView updateBullet(int startPosition, int endPosition, int gapWidth, int color, int bulletRadius) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2149,7 +2227,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2163,6 +2242,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView updateTextRound(int startPosition, int endPosition, int lines, int margin) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -2171,7 +2251,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2185,6 +2266,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     public synchronized RichTextView setSpan(Object what, int startPosition, int endPosition, int flags) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition
@@ -2193,7 +2275,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     startPosition, endPosition,
                     flags);
             setText(spannableString);
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2202,6 +2285,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
      */
     private synchronized void setTextSpan(RichBean richBean, int startPosition, int endPosition) {
         if (spannableString != null
+                && startPosition >= 0
                 && startPosition <= spannableString.length()
                 && endPosition <= spannableString.length()
                 && startPosition <= endPosition) {
@@ -2214,6 +2298,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
             }
             // 文本颜色
@@ -2225,6 +2310,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
             }
             // 添加超链接
@@ -2326,6 +2412,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
             }
             // 绝对大小
@@ -2363,6 +2450,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         startPosition, endPosition,
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }
+        } else {
+            Log.d(TAG, "数据异常");
         }
     }
 
@@ -2434,6 +2523,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
+                                        Log.d(TAG, e.getMessage());
                                     }
                                     try {
                                         if (!TextUtils.isEmpty(data.getBackgroundColor())) {
@@ -2443,6 +2533,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
+                                        Log.d(TAG, e.getMessage());
                                     }
                                     VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
                                     richImgBean.setVerticalImageSpan(verticalImageSpan);
@@ -2494,6 +2585,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                Log.d(TAG, e.getMessage());
                             }
                             try {
                                 if (!TextUtils.isEmpty(data.getBackgroundColor())) {
@@ -2503,6 +2595,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                Log.d(TAG, e.getMessage());
                             }
                             VerticalImageSpan verticalImageSpan = new VerticalImageSpan(drawable);
                             richImgBean.setVerticalImageSpan(verticalImageSpan);
@@ -2533,6 +2626,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.getMessage());
         }
     }
 
@@ -2546,6 +2640,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         if (richBean != null
                 && richBeanList != null
                 && tempList != null
+                && position >= 0
                 && position < richBeanList.size()
                 && tempList.size() == richBeanList.size()) {
             if (richBean.getType() == 0) {// 文本
@@ -2564,7 +2659,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             } else {// 图片
                 downLoadImage(richBean, false);
             }
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2712,6 +2808,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 int startPosition = latexBean.getStartPosition();
                 int endPosition = latexBean.getEndPosition();
                 if (spannableString != null
+                        && startPosition >= 0
                         && startPosition <= spannableString.length()
                         && endPosition <= spannableString.length()
                         && startPosition <= endPosition
@@ -2740,7 +2837,8 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     }
                 }
             }
-        }
+        } else
+            Log.d(TAG, "数据异常");
         return this;
     }
 
@@ -2807,6 +2905,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                     canvas.drawBitmap(image, 0, 0, paint1);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d(TAG, e.getMessage());
                 }
             }
 
@@ -2832,7 +2931,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
 //        return bitmap;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("RichTextView", "Latex异常：" + latex);
+            Log.d(TAG, "Latex异常：" + latex);
 
             if (loadLatexTatol > loadLatexComplete)
                 loadLatexComplete++;
