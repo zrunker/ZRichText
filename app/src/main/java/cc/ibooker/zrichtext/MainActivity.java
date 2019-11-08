@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         richTextView3 = findViewById(R.id.richTextView3);
         richTextView4 = findViewById(R.id.richTextView4);
         richTextView5 = findViewById(R.id.richTextView5);
-        textView.setText("阿搜噶搜噶是否噶是购房人个人过去而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话")
-                .setHorizontallyScroll();
+        textView.setText("阿搜噶搜噶是否噶是购房人个人过去阿搜噶搜噶是否噶是购房人个人过去而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话而过个人首付该发as嘎嘎嘎嘎递给他还让他忽然还是电话司徒浩然四氧化三铁花容失色的还是电话")
+                .setVerticalScroll(2);
 
         ArrayList<RichBean> richBeans = new ArrayList<>();
         RichBean richBean1 = new RichBean();

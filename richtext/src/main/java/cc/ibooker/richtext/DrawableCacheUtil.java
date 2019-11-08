@@ -16,7 +16,7 @@ public class DrawableCacheUtil {
     private LruCache<String, Drawable> mLruCache;
     private static DrawableCacheUtil imageCacheUtil;
 
-    public static DrawableCacheUtil getInstanse() {
+    public static DrawableCacheUtil getInstance() {
         if (imageCacheUtil == null) {
             synchronized (DrawableCacheUtil.class) {
                 if (imageCacheUtil == null)

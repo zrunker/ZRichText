@@ -59,7 +59,7 @@ public class DownLoadImage {
         // 获取Drawable
         Drawable drawable = null;
         if (isOpenImgCache)
-            drawable = DrawableCacheUtil.getInstanse().init().getDrawableByPath(imagePath);
+            drawable = DrawableCacheUtil.getInstance().init().getDrawableByPath(imagePath);
         if (drawable == null) {
             // 开启线程
             Thread thread = new Thread(new Runnable() {
@@ -112,7 +112,7 @@ public class DownLoadImage {
                 case 1:
                     Drawable drawable = downLoadBean.getDrawable();
                     if (downLoadBean.isOpenImgCache())
-                        DrawableCacheUtil.getInstanse().init().putDrawableByPath(downLoadBean.getImagePath(), drawable);
+                        DrawableCacheUtil.getInstance().init().putDrawableByPath(downLoadBean.getImagePath(), drawable);
                     if (callback != null)
                         callback.getDrawable(drawable);
                     break;
