@@ -981,8 +981,13 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 && tempList != null) {
             int startPosition = 0;// 标记realText的开始位置
             for (int i = 0; i < tempList.size(); i++) {
-                if (i == position) break;
-                else startPosition += tempList.get(i).length();
+                if (i == position)
+                    break;
+                else {
+                    String tempStr = tempList.get(i);
+                    if (!TextUtils.isEmpty(tempStr))
+                        startPosition += tempStr.length();
+                }
             }
             if (startPosition >= 0
                     && startPosition < spannableString.length()
