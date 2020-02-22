@@ -984,9 +984,11 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 if (i == position)
                     break;
                 else {
-                    String tempStr = tempList.get(i);
-                    if (!TextUtils.isEmpty(tempStr))
-                        startPosition += tempStr.length();
+                    if (i < tempList.size()) {
+                        String tempStr = tempList.get(i);
+                        if (!TextUtils.isEmpty(tempStr))
+                            startPosition += tempStr.length();
+                    }
                 }
             }
             if (startPosition >= 0
