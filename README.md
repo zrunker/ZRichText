@@ -17,7 +17,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.zrunker:ZRichText:v1.1.7.5'
+	implementation 'com.github.zrunker:ZRichText:v1.1.8.4'
 }
 ```
 B. maven方式：
@@ -32,7 +32,7 @@ B. maven方式：
 <dependency>
 	<groupId>com.github.zrunker</groupId>
 	<artifactId>ZRichText</artifactId>
-	<version>v1.1.7.5</version>
+	<version>v1.1.8.4</version>
 </dependency>
 ```
 #### 2、引用
