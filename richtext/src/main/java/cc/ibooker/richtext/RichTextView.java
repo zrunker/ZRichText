@@ -230,7 +230,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 延后刷新界面
-    public void delayedReflushView(long delayMillis) {
+    public RichTextView delayedReflushView(long delayMillis) {
         postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -238,19 +238,22 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 invalidate();
             }
         }, delayMillis);
+        return this;
     }
 
     // 设置RichTextView的宽度
-    public void setRichTvWidth(int richTvWidth) {
+    public RichTextView setRichTvWidth(int richTvWidth) {
         this.richTvWidth = richTvWidth;
+        return this;
     }
 
     // RichTextView的宽度是否等于屏幕的宽度
-    public void setEqualScreenWidth(boolean equalScreenWidth) {
+    public RichTextView setEqualScreenWidth(boolean equalScreenWidth) {
         if (equalScreenWidth)
             richTvWidth = (int) (Resources.getSystem().getDisplayMetrics().widthPixels * 0.8);
         else
             richTvWidth = 0;
+        return this;
     }
 
     @Override
@@ -259,8 +262,9 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
         this.tintColorI = color;
     }
 
-    public void setTextColor(String color) {
+    public RichTextView setTextColor(String color) {
         this.setTintColor(color);
+        return this;
     }
 
     @Override
@@ -360,7 +364,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     // 设置是否能够滚动
-    private void setRichTvScroll() {
+    private RichTextView setRichTvScroll() {
         if (isScroll) // 默认竖直滚动
             setMovementMethod(LinkMovementMethod.getInstance());
         else {
@@ -368,6 +372,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             setVerticalScrollBarEnabled(false);
             setOnTouchListener(new LinkMovementMethodOverride());
         }
+        return this;
     }
 
     // 设置水平滚动-默认是一行显示
@@ -579,11 +584,24 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+//                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+//                        if (richTvWidth <= 0) {
+//                            ViewGroup parent = (ViewGroup) getParent();
+//                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+//                        }
+//                        dealWithLatex(richText);
+//                        setText(spannableString);
+//                        isTextLoadComplete = true;
+//                    }
+//                });
+                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    public boolean onPreDraw() {
+                        getViewTreeObserver().removeOnPreDrawListener(this);
                         richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
@@ -592,6 +610,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         dealWithLatex(richText);
                         setText(spannableString);
                         isTextLoadComplete = true;
+                        return true;
                     }
                 });
             }
@@ -661,11 +680,26 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+//                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+//                        if (richTvWidth <= 0) {
+//                            ViewGroup parent = (ViewGroup) getParent();
+//                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+//                        }
+//                        if (updateRichTvDataModel == 1)
+//                            updateRichTvData1();
+//                        else if (updateRichTvDataModel == 2)
+//                            updateRichTvData2();
+//                        isTextLoadComplete = true;
+//                    }
+//                });
+                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    public boolean onPreDraw() {
+                        getViewTreeObserver().removeOnPreDrawListener(this);
                         richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
@@ -676,6 +710,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
                         isTextLoadComplete = true;
+                        return true;
                     }
                 });
             }
@@ -704,11 +739,26 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+//                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+//                        if (richTvWidth <= 0) {
+//                            ViewGroup parent = (ViewGroup) getParent();
+//                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+//                        }
+//                        if (updateRichTvDataModel == 1)
+//                            updateRichTvData1();
+//                        else if (updateRichTvDataModel == 2)
+//                            updateRichTvData2();
+//                        isTextLoadComplete = true;
+//                    }
+//                });
+                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    public boolean onPreDraw() {
+                        getViewTreeObserver().removeOnPreDrawListener(this);
                         richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
@@ -719,6 +769,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
                         isTextLoadComplete = true;
+                        return true;
                     }
                 });
             }
@@ -784,11 +835,26 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 isTextLoadComplete = true;
             } else {
                 final ViewTreeObserver vto = getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//                    @Override
+//                    public void onGlobalLayout() {
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+//                            getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                        richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
+//                        if (richTvWidth <= 0) {
+//                            ViewGroup parent = (ViewGroup) getParent();
+//                            richTvWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
+//                        }
+//                        if (updateRichTvDataModel == 1)
+//                            updateRichTvData1();
+//                        else if (updateRichTvDataModel == 2)
+//                            updateRichTvData2();
+//                        isTextLoadComplete = true;
+//                    }
+//                });
+                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    public boolean onPreDraw() {
+                        getViewTreeObserver().removeOnPreDrawListener(this);
                         richTvWidth = getWidth() - getPaddingLeft() - getPaddingRight();
                         if (richTvWidth <= 0) {
                             ViewGroup parent = (ViewGroup) getParent();
@@ -799,6 +865,7 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                         else if (updateRichTvDataModel == 2)
                             updateRichTvData2();
                         isTextLoadComplete = true;
+                        return true;
                     }
                 });
             }
