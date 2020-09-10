@@ -15,6 +15,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.Spannable;
@@ -462,11 +463,23 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 拆分字符串
+     *
+     * @param text     待拆分数据
+     * @param splitStr 拆分格式
+     */
+    public String[] splitBysep(@NonNull String text, @NonNull String splitStr) {
+        String separator = "&RichTextView&";
+        text = text.replace(splitStr, separator + splitStr + separator);
+        return text.split(separator);
+    }
+
+    /**
      * 仅仅显示数据
      *
      * @param text 待显示数据
      */
-    private RichTextView setSimpleText(CharSequence text) {
+    public RichTextView setSimpleText(CharSequence text) {
         this.setText(text);
         return this;
     }
