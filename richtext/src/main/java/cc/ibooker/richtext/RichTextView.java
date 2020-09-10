@@ -463,6 +463,15 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
     }
 
     /**
+     * 刷新RichTextView
+     */
+    public RichTextView invalidateRichText() {
+        setRichText(getText(), isLatexOneStr);
+        super.invalidate();
+        return this;
+    }
+
+    /**
      * 拆分字符串
      *
      * @param text     待拆分数据
