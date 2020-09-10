@@ -15,7 +15,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.Spannable;
@@ -460,6 +459,16 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
             loadImgComplete = 0;
         }
         isResetData = true;
+    }
+
+    /**
+     * 仅仅显示数据
+     *
+     * @param text 待显示数据
+     */
+    private RichTextView setSimpleText(CharSequence text) {
+        this.setText(text);
+        return this;
     }
 
     /**
@@ -1051,11 +1060,10 @@ public class RichTextView extends android.support.v7.widget.AppCompatTextView {
                 if (i == position)
                     break;
                 else {
-                    if (i < tempList.size()) {
-                        String tempStr = tempList.get(i);
-                        if (!TextUtils.isEmpty(tempStr))
-                            startPosition += tempStr.length();
-                    }
+                    tempList.size();
+                    String tempStr = tempList.get(i);
+                    if (!TextUtils.isEmpty(tempStr))
+                        startPosition += tempStr.length();
                 }
             }
             if (startPosition >= 0
